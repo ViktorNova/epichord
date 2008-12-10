@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\""
-CFLAGS = -g -O2
+CFLAGS = -g -O2 -Wall
 AM_LDFLAGS = -lfltk2 -ljack
 
 bin_PROGRAMS = epichord
