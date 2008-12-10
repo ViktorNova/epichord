@@ -1,0 +1,11 @@
+
+LINKFLAGS = -lfltk2 -ljack ;
+C++ = g++ ;
+LINK = g++ ;
+C++FLAGS = -g ;
+
+Main epichord : main.cpp seq.cpp jack.cpp ui.cpp 
+                pianoroll.cpp trackselect.cpp eventedit.cpp timeline.cpp 
+                sampleview.cpp trackinfo.cpp arranger.cpp keyboard.cpp
+                trackmodule.cpp util.cpp midi.cpp uihelper.cpp
+                saveload.cpp ;

@@ -1,0 +1,58 @@
+Controls
+
+! means not yet implemented
+
+left click drag on empty space - new pattern/note
+left click drag on selected pattern - move or resize pattern/note
+left click - select pattern/note
+!shift left click - select more patterns/notes
+!shift left click drag - box select
+right click - delete pattern/note
+middle click - paste clone pattern
+!middle click on pattern (song view) - make unique copy if a clone
+
+!control v - paste clone pattern
+!delete - delete selected patterns/notes
+!control z - undo
+!control y - redo
+!control a - select none / select all
+
+!= - zoom in
+!- - zoom out
+
+!control s - save
+!control o - open
+!control w - save as
+!control n - erase everything
+
+!space bar - start/pause playback
+!backspace - reset play head
+!return - toggle recording
+
+
+
+You can play notes with the keyboard. (doesnt work yet)
+This is the layout for qwerty. (customize doesnt work yet)
+
+ # #   # # #   # #
+C D E F G A B C D E
+
+ 2 3   5 6 7   9 0
+q w e r t y u i o p
+
+ s d   g h j   k l
+z x c v b n m , . /
+
+![ - octave down one
+!] - octave up one
+
+
+
+song view special controls
+
+!control left click (song view) - mute/unmute pattern
+double left click (song view) - edit pattern
+
+
+pattern edit special controls
+

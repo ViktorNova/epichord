@@ -1,0 +1,35 @@
+80 note off
+90 note on
+A0 aftertouch
+B0 control change
+C0 program change
+D0 channel pressure
+E0 pitch wheel
+
+special controllers (B0)
+120 - all sound off
+121 - reset all controllers
+122 - local control (on / off)
+123 - all notes off
+124 - omni mode off
+125 - omni mode on
+126 - mono mode on
+127 - poly mode on
+
+F0 - system exclusive message
+F1 - reserved
+F2 - song position pointer
+F3 - song select
+F4 - reserved
+F5 - reserved
+F6 - tune request
+F7 - end of exclusive
+
+F8 - timing clock
+F9 - reserved
+FA - start
+FB - continue
+FC - stop
+FD - reserved
+FE - active sensing
+FF - reset

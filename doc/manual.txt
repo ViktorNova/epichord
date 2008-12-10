@@ -1,0 +1,57 @@
+scratch work for manual text
+
+overview of the widgets
+
+The first screen that opens is the song view. You can use this to configure
+the initial state of the tracks and manipulate the song at a high level.
+
+On the left is the track info panel which has a vertical list of tracks and
+their configuration. In each track entry there is a multi-function button, the
+track name, the volume adjuster, the pan adjuster, the solo button and the
+mute button. Right click the multifunction button to delete the track. Click
+under the last track to create a new blank track.
+
+By pressing the + button at the top of the track info panel, you toggle the
+track info between two modes. The second mode allows you to set the output
+port, the midi channel, and the initial program for each track.
+
+On the right is the pattern arranger. You use this to create delete copy move
+and resize patterns in the song.
+
+The timeline at the top of the arranger gives an indication of the current
+play position and current loop endpoints. You can click in this to change the
+endpoints or set current play position.
+
+The bottom of the screen contains buttons that are always visible whether or
+not you are in song edit or pattern edit mode. From left to right:
+
+play button (arrow)   - begin playing the song at current position
+pause button (bars)   - appears while playing, pauses play at current position
+stop button (square)  - stop playback and reset to time zero
+record button (circle)- toggle whether midi input is recorded
+
+loop button - toggle whether the play will loop between current loop endpoints.
+keyboard button - toggle whether computer keyboard acts as midi keyboard.
+oscillo button - open the configuration window
+floppy button - open the save/load menu
+question button - open the info/help window
+
+
+When you double click on a pattern in the song view, you will open the pattern
+editor. Here you can view or edit individual notes and other midi events in
+a given pattern.
+
+On the left is the keyboard. This shows what note each horizontal delineation
+corresponds to. You can click on the keyboard to send a midi note on this
+channel.
+
+The timeline shows the same thing as the song view timeline but zero begins
+at the start of the pattern and not the start of the entire song.
+
+The grid or the piano roll region shows notes. You click here to create delete
+move resize select or copy notes in much the same way as the arranger.
+
+The event editor at the bottom of the pattern view screen lets you create delete
+edit move and copy individual midi messages.
+
+the left arrow button in the bottom left will return you to the song editor.

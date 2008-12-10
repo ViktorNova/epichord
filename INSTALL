@@ -1,0 +1,42 @@
+This is autotools.
+
+To build the program, do
+
+  ./configure
+  make
+
+and then
+
+  make install
+
+as root to install to the default location.
+
+
+When you run into problems, make sure you have the dependency libraries
+installed. FLTK 2 and JACK with midi support (any recent version) is
+required.
+
+After building you may have an error message about missing graphics and
+buttons may appear blank. This is caused by not running 'make install'
+and attempting to run the program from another location.
+
+You may choose where to install the program by doing
+
+  ./configure --prefix=/usr
+
+This will install the program in /usr (/usr/bin /usr/share and so on)
+
+And if you do not want to install the program, you may set the location
+the program searches for graphics and documentation with
+
+  ./configure --datadir=/usr/share
+
+Note that in the above example, the program will search in the directory
+
+/usr/share/epichord/gfx for the graphics and
+/usr/share/epichord/doc for the documentation
+
+In order to run the program from its current location without installing, 
+for instance /home/bob/src/epichord you can do this
+
+  ./configure --datadir=/home/bob/src

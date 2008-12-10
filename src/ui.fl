@@ -1,0 +1,508 @@
+# data file for the FLTK User Interface Designer (FLUID)
+version 2.1000 
+images_dir header_name 
+do_not_include_H_from_C 
+header_name {.h} 
+code_name {.cpp} 
+gridx 5 
+gridy 5 
+snap 3
+decl {/*
+   Epichord - a midi sequencer
+   Copyright (C) 2008  Evan Rinehart
+
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to
+
+   The Free Software Foundation, Inc.
+   51 Franklin Street, Fifth Floor
+   Boston, MA  02110-1301, USA
+*/} {} 
+
+decl {\#include <fltk/events.h>} {} 
+
+decl {\#include <fltk/file_chooser.h>} {} 
+
+decl {\#include "backend.h"} {} 
+
+decl {\#include "util.h"} {} 
+
+decl {\#include "uihelper.h"} {} 
+
+decl {\#include "config.h"} {} 
+
+decl {extern UI* ui;} {} 
+
+class UI {open
+} {
+  Function {UI()} {open
+  } {
+    {fltk::Window} main_window {
+      label Epichord
+      callback {config_window->hide();
+help_window->hide();
+action_window->hide();
+o->hide();} selected
+      xywh {1036 27 640 480} resizable
+      extra_code {\#include <unistd.h>
+\#include <stdio.h>
+\#include "seq.h"
+\#include "trackmodule.h"
+o->size_range(640,455);
+o->resize(640,455);} visible
+    } {
+      {fltk::Group} {} {open
+        xywh {0 0 640 445} resizable
+      } {
+        {fltk::Group} song_edit {open
+          xywh {0 0 640 445}
+        } {
+          {fltk::Group} {} {open
+            xywh {0 0 255 445} box FLAT_BOX
+          } {
+            {fltk::Widget} track_info {
+              label {track info}
+              xywh {0 15 255 415} resizable
+              extra_code {\#include "trackinfo.h"}
+              class TrackInfo
+            }
+            {fltk::Button} {} {
+              label {@+}
+              callback {ui->track_info->toggle_controls();}
+              xywh {0 0 255 15}
+            }
+          }
+          {fltk::Group} {} {open
+            xywh {255 0 385 15}
+          } {
+            {fltk::Widget} song_timeline {
+              label timeline
+              xywh {0 0 370 15} resizable
+              extra_code {o->scale=16;
+o->label_scale=4;}
+              class Timeline
+            }
+          }
+          {fltk::ScrollGroup} song_scroll {open
+            xywh {255 15 385 430} resizable
+            extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
+          } {
+            {fltk::Widget} arranger {
+              label arranger
+              xywh {0 0 245 220} box FLAT_BOX
+              extra_code {\#include "seq.h"
+\#include "arranger.h"
+o->resize(1000,1000);}
+              class Arranger
+            }
+          }
+        }
+        {fltk::Group} pattern_edit {open
+          xywh {0 0 640 445} hide
+        } {
+          {fltk::Group} {} {open
+            xywh {45 0 595 445} resizable
+          } {
+            {fltk::Group} {} {open
+              xywh {0 0 595 15}
+            } {
+              {fltk::Widget} pattern_timeline {
+                label timeline
+                xywh {0 0 580 15} resizable box FLAT_BOX
+                extra_code {\#include "timeline.h"}
+                class Timeline
+              }
+            }
+            {fltk::ScrollGroup} pattern_scroll {
+              xywh {0 15 595 355} when CHANGED resizable box FLAT_BOX shortcut 0xff1b
+              extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
+            } {
+              {fltk::Widget} piano_roll {
+                label pianoroll
+                xywh {0 0 595 355} resizable box FLAT_BOX
+                extra_code {\#include "pianoroll.h"
+o->resize(960,900);}
+                class PianoRoll
+              }
+            }
+            {fltk::Group} {} {open
+              xywh {0 370 595 75}
+            } {
+              {fltk::Widget} event_edit {
+                label {event editor}
+                xywh {0 0 580 75} resizable box FLAT_BOX
+                extra_code {\#include "eventedit.h"}
+                class EventEdit
+              }
+              {fltk::Button} {} {
+                label E
+                tooltip {pick event type}
+                xywh {580 0 15 15}
+              }
+              {fltk::Button} {} {
+                label Q
+                tooltip {quantization resolution}
+                xywh {580 15 15 15}
+              }
+              {fltk::Button} {} {
+                label {?}
+                xywh {580 30 15 15}
+              }
+              {fltk::Button} {} {
+                label {?}
+                xywh {580 45 15 15}
+              }
+              {fltk::Button} {} {
+                label {?}
+                xywh {580 60 15 15}
+              }
+            }
+          }
+          {fltk::Group} {} {open
+            xywh {0 0 45 445} horizontal
+          } {
+            {fltk::Button} {} {
+              label {@+}
+              xywh {0 0 45 15}
+            }
+            {fltk::Group} {} {open
+              xywh {0 15 45 340} resizable
+            } {
+              {fltk::Widget} track_select {
+                label {track picker}
+                xywh {0 35 45 305}
+                extra_code {\#include "trackselect.h"}
+                class TrackSelect
+              }
+              {fltk::Widget} sample_view {
+                label {sample names}
+                xywh {0 35 45 305}
+                extra_code {\#include "sampleview.h"}
+                class SampleView
+              }
+              {fltk::Widget} keyboard {
+                label keyboard
+                xywh {0 0 45 340}
+                extra_code {\#include "keyboard.h"}
+                class Keyboard
+              }
+            }
+            {fltk::Button} {} {
+              label {@<-}
+              callback {ui->pattern_edit->hide();
+ui->song_edit->activate();
+ui->song_edit->show();
+ui->song_edit->take_focus();}
+              xywh {0 370 45 75}
+            }
+          }
+        }
+      }
+      {fltk::Group} {} {
+        xywh {0 445 640 35} box UP_BOX
+      } {
+        {fltk::Button} play_button {
+          label {@>}
+          callback {press_play();}
+          xywh {5 5 25 25} labelcolor 0x800000
+        }
+        {fltk::Button} stop_button {
+          label {@square}
+          callback {press_stop();}
+          xywh {35 5 25 25} labelcolor 0x800000
+        }
+        {fltk::Button} record_button {
+          label {@circle}
+          callback {toggle_backend_recording();}
+          xywh {65 5 25 25} labelcolor 0xff000000
+          extra_code {o->type(fltk::Button::TOGGLE);}
+        }
+        {fltk::Group} {} {open
+          xywh {95 0 20 35} resizable
+        } {}
+        {fltk::Button} loop_toggle {
+          callback {toggle_loop();}
+          tooltip {toggle looping}
+          xywh {490 5 25 25}
+          extra_code {o->type(fltk::Button::TOGGLE);}
+        }
+        {fltk::Button} keyboard_toggle {
+          tooltip {toggle keyboard}
+          xywh {520 5 25 25}
+          extra_code {o->type(fltk::Button::TOGGLE);}
+        }
+        {fltk::Button} config_button {
+          callback {ui->config_window->show();}
+          tooltip config
+          xywh {550 5 25 25}
+        }
+        {fltk::Button} file_button {
+          callback {//load(fltk::file_chooser("save file",NULL,"~"));
+ui->action_window->show();}
+          xywh {580 5 25 25}
+          extra_code {\#include "saveload.h"}
+        }
+        {fltk::Button} help_button {
+          callback {help_window->show();}
+          tooltip help
+          xywh {610 5 25 25}
+        }
+        {fltk::Group} {} {open
+          xywh {280 5 175 25}
+        } {
+          {fltk::Button} qbutton4 {
+            label {♩}
+            callback {set_quant(4);}
+            xywh {0 0 25 25} labelsize 24
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} qbutton8 {
+            label {♪}
+            callback {set_quant(8);}
+            xywh {25 0 25 25} labelsize 24
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} qbutton16 {
+            label {♬}
+            callback {set_quant(16);}
+            xywh {50 0 25 25} labelsize 24
+            extra_code {o->type(fltk::Button::TOGGLE);
+o->state(1);}
+          }
+          {fltk::Button} qbutton32 {
+            label 32
+            callback {set_quant(32);}
+            xywh {75 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} qbutton64 {
+            label 64
+            callback {set_quant(64);}
+            xywh {100 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} qbutton128 {
+            label 128
+            callback {set_quant(128);}
+            xywh {125 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} qbutton0 {
+            label {∞}
+            callback {set_quant(0);}
+            xywh {150 0 25 25} labelsize 24
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+        }
+      }
+    }
+    {fltk::Window} config_window {
+      label config open
+      xywh {28 665 315 260} hide resizable
+    } {
+      {fltk::ValueInput} {} {
+        label {beats per measure}
+        xywh {145 10 45 20} minimum 2 maximum 31 step 1 value 4
+      }
+      {fltk::ValueInput} {} {
+        label {measures per phrase}
+        xywh {145 35 45 20} maximum 128 step 1 value 4
+      }
+      {fltk::ValueOutput} bpm_output {
+        label bpm
+        xywh {145 60 45 20} minimum 1 maximum 1000 step 1 value 120
+      }
+      {fltk::ThumbWheel} bpm_wheel {
+        callback {set_bpm((int)o->value());
+ui->bpm_output->value(o->value());}
+        xywh {195 60 105 20} align 4 minimum 1 maximum 1000 step 1 value 120
+      }
+      {fltk::ValueInput} {} {
+        label {metronome lead-in}
+        xywh {145 85 45 20} maximum 128 step 1 value 4
+      }
+      {fltk::CheckButton} {} {
+        label {always hard copy}
+        xywh {145 110 25 25} align 4
+      }
+      {fltk::CheckButton} {} {
+        label {auto track name}
+        xywh {285 110 25 25} align 4
+      }
+      {fltk::CheckButton} {} {
+        label {record pass-thru}
+        xywh {145 135 25 26} horizontal align 4 value 1
+      }
+      {fltk::CheckButton} {} {
+        label {play note insertion}
+        xywh {285 135 25 26} horizontal align 4 value 1
+      }
+      {fltk::CheckButton} {} {
+        label {follow playback}
+        xywh {145 160 25 26} horizontal align 4 value 1
+      }
+      {fltk::CheckButton} {} {
+        label {play note selection}
+        xywh {285 160 25 26} horizontal align 4 value 1
+      }
+      {fltk::CheckButton} {} {
+        label {quantize note off}
+        xywh {285 185 25 25} align 4 value 1
+      }
+      {fltk::Choice} {} {
+        label {record mode} open
+        xywh {145 215 160 25}
+      } {
+        {fltk::Item} {} {
+          label merge
+          }
+        {fltk::Item} {} {
+          label overwrite
+          }
+        {fltk::Item} {} {
+          label layer
+          }
+      }
+    }
+    {fltk::Window} help_window {
+      label help
+      xywh {519 345 580 370} hide resizable
+      extra_code {o->size_range(555,370);}
+    } {
+      {fltk::TabGroup} {} {open
+        xywh {0 0 580 370}
+      } {
+        {fltk::Group} {} {
+          label info open
+          xywh {0 25 580 345} resizable
+        } {
+          {fltk::Input} title_text {
+            label Title
+            xywh {55 5 520 20}
+          }
+          {fltk::Input} author_text {
+            label Author
+            xywh {55 30 520 20}
+          }
+          {fltk::TextEditor} info_text {
+            xywh {5 55 570 285} resizable textfont 4
+          }
+        }
+        {fltk::Group} {} {
+          label controls open
+          xywh {0 25 580 345} hide
+        } {
+          {fltk::TextDisplay} {} {
+            xywh {5 5 570 335} resizable textfont 4
+            extra_code {load_text(o,ROOT_DATA_DIR"doc/controls.txt");}
+          }
+        }
+        {fltk::Group} {} {
+          label guide open
+          xywh {0 25 580 345} hide
+        } {
+          {fltk::TextDisplay} {} {
+            xywh {5 5 570 335} resizable textfont 4
+            extra_code {load_text(o,ROOT_DATA_DIR"doc/guide.txt");}
+          }
+        }
+        {fltk::Group} {} {
+          label license open
+          xywh {0 25 580 345} hide
+        } {
+          {fltk::TextDisplay} {} {
+            xywh {5 5 570 335} resizable textfont 4
+            extra_code {load_text(o,ROOT_DATA_DIR"doc/license.txt");}
+          }
+        }
+        {fltk::Group} {} {
+          label about open
+          xywh {0 25 580 345} hide
+        } {
+          {fltk::TextDisplay} {} {
+            xywh {5 5 570 335} resizable textfont 4
+            extra_code {load_text(o,ROOT_DATA_DIR"doc/README");}
+          }
+        }
+      }
+    }
+    {fltk::Window} action_window {
+      label menu
+      xywh {286 302 100 130} horizontal resizable visible
+    } {
+      {fltk::Button} {} {
+        label new
+        callback {clear();
+init_seq();
+track_info->update();
+action_window->hide();}
+        xywh {5 5 90 20}
+      }
+      {fltk::Button} {} {
+        label save
+        callback {action_window->hide();
+save();}
+        xywh {5 25 90 20}
+      }
+      {fltk::Button} {} {
+        label {save as}
+        callback {action_window->hide();
+save(fltk::file_chooser("save file",NULL,get_last_dir()));}
+        xywh {5 45 90 20}
+      }
+      {fltk::Button} {} {
+        label load
+        callback {action_window->hide();
+load(fltk::file_chooser("open file",NULL,get_last_dir()));}
+        xywh {5 65 90 20}
+      }
+      {fltk::Button} {} {
+        label import
+        xywh {5 85 90 20}
+      }
+      {fltk::Button} {} {
+        label export
+        callback {action_window->hide();
+savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
+        xywh {5 105 90 20}
+      }
+    }
+    {fltk::Window} key_config {
+      label {key layout}
+      xywh {846 474 650 370} hide
+    } {
+      {fltk::Widget} {} {
+        label C1
+        xywh {45 105 25 25} align 2
+      }
+      {fltk::Widget} {} {
+        label {octave up}
+        xywh {615 15 25 25} align 4
+      }
+      {fltk::Widget} {} {
+        label {zoom in}
+        xywh {615 75 25 25} align 4
+      }
+      {fltk::Widget} {} {
+        label {zoom out}
+        xywh {615 105 25 25} align 4
+      }
+    }
+    code {loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
+keyboard_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/keys.gif"));
+config_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
+file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
+help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));} {}
+    code {main_window->show();} {}
+  }
+} 

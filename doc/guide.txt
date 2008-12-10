@@ -1,0 +1,72 @@
+Total beginner's guide
+
+
+This program is not a digital audio workstation, plug-in host, video
+editor or anything like that. It does not make sound and it does not
+process sound in any way. It lets you arrange notes and phrases into
+a song and send the data to other programs or hardware via the MIDI
+interface.
+
+The receiver that gets this data can use it to generate sounds at
+the desired time, pitch, volume, and pan. Many other aspects of
+the performance can be specified in the MIDI data. Sequencers
+generally allow you to schedule any of these such MIDI messages, but 
+their responsibility is not to specify the exact audio presentation.
+
+Computer music gurus historically have used a combination of hardware
+synthesizers and computer programs connected with MIDI to generate the 
+sounds for the performance. Since you are a total beginner, like me, I 
+will assume you don't have any cool hardware, and I will focus on how 
+to use only software to get you set up to start making rad music.
+
+There are many many freely available synthesizers and samplers which
+you can connect to the sequencer to play your tunes. Here is a list
+of popular synths for Linux that support JACK audio.
+
+Timidity++ - plays GUS patches
+Fluidsynth - plays soundfonts
+ZynAddSubFX - realtime software synth
+AlsaModularSynth - modular synth emulator
+Smack - drum synth
+Csound - sound and instrument language
+SuperCollider - another language
+Hydrogen - drum machine
+Specimen - plays samples
+Common Music - music composition environment
+Ingen - modular audio processing system
+
+
+Once you have one or more of these instaled and working (the
+details of doing that are not covered here), you need to be
+able to connect them to the sequencer. JACK comes with command
+line utilities to perform this operation, but it is much
+easier if you use a graphical tool to do it for you. Here is
+a list of programs to manage your JACK connections.
+
+Patchage - connect jack clients
+Qjackctl - same thing with many more features
+Qjackconnect - simpler program for qt3
+
+NOTE that many programs for linux audio use alsa sequencer for
+midi. JACK allows you to connect to these programs as long as
+you run jackd with the -X seq option.
+
+
+
+Now you have everything necessary to start making awesome tunes.
+At some point you may want to save your music to disk perhaps
+to be compressed into an ogg vorbis file or some such. Here
+is a list of JACK programs which will accomplish this for you.
+
+JAmin - full featured audio mastering suite
+SoX - audio swiss army knife
+
+
+
+For more linux audio applications just go to this website
+http://apps.linuxaudio.org/
+
+
+
+
+

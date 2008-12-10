@@ -1,0 +1,125 @@
+A midi sequencer for linux
+ _____       _      _                   _ 
+| ____|_ __ (_) ___| |__   ___  _ __ __| |
+|  _| | '_ \| |/ __| '_ \ / _ \| '__/ _` |
+| |___| |_) | | (__| | | | (_) | | | (_| |
+|_____| .__/|_|\___|_| |_|\___/|_|  \__,_|
+      |_|
+
+
+**Epichord**
+
+This is a program which I have heard described as a classical multi-track
+midi sequencer. It allows you to arrange notes and patterns to be played on a
+midi bus or record notes from some midi source. It does not make sound
+and it does not handle audio in any way. That is the the job of other midi
+aware softwares and hardware devices.
+
+
+**where to get the source**
+
+Epichord is licensed under the GNU GPL, so by using this program you implicitly
+accept the ability to get the source code if you do not already have it.
+
+the source is... somewhere...
+
+
+**how to build**
+
+Assuming you have a basic gnu/linux-type setup (a compiler, X, etc) you need 
+some additional libs to build this program.
+
+fltk-2.0      graphical user interface
+jack-0.109.2  or any recent version of jack with midi support
+
+After installing those, you can build and do a default install by:
+
+  ./configure
+  make
+
+When the build finishes, run the following as root:
+
+  make install
+
+
+If you have problems during configuration, read the error message.
+If you have problems during make, contact the developer or fix the problem 
+and contact the developer with the solution.
+
+If you want to install to a different location than the default you must
+pass the directory to configure like this
+
+  ./configure --prefix=/usr
+
+You can also set the location where the program will search for graphics
+and documentation:
+
+  ./configure --datadir=/usr/share
+
+Currently this means the program will look in /usr/share/epichord/gfx 
+for graphics and /usr/share/epichord/doc for documentation.
+
+Run ./configure -h for more configuration options.
+
+
+**How to get help**
+
+If you cant figure out the controls read the list of controls in controls.txt
+
+If you dont know what you are doing at all, you can read the guide.txt
+
+As a last resort you can try to get help at #lad on freenode
+
+All help is available from inside the program by pressing the ? button.
+
+
+
+
+
+**FAQ**
+
+Who wrote this software?
+
+
+
+Why yet another midi sequencer. Aren't there enough already?
+
+
+
+What is the grand over-arching philosophy of this program?
+
+
+
+Why can I not load samples and audio clips?
+
+
+
+Why did you use FLTK? It sucks!
+
+
+
+Why did you use c++? It sucks!
+
+
+
+Why did you use autoconf and automake? It sucks!
+
+
+
+The name Epichord is too cutesy. Can't you think of a better name?
+
+
+
+Will there be a Windows(R) version?
+
+
+
+When will the next release, with many new features, be ready?
+
+
+
+Can you please add feature XYZ?
+
+
+
+
