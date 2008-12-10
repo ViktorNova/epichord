@@ -44,7 +44,7 @@ extern pattern* patterns;
 using namespace std;
 
 std::string last_filename;
-char last_dir[1024] = ".";
+char last_dir[1024] = "";
 
 
 int clear(){
