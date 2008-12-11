@@ -36,7 +36,7 @@ Common Music - music composition environment
 Ingen - modular audio processing system
 
 
-Once you have one or more of these instaled and working (the
+Once you have one or more of these installed and working (the
 details of doing that are not covered here), you need to be
 able to connect them to the sequencer. JACK comes with command
 line utilities to perform this operation, but it is much

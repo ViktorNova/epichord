@@ -14,7 +14,10 @@ as root to install to the default location.
 
 When you run into problems, make sure you have the dependency libraries
 installed. FLTK 2 and JACK with midi support (any recent version) is
-required.
+required. 
+
+NOTE that FLTK2's default configuration will not build the shared libs. 
+Remember to use --enable-shared when building FLTK2.
 
 After building you may have an error message about missing graphics and
 buttons may appear blank. This is caused by not running 'make install'
