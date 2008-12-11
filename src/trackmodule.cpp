@@ -39,13 +39,17 @@ extern UI* ui;
 void portcb(fltk::Widget* w, long i){
   fltk::ValueInput* o = (fltk::ValueInput*)w;
   track* t = tracks[i];
+  int old_port = t->port;
   t->port = (int)o->value();
+  midi_channel_off(t->chan,old_port);
 }
 
 void chancb(fltk::Widget* w, long i){
   fltk::ValueInput* o = (fltk::ValueInput*)w;
   track* t = tracks[i];
+  int old_chan = t->chan;
   t->chan = (int)o->value();
+  midi_channel_off(old_chan,t->port);
 }
 
 void progcb(fltk::Widget* w, long i){

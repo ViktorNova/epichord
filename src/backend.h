@@ -57,6 +57,7 @@ void all_notes_off();
 void program_change(int track, int prog);
 
 void midi_note_off(int note, int chan, int port);
+void midi_channel_off(int chan, int port);
 void midi_track_off(int track);
 
 #endif

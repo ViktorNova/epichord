@@ -389,6 +389,10 @@ void midi_track_off(int track){
   int chan = tracks[track]->chan;
   int port = tracks[track]->port;
 
+  midi_channel_off(chan,port);
+}
+
+void midi_channel_off(int chan, int port){
   char buf[3] = {0xB0,123,0};
   buf[0] = 0xB0 | chan;
   send_midi(buf,3,port);
