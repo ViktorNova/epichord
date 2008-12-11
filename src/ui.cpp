@@ -367,38 +367,34 @@ UI::UI() {
         o->callback((fltk::Callback*)cb_help_button);
         o->tooltip("help");
       }
-       {fltk::Group* o = new fltk::Group(280, 5, 175, 25);
+       {fltk::Group* o = new fltk::Group(310, 5, 175, 25);
         o->begin();
-         {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25, "\342\231\251");
-          o->labelsize(24);
+         {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton8 = new fltk::Button(25, 0, 25, 25, "\342\231\252");
-          o->labelsize(24);
+         {fltk::Button* o = qbutton8 = new fltk::Button(25, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton8);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton16 = new fltk::Button(50, 0, 25, 25, "\342\231\254");
-          o->labelsize(24);
+         {fltk::Button* o = qbutton16 = new fltk::Button(50, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton16);
           o->type(fltk::Button::TOGGLE);
           o->state(1);
         }
-         {fltk::Button* o = qbutton32 = new fltk::Button(75, 0, 25, 25, "32");
+         {fltk::Button* o = qbutton32 = new fltk::Button(75, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton32);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton64 = new fltk::Button(100, 0, 25, 25, "64");
+         {fltk::Button* o = qbutton64 = new fltk::Button(100, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton64);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton128 = new fltk::Button(125, 0, 25, 25, "128");
+         {fltk::Button* o = qbutton128 = new fltk::Button(125, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton128);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton0 = new fltk::Button(150, 0, 25, 25, "\342\210\236");
-          o->labelsize(24);
+         {fltk::Button* o = qbutton0 = new fltk::Button(150, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton0);
           o->type(fltk::Button::TOGGLE);
         }
@@ -590,5 +586,13 @@ UI::UI() {
   config_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
   file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
   help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
+  
+  qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
+  qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
+  qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
+  qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
+  qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
+  qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
+  qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));
   main_window->show();
 }

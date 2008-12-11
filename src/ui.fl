@@ -52,8 +52,8 @@ class UI {open
       callback {config_window->hide();
 help_window->hide();
 action_window->hide();
-o->hide();} selected
-      xywh {1036 27 640 480} resizable
+o->hide();} open
+      xywh {507 27 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
 \#include "seq.h"
@@ -208,7 +208,7 @@ ui->song_edit->take_focus();}
           }
         }
       }
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -257,57 +257,50 @@ ui->action_window->show();}
           tooltip help
           xywh {610 5 25 25}
         }
-        {fltk::Group} {} {open
-          xywh {280 5 175 25}
+        {fltk::Group} {} {open selected
+          xywh {310 5 175 25}
         } {
           {fltk::Button} qbutton4 {
-            label {♩}
             callback {set_quant(4);}
-            xywh {0 0 25 25} labelsize 24
+            xywh {0 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton8 {
-            label {♪}
             callback {set_quant(8);}
-            xywh {25 0 25 25} labelsize 24
+            xywh {25 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton16 {
-            label {♬}
             callback {set_quant(16);}
-            xywh {50 0 25 25} labelsize 24
+            xywh {50 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);
 o->state(1);}
           }
           {fltk::Button} qbutton32 {
-            label 32
             callback {set_quant(32);}
             xywh {75 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton64 {
-            label 64
             callback {set_quant(64);}
             xywh {100 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton128 {
-            label 128
             callback {set_quant(128);}
             xywh {125 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton0 {
-            label {∞}
             callback {set_quant(0);}
-            xywh {150 0 25 25} labelsize 24
+            xywh {150 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
         }
       }
     }
     {fltk::Window} config_window {
-      label config open
+      label config
       xywh {28 665 315 260} hide resizable
     } {
       {fltk::ValueInput} {} {
@@ -502,7 +495,15 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
 keyboard_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/keys.gif"));
 config_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
 file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
-help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));} {}
+help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
+
+qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
+qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
+qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
+qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
+qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
+qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
+qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {main_window->show();} {}
   }
 } 
