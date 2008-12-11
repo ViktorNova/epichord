@@ -159,9 +159,14 @@ int PianoRoll::handle(int event){
           if(play_pos > e->tick && play_pos < e->tick + e->dur){
             midi_note_off(e->value1,tr->chan,tr->port);
           }
+          int old_note = main_sel->value1;
           c=new MoveNote(cur_seqpat->p,main_sel,move_t,move_note);
           set_undo(c);
           undo_push(1);
+
+          int cur_chan = tracks[cur_seqpat->track]->chan;
+          int cur_port = tracks[cur_seqpat->track]->port;
+          midi_note_off(old_note,cur_chan,cur_port);
         }
         new_drag=0;
         move_flag=0;

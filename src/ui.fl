@@ -258,7 +258,7 @@ ui->action_window->show();}
           xywh {610 5 25 25}
         }
         {fltk::Group} {} {open selected
-          xywh {310 5 175 25}
+          xywh {275 5 175 25}
         } {
           {fltk::Button} qbutton4 {
             callback {set_quant(4);}

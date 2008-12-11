@@ -367,7 +367,7 @@ UI::UI() {
         o->callback((fltk::Callback*)cb_help_button);
         o->tooltip("help");
       }
-       {fltk::Group* o = new fltk::Group(310, 5, 175, 25);
+       {fltk::Group* o = new fltk::Group(275, 5, 175, 25);
         o->begin();
          {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);
