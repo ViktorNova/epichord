@@ -37,67 +37,243 @@ extern UI* ui;
 
 using namespace fltk;
 
+namespace keymap{
+
+  int lower[18];
+  int upper[18];
+  int octaveup;
+  int octavedown;
+  int zoomin;
+  int zoomout;
+
+};
 
 Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   sustain = 0;
   cur_note = -1;
   fltk::add_event_handler(keyboard_handler);
+
+  cur_port = 0;
+  cur_chan = 0;
+
+  octave = 4;
+
+  keymap::lower[0] = 'z';
+  keymap::lower[1] = 's';
+  keymap::lower[2] = 'x';
+  keymap::lower[3] = 'd';
+  keymap::lower[4] = 'c';
+  keymap::lower[5] = 'v';
+  keymap::lower[6] = 'g';
+  keymap::lower[7] = 'b';
+  keymap::lower[8] = 'h';
+  keymap::lower[9] = 'n';
+  keymap::lower[10] = 'j';
+  keymap::lower[11] = 'm';
+  keymap::lower[12] = ',';
+  keymap::lower[13] = 'l';
+  keymap::lower[14] = '.';
+  keymap::lower[15] = ';';
+  keymap::lower[16] = '/';
+  keymap::lower[17] = '\'';
+  keymap::lower[18] = 'a';
+
+  keymap::upper[0] = 'q';
+  keymap::upper[1] = '2';
+  keymap::upper[2] = 'w';
+  keymap::upper[3] = '3';
+  keymap::upper[4] = 'e';
+  keymap::upper[5] = 'r';
+  keymap::upper[6] = '5';
+  keymap::upper[7] = 't';
+  keymap::upper[8] = '6';
+  keymap::upper[9] = 'y';
+  keymap::upper[10] = '7';
+  keymap::upper[11] = 'u';
+  keymap::upper[12] = 'i';
+  keymap::upper[13] = '9';
+  keymap::upper[14] = 'o';
+  keymap::upper[15] = '0';
+  keymap::upper[16] = 'p';
+  keymap::upper[17] = '4';
+
+  keymap::octaveup = ']';
+  keymap::octavedown = '[';
+  keymap::zoomin = '=';
+  keymap::zoomout = '-';
+
 }
 
+
+
 int keyboard_handler(int e, fltk::Window* w){
+  int E = event_key();
+
   switch(e){
     case fltk::SHORTCUT:
       if(fltk::event_key_repeated()){
         return 0;
       }
-      switch(event_key()){
-        case fltk::SpaceKey:
-          ui->keyboard->set_sustain(1);
-          break;
-        case '[':
-          //printf("octave down\n");
-          break;
-        case ']':
-          //printf("octave up\n");
-          break;
-        case 'q':
-          //printf("C\n");
-          break;
-        case 'w':
-          //printf("D\n");
-          break;
-        case 'e':
-          //printf("E\n");
-          break;
-        case 'r':
-          //printf("F\n");
-          break;
-        case 't':
-          //printf("G\n");
-          break;
+      if(E==fltk::SpaceKey){
+        ui->keyboard->set_sustain(1);
       }
+      else if(E==keymap::octavedown){
+        ui->keyboard->octave_down();
+      }
+      else if(E==keymap::octaveup){
+        ui->keyboard->octave_up();
+      }
+      else if(E==keymap::lower[0])
+        ui->keyboard->kb_play_note(0);
+      else if(E==keymap::lower[1])
+        ui->keyboard->kb_play_note(1);
+      else if(E==keymap::lower[2])
+        ui->keyboard->kb_play_note(2);
+      else if(E==keymap::lower[3])
+        ui->keyboard->kb_play_note(3);
+      else if(E==keymap::lower[4])
+        ui->keyboard->kb_play_note(4);
+      else if(E==keymap::lower[5])
+        ui->keyboard->kb_play_note(5);
+      else if(E==keymap::lower[6])
+        ui->keyboard->kb_play_note(6);
+      else if(E==keymap::lower[7])
+        ui->keyboard->kb_play_note(7);
+      else if(E==keymap::lower[8])
+        ui->keyboard->kb_play_note(8);
+      else if(E==keymap::lower[9])
+        ui->keyboard->kb_play_note(9);
+      else if(E==keymap::lower[10])
+        ui->keyboard->kb_play_note(10);
+      else if(E==keymap::lower[11])
+        ui->keyboard->kb_play_note(11);
+      else if(E==keymap::lower[12])
+        ui->keyboard->kb_play_note(12);
+      else if(E==keymap::lower[13])
+        ui->keyboard->kb_play_note(13);
+      else if(E==keymap::lower[14])
+        ui->keyboard->kb_play_note(14);
+      else if(E==keymap::lower[15])
+        ui->keyboard->kb_play_note(15);
+      else if(E==keymap::lower[16])
+        ui->keyboard->kb_play_note(16);
+      else if(E==keymap::lower[17])
+        ui->keyboard->kb_play_note(17);
+      else if(E==keymap::upper[0])
+        ui->keyboard->kb_play_note(12);
+      else if(E==keymap::upper[1])
+        ui->keyboard->kb_play_note(13);
+      else if(E==keymap::upper[2])
+        ui->keyboard->kb_play_note(14);
+      else if(E==keymap::upper[3])
+        ui->keyboard->kb_play_note(15);
+      else if(E==keymap::upper[4])
+        ui->keyboard->kb_play_note(16);
+      else if(E==keymap::upper[5])
+        ui->keyboard->kb_play_note(17);
+      else if(E==keymap::upper[6])
+        ui->keyboard->kb_play_note(18);
+      else if(E==keymap::upper[7])
+        ui->keyboard->kb_play_note(19);
+      else if(E==keymap::upper[8])
+        ui->keyboard->kb_play_note(20);
+      else if(E==keymap::upper[9])
+        ui->keyboard->kb_play_note(21);
+      else if(E==keymap::upper[10])
+        ui->keyboard->kb_play_note(22);
+      else if(E==keymap::upper[11])
+        ui->keyboard->kb_play_note(23);
+      else if(E==keymap::upper[12])
+        ui->keyboard->kb_play_note(24);
+      else if(E==keymap::upper[13])
+        ui->keyboard->kb_play_note(25);
+      else if(E==keymap::upper[14])
+        ui->keyboard->kb_play_note(26);
+      else if(E==keymap::upper[15])
+        ui->keyboard->kb_play_note(27);
+      else if(E==keymap::upper[16])
+        ui->keyboard->kb_play_note(28);
+      else if(E==keymap::upper[17])
+        ui->keyboard->kb_play_note(29);
+
+
       return 1;
     case fltk::KEYUP:
-      switch(event_key()){
-        case fltk::SpaceKey:
-          ui->keyboard->set_sustain(0);
-          break;
-        case 'q':
-          //printf("C off\n");
-          break;
-        case 'w':
-          //printf("D off\n");
-          break;
-        case 'e':
-          //printf("E off\n");
-          break;
-        case 'r':
-          //printf("F off\n");
-          break;
-        case 't':
-          //printf("G off\n");
-          break;
+      if(E==fltk::SpaceKey){
+        ui->keyboard->set_sustain(0);
       }
+      else if(E==keymap::lower[0])
+        ui->keyboard->kb_release_note(0);
+      else if(E==keymap::lower[1])
+        ui->keyboard->kb_release_note(1);
+      else if(E==keymap::lower[2])
+        ui->keyboard->kb_release_note(2);
+      else if(E==keymap::lower[3])
+        ui->keyboard->kb_release_note(3);
+      else if(E==keymap::lower[4])
+        ui->keyboard->kb_release_note(4);
+      else if(E==keymap::lower[5])
+        ui->keyboard->kb_release_note(5);
+      else if(E==keymap::lower[6])
+        ui->keyboard->kb_release_note(6);
+      else if(E==keymap::lower[7])
+        ui->keyboard->kb_release_note(7);
+      else if(E==keymap::lower[8])
+        ui->keyboard->kb_release_note(8);
+      else if(E==keymap::lower[9])
+        ui->keyboard->kb_release_note(9);
+      else if(E==keymap::lower[10])
+        ui->keyboard->kb_release_note(10);
+      else if(E==keymap::lower[11])
+        ui->keyboard->kb_release_note(11);
+      else if(E==keymap::lower[12])
+        ui->keyboard->kb_release_note(12);
+      else if(E==keymap::lower[13])
+        ui->keyboard->kb_release_note(13);
+      else if(E==keymap::lower[14])
+        ui->keyboard->kb_release_note(14);
+      else if(E==keymap::lower[15])
+        ui->keyboard->kb_release_note(15);
+      else if(E==keymap::lower[16])
+        ui->keyboard->kb_release_note(16);
+      else if(E==keymap::lower[17])
+        ui->keyboard->kb_release_note(17);
+      else if(E==keymap::upper[0])
+        ui->keyboard->kb_release_note(12);
+      else if(E==keymap::upper[1])
+        ui->keyboard->kb_release_note(13);
+      else if(E==keymap::upper[2])
+        ui->keyboard->kb_release_note(14);
+      else if(E==keymap::upper[3])
+        ui->keyboard->kb_release_note(15);
+      else if(E==keymap::upper[4])
+        ui->keyboard->kb_release_note(16);
+      else if(E==keymap::upper[5])
+        ui->keyboard->kb_release_note(17);
+      else if(E==keymap::upper[6])
+        ui->keyboard->kb_release_note(18);
+      else if(E==keymap::upper[7])
+        ui->keyboard->kb_release_note(19);
+      else if(E==keymap::upper[8])
+        ui->keyboard->kb_release_note(20);
+      else if(E==keymap::upper[9])
+        ui->keyboard->kb_release_note(21);
+      else if(E==keymap::upper[10])
+        ui->keyboard->kb_release_note(22);
+      else if(E==keymap::upper[11])
+        ui->keyboard->kb_release_note(23);
+      else if(E==keymap::upper[12])
+        ui->keyboard->kb_release_note(24);
+      else if(E==keymap::upper[13])
+        ui->keyboard->kb_release_note(25);
+      else if(E==keymap::upper[14])
+        ui->keyboard->kb_release_note(26);
+      else if(E==keymap::upper[15])
+        ui->keyboard->kb_release_note(27);
+      else if(E==keymap::upper[16])
+        ui->keyboard->kb_release_note(28);
+      else if(E==keymap::upper[17])
+        ui->keyboard->kb_release_note(29);
       return 1;
   }
   return 0;
@@ -130,8 +306,8 @@ int Keyboard::handle(int event){
     case fltk::PUSH:
       take_focus();
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
+      cur_note = note;
       play_note(note);
-      redraw();
       return 1;
     case fltk::RELEASE:
       cur_note=-1;
@@ -143,11 +319,11 @@ int Keyboard::handle(int event){
     case fltk::DRAG:
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
       if(cur_note != note){
+        cur_note = note;
         if(sustain == 0){
           cut_notes();
         }
         play_note(note);
-        redraw();
       }
       return 1;
   }
@@ -158,7 +334,7 @@ void Keyboard::play_note(int note){
   if(ons[note]==1){
     return;
   }
-  cur_note = note;
+
   char buf[3];
   buf[0] = 0x90 | cur_chan;
   buf[1] = note;
@@ -166,6 +342,50 @@ void Keyboard::play_note(int note){
   send_midi(buf,3,cur_port);
 
   ons[note] = 1;
+  redraw();
+}
+
+void Keyboard::release_note(int note){
+  if(ons[note]==0 || sustain==1){
+    return;
+  }
+
+  char buf[3];
+  buf[0] = 0x80 | cur_chan;
+  buf[1] = note;
+  buf[2] = 0x00;
+  send_midi(buf,3,cur_port);
+
+  ons[note] = 0;
+  redraw();
+}
+
+void Keyboard::kb_play_note(int note){
+  int raw = octave*12 + note;
+  if(raw < 128 && raw >= 0){
+    play_note(raw);
+  }
+}
+
+void Keyboard::kb_release_note(int note){
+  int raw = octave*12 + note;
+  if(raw < 128 && raw >= 0){
+    release_note(raw);
+  }
+}
+
+void Keyboard::octave_up(){
+  if(octave < 9){
+    cut_notes();
+    octave++;
+  }
+}
+
+void Keyboard::octave_down(){
+  if(octave > 0){
+    cut_notes();
+    octave--;
+  }
 }
 
 void Keyboard::cut_notes(){

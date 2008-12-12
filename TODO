@@ -1,10 +1,7 @@
 short list of features not yet implemented
 
 keyboard input
-  play notes on keyboard
-  allow sustain
   allow remapping
-  octave change
 the rest of the mouse commands
   select many notes/patterns
   delete all selected

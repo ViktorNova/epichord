@@ -99,7 +99,6 @@ int PianoRoll::handle(int event){
           last_note = new_note;
           if(1){//play on insert
             ui->keyboard->play_note(last_note);
-            ui->keyboard->redraw();
           }
         }
         else{
@@ -117,7 +116,6 @@ int PianoRoll::handle(int event){
             last_note = move_note;
             if(1){//play on move
               ui->keyboard->play_note(last_note);
-              ui->keyboard->redraw();
             }
           }
           redraw();
@@ -153,7 +151,6 @@ int PianoRoll::handle(int event){
           if(1){//play on insert
             ui->keyboard->cut_notes();
             ui->keyboard->play_note(last_note);
-            ui->keyboard->redraw();
           }
         }
         redraw();
@@ -167,7 +164,6 @@ int PianoRoll::handle(int event){
           if(1){//play on move
             ui->keyboard->cut_notes();
             ui->keyboard->play_note(last_note);
-            ui->keyboard->redraw();
           }
         }
         redraw();

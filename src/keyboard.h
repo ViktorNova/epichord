@@ -31,6 +31,8 @@ class Keyboard : public fltk::Widget {
 
     char ons[128];
 
+    int octave;
+
   public:
     int cur_port;
     int cur_chan;
@@ -39,8 +41,14 @@ class Keyboard : public fltk::Widget {
     Keyboard(int x, int y, int w, int h, const char* label);
 
     void play_note(int note);
+    void release_note(int note);
     void cut_notes();
     void set_sustain(int state);
+
+    void kb_play_note(int note);
+    void kb_release_note(int note);
+    void octave_up();
+    void octave_down();
 
     int handle(int event);
     void draw();
