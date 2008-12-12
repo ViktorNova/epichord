@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\""
 CFLAGS = -g -O2 -Wall
-AM_LDFLAGS = -lfltk2 -ljack
+AM_LDFLAGS = `fltk2-config --ldflags` -ljack
 
 bin_PROGRAMS = epichord
 epichord_SOURCES = main.cpp seq.cpp jack.cpp ui.cpp \
