@@ -93,20 +93,29 @@ void hsv_to_rgb(float h, float s, float v, unsigned char* r, unsigned char* g, u
 
 
 int ypix2note(int ypix, int black){
-  int udy = 900 - ypix + 2;
+  int udy = 900 - ypix + 1;
   int white = udy/12;
   int note = 2*white - white/7 - (white+4)/7;
-  
-  //printf("white %d\n",white);
-  //printf("wmidi %d\n",note);
-  //printf("udy%12 = %d\n",udy%12);
+
   if(black){
-    if(udy%12<3 && white%7!=0 && (white+4)%7!=0){note--;}
-    else if(udy%12>9 && (white+1)%7!=0 && (white+5)%7!=0){note++;}
+    if(udy%12<4 && white%7!=0 && (white+4)%7!=0){note--;}
+    else if(udy%12>8 && (white+1)%7!=0 && (white+5)%7!=0){note++;}
   }
 
-  //printf("total midi %d\n",note);
   return note;
 }
 
+int note2ypix(int note, int* black){
+  int key = (note + (note+7)/12 + note/12)/2;
+
+  if((note + (note+7)/12 + note/12)%2 == 0){//white key
+    *black=0;
+    return 900 - key*12 - 12;
+  }
+  else{//black key
+    *black=1;
+    return 900 - key*12 - 12 - 3;
+  }
+
+}
 

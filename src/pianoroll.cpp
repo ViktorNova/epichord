@@ -87,13 +87,20 @@ int PianoRoll::handle(int event){
       }
       return 0;
     case fltk::PUSH:
+      take_focus();
       if(event_button()==1){//left mouse
-        if(over_note()==NULL){//begin pattern creation
+        if(over_note()==NULL){//new note init
           new_drag = 1;
           new_left_t = quantize(xpix2tick(event_x()));
           new_orig_t = new_left_t;
           new_note = ypix2note(event_y(),1);
           new_right_t = new_left_t + q_tick;
+
+          last_note = new_note;
+          if(1){//play on insert
+            ui->keyboard->play_note(last_note);
+            ui->keyboard->redraw();
+          }
         }
         else{
           //if shift, add to selection
@@ -106,6 +113,12 @@ int PianoRoll::handle(int event){
             move_offset = quantize(xpix2tick(event_x())) - move_t;
             //move_track = event_y() / 30;
             move_note = ypix2note(event_y(),1);
+
+            last_note = move_note;
+            if(1){//play on move
+              ui->keyboard->play_note(last_note);
+              ui->keyboard->redraw();
+            }
           }
           redraw();
         }
@@ -135,12 +148,28 @@ int PianoRoll::handle(int event){
           new_left_t = new_orig_t;
         }
         new_note = ypix2note(event_y(),1);
+        if(new_note != last_note){
+          last_note = new_note;
+          if(1){//play on insert
+            ui->keyboard->cut_notes();
+            ui->keyboard->play_note(last_note);
+            ui->keyboard->redraw();
+          }
+        }
         redraw();
         return 1;
       }
       else if(move_flag){
         move_t = quantize(xpix2tick(event_x())) - move_offset;
         move_note = ypix2note(event_y(),1);
+        if(move_note != last_note){
+          last_note = move_note;
+          if(1){//play on move
+            ui->keyboard->cut_notes();
+            ui->keyboard->play_note(last_note);
+            ui->keyboard->redraw();
+          }
+        }
         redraw();
         return 1;
       }
@@ -151,6 +180,8 @@ int PianoRoll::handle(int event){
           c=new CreateNote(p,new_note,new_left_t,new_right_t-new_left_t);
           set_undo(c);
           undo_push(1);
+          ui->keyboard->cut_notes();
+          ui->keyboard->redraw();
         }
         else if(move_flag && move_note < 128 && move_note >= 0){
           int play_pos = get_play_position();
@@ -167,6 +198,9 @@ int PianoRoll::handle(int event){
           int cur_chan = tracks[cur_seqpat->track]->chan;
           int cur_port = tracks[cur_seqpat->track]->port;
           midi_note_off(old_note,cur_chan,cur_port);
+
+          ui->keyboard->cut_notes();
+          ui->keyboard->redraw();
         }
         new_drag=0;
         move_flag=0;
@@ -198,12 +232,18 @@ void PianoRoll::draw(){
     fltk::drawline(i,0,i,h());
   }
 
+  fltk::setcolor(fltk::GRAY30);
+  for(int i=12*5; i<h(); i+=12*7){
+    fltk::drawline(0,i,w(),i);
+  }
+
   fltk::setcolor(fltk::GRAY50);
   for(int i=zoom*4; i<w(); i+=zoom*4){
     fltk::drawline(i,0,i,h());
   }
 
-
+  fltk::setcolor(fltk::color(128,128,0));
+  fltk::drawline(0,12*40,w(),12*40);
 
   if(new_drag){
     fltk::setcolor(fltk::BLUE);

@@ -32,6 +32,8 @@ class PianoRoll : public fltk::Widget {
   int wkeyh;
   int bkeyh;
 
+  int last_note;
+
   int new_left_t;
   int new_right_t;
   int new_orig_t;

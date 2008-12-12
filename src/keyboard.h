@@ -29,6 +29,8 @@ class Keyboard : public fltk::Widget {
     int cur_note;
     int sustain;
 
+    char ons[128];
+
   public:
     int cur_port;
     int cur_chan;
@@ -38,7 +40,7 @@ class Keyboard : public fltk::Widget {
 
     void play_note(int note);
     void cut_notes();
-    void set_sustain(int state){sustain = state;}
+    void set_sustain(int state);
 
     int handle(int event);
     void draw();
