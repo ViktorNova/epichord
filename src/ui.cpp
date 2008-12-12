@@ -78,35 +78,6 @@ void UI::cb_record_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_record_button_i(o,v);
 }
 
-inline void UI::cb_loop_toggle_i(fltk::Button*, void*) {
-  toggle_loop();
-}
-void UI::cb_loop_toggle(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
-}
-
-inline void UI::cb_config_button_i(fltk::Button*, void*) {
-  ui->config_window->show();
-}
-void UI::cb_config_button(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_config_button_i(o,v);
-}
-
-inline void UI::cb_file_button_i(fltk::Button*, void*) {
-  //load(fltk::file_chooser("save file",NULL,"~"));
-  ui->action_window->show();
-}
-void UI::cb_file_button(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_file_button_i(o,v);
-}
-
-inline void UI::cb_help_button_i(fltk::Button*, void*) {
-  help_window->show();
-}
-void UI::cb_help_button(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_help_button_i(o,v);
-}
-
 inline void UI::cb_qbutton4_i(fltk::Button*, void*) {
   set_quant(4);
 }
@@ -154,6 +125,35 @@ inline void UI::cb_qbutton0_i(fltk::Button*, void*) {
 }
 void UI::cb_qbutton0(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_qbutton0_i(o,v);
+}
+
+inline void UI::cb_loop_toggle_i(fltk::Button*, void*) {
+  toggle_loop();
+}
+void UI::cb_loop_toggle(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
+}
+
+inline void UI::cb_config_button_i(fltk::Button*, void*) {
+  ui->config_window->show();
+}
+void UI::cb_config_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_config_button_i(o,v);
+}
+
+inline void UI::cb_file_button_i(fltk::Button*, void*) {
+  //load(fltk::file_chooser("save file",NULL,"~"));
+  ui->action_window->show();
+}
+void UI::cb_file_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_file_button_i(o,v);
+}
+
+inline void UI::cb_help_button_i(fltk::Button*, void*) {
+  help_window->show();
+}
+void UI::cb_help_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_help_button_i(o,v);
 }
 
 inline void UI::cb_bpm_wheel_i(fltk::ThumbWheel* o, void*) {
@@ -287,9 +287,7 @@ UI::UI() {
              {fltk::Button* o = new fltk::Button(580, 0, 15, 15, "E");
               o->tooltip("pick event type");
             }
-             {fltk::Button* o = new fltk::Button(580, 15, 15, 15, "Q");
-              o->tooltip("quantization resolution");
-            }
+            new fltk::Button(580, 15, 15, 15, "?");
             new fltk::Button(580, 30, 15, 15, "?");
             new fltk::Button(580, 45, 15, 15, "?");
             new fltk::Button(580, 60, 15, 15, "?");
@@ -347,26 +345,6 @@ UI::UI() {
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }
-       {fltk::Button* o = loop_toggle = new fltk::Button(490, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_loop_toggle);
-        o->tooltip("toggle looping");
-        o->type(fltk::Button::TOGGLE);
-      }
-       {fltk::Button* o = keyboard_toggle = new fltk::Button(520, 5, 25, 25);
-        o->tooltip("toggle keyboard");
-        o->type(fltk::Button::TOGGLE);
-      }
-       {fltk::Button* o = config_button = new fltk::Button(550, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_config_button);
-        o->tooltip("config");
-      }
-       {fltk::Button* o = file_button = new fltk::Button(580, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_file_button);
-      }
-       {fltk::Button* o = help_button = new fltk::Button(610, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_help_button);
-        o->tooltip("help");
-      }
        {fltk::Group* o = new fltk::Group(275, 5, 175, 25);
         o->begin();
          {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25);
@@ -399,6 +377,27 @@ UI::UI() {
           o->type(fltk::Button::TOGGLE);
         }
         o->end();
+      }
+       {fltk::Button* o = loop_toggle = new fltk::Button(490, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_loop_toggle);
+        o->tooltip("toggle looping");
+        o->type(fltk::Button::TOGGLE);
+      }
+       {fltk::Button* o = keyboard_toggle = new fltk::Button(520, 5, 25, 25);
+        o->tooltip("keyboard layout");
+        o->type(fltk::Button::TOGGLE);
+      }
+       {fltk::Button* o = config_button = new fltk::Button(550, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_config_button);
+        o->tooltip("config");
+      }
+       {fltk::Button* o = file_button = new fltk::Button(580, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_file_button);
+        o->tooltip("disk");
+      }
+       {fltk::Button* o = help_button = new fltk::Button(610, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_help_button);
+        o->tooltip("help");
       }
       o->end();
     }
@@ -474,7 +473,6 @@ UI::UI() {
       o->end();
     }
     o->end();
-    o->resizable(o);
   }
    {fltk::Window* o = help_window = new fltk::Window(580, 370, "help");
     o->shortcut(0xff1b);
@@ -536,7 +534,7 @@ UI::UI() {
       o->end();
     }
     o->end();
-    o->size_range(555,370);
+    o->size_range(580,370);
     o->resizable(o);
   }
    {fltk::Window* o = action_window = new fltk::Window(100, 130, "menu");
@@ -560,7 +558,6 @@ UI::UI() {
       o->callback((fltk::Callback*)cb_export);
     }
     o->end();
-    o->resizable(o);
   }
    {fltk::Window* o = key_config = new fltk::Window(650, 370, "key layout");
     w = o;

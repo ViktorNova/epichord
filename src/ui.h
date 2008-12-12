@@ -75,27 +75,6 @@ private:
       inline void cb_record_button_i(fltk::Button*, void*);
       static void cb_record_button(fltk::Button*, void*);
 public:
-      fltk::Button *loop_toggle;
-private:
-      inline void cb_loop_toggle_i(fltk::Button*, void*);
-      static void cb_loop_toggle(fltk::Button*, void*);
-public:
-      fltk::Button *keyboard_toggle;
-      fltk::Button *config_button;
-private:
-      inline void cb_config_button_i(fltk::Button*, void*);
-      static void cb_config_button(fltk::Button*, void*);
-public:
-      fltk::Button *file_button;
-private:
-      inline void cb_file_button_i(fltk::Button*, void*);
-      static void cb_file_button(fltk::Button*, void*);
-public:
-      fltk::Button *help_button;
-private:
-      inline void cb_help_button_i(fltk::Button*, void*);
-      static void cb_help_button(fltk::Button*, void*);
-public:
         fltk::Button *qbutton4;
 private:
         inline void cb_qbutton4_i(fltk::Button*, void*);
@@ -130,6 +109,27 @@ public:
 private:
         inline void cb_qbutton0_i(fltk::Button*, void*);
         static void cb_qbutton0(fltk::Button*, void*);
+public:
+      fltk::Button *loop_toggle;
+private:
+      inline void cb_loop_toggle_i(fltk::Button*, void*);
+      static void cb_loop_toggle(fltk::Button*, void*);
+public:
+      fltk::Button *keyboard_toggle;
+      fltk::Button *config_button;
+private:
+      inline void cb_config_button_i(fltk::Button*, void*);
+      static void cb_config_button(fltk::Button*, void*);
+public:
+      fltk::Button *file_button;
+private:
+      inline void cb_file_button_i(fltk::Button*, void*);
+      static void cb_file_button(fltk::Button*, void*);
+public:
+      fltk::Button *help_button;
+private:
+      inline void cb_help_button_i(fltk::Button*, void*);
+      static void cb_help_button(fltk::Button*, void*);
 public:
   fltk::Window *config_window;
     fltk::ValueOutput *bpm_output;
