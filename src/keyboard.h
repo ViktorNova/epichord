@@ -30,6 +30,7 @@ class Keyboard : public fltk::Widget {
     int sustain;
 
     char ons[128];
+    char helds[128];
 
     int octave;
 

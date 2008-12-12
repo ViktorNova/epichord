@@ -53,6 +53,11 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   cur_note = -1;
   fltk::add_event_handler(keyboard_handler);
 
+  for(int i=0; i<128; i++){
+    ons[i]=0;
+    helds[i]=0;
+  }
+
   cur_port = 0;
   cur_chan = 0;
 
@@ -288,7 +293,7 @@ void Keyboard::set_sustain(int state){
   sustain=state;
   if(state==0){
     for(int i=0; i<128; i++){
-      if(ons[i]==1 && cur_note!=i){
+      if(ons[i]==1 && helds[i]==0){
         ons[i]=0;
         midi_note_off(i,cur_chan,cur_port);
       }
@@ -307,9 +312,13 @@ int Keyboard::handle(int event){
       take_focus();
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
       cur_note = note;
+      helds[note] = 1;
       play_note(note);
       return 1;
     case fltk::RELEASE:
+      if(cur_note!=-1){
+        helds[cur_note]=0;
+      }
       cur_note=-1;
       if(sustain == 0){
         cut_notes();
@@ -319,10 +328,12 @@ int Keyboard::handle(int event){
     case fltk::DRAG:
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
       if(cur_note != note){
+        helds[cur_note]=0;
         cur_note = note;
         if(sustain == 0){
           cut_notes();
         }
+        helds[note]=1;
         play_note(note);
       }
       return 1;
@@ -342,11 +353,18 @@ void Keyboard::play_note(int note){
   send_midi(buf,3,cur_port);
 
   ons[note] = 1;
+  helds[note] = 1;
   redraw();
 }
 
 void Keyboard::release_note(int note){
-  if(ons[note]==0 || sustain==1){
+  if(ons[note]==0){
+    return;
+  }
+
+  helds[note]=0;
+
+  if(sustain==1){
     return;
   }
 
