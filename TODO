@@ -1,10 +1,5 @@
 short list of features not yet implemented
 
-keyboard experience upgrade
-  highlight keys
-  play note on insertion
-  play note on move
-  adjust sensor area by 1 or 2 pixels
 keyboard input
   play notes on keyboard
   allow sustain
@@ -23,6 +18,7 @@ the event editor
   menu
 import midi file
 record midi input
+undo and redo
 graphical upgrades
   horizontal rule
   allow disconnected noteon, noteoffs
