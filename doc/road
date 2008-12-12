@@ -1,3 +1,40 @@
+short list of features not yet implemented
+
+keyboard experience upgrade
+  highlight keys
+  play note on insertion
+  play note on move
+  adjust sensor area by 1 or 2 pixels
+keyboard input
+  play notes on keyboard
+  allow sustain
+  allow remapping
+  octave change
+the rest of the mouse commands
+  select many notes/patterns
+  delete all selected
+  move all selected
+  copy all selected
+  split/join
+  no overlapping patterns
+the event editor
+  mouse commands
+  display
+  menu
+import midi file
+record midi input
+graphical upgrades
+  horizontal rule
+  allow disconnected noteon, noteoffs
+  pattern xray
+trackselect in piano roll
+  toggle tracks shown
+  switch edited track
+jack transport
+lash
+
+
+
 big list of features
 
 
