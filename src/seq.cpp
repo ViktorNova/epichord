@@ -217,21 +217,9 @@ void CreateSeqpat::undo(){
 CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
   s = new seqpat(track, tick, len, new pattern());
   unsigned char r,g,b;
-  //hue_to_rgb(track*100/15,&r,&g,&b);
-  //r = r/2 + 64;
-  //g = g/2 + 64;
- // b = b/2 + 64;
-  //s->color[0][0] = r;
-  //s->color[0][1] = g;
-  //s->color[0][2] = b;
-  //s->color[1][0] = r-30;
-  //s->color[1][1] = g-30;
-  //s->color[1][2] = b-30;
-  //s->color[2][0] = r+30;
-  //s->color[2][1] = g+30;
-  //s->color[2][2] = b+30;
 
-  float X = rand()*1.0 / RAND_MAX * 360;
+  //float X = rand()*1.0 / RAND_MAX * 360;
+  float X = ((track%16) / 16.0) * 360;
   hsv_to_rgb(X,1,0.8,&r,&g,&b);
   s->color[0][0] = r;
   s->color[0][1] = g;

@@ -52,7 +52,7 @@ class UI {open
       callback {config_window->hide();
 help_window->hide();
 action_window->hide();
-o->hide();} open
+o->hide();}
       xywh {507 27 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -212,7 +212,7 @@ ui->song_edit->take_focus();}
       } {
         {fltk::Button} play_button {
           label {@>}
-          callback {press_play();} selected
+          callback {press_play();}
           xywh {5 5 25 25} labelcolor 0x800000
         }
         {fltk::Button} stop_button {
@@ -300,8 +300,8 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label config
-      xywh {28 464 315 260} hide
+      label config selected
+      xywh {28 464 315 260} resizable visible
     } {
       {fltk::ValueInput} {} {
         label {beats per measure}
@@ -365,6 +365,10 @@ ui->bpm_output->value(o->value());}
         {fltk::Item} {} {
           label layer
           }
+      }
+      {fltk::CheckButton} {} {
+        label {pattern x-ray}
+        xywh {145 185 25 25} align 4 value 1
       }
     }
     {fltk::Window} help_window {

@@ -472,7 +472,12 @@ UI::UI() {
       new fltk::Item("layer");
       o->end();
     }
+     {fltk::CheckButton* o = new fltk::CheckButton(145, 185, 25, 25, "pattern x-ray");
+      o->set_flag(fltk::STATE);
+      o->align(fltk::ALIGN_LEFT);
+    }
     o->end();
+    o->resizable(o);
   }
    {fltk::Window* o = help_window = new fltk::Window(580, 370, "help");
     o->shortcut(0xff1b);

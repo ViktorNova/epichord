@@ -46,6 +46,7 @@ class Arranger : public fltk::Widget {
     int paste_flag;
 
     seqpat* main_sel;
+    seqpat* delete_sel;
     int sel_timer;
 
     seqpat* over_seqpat();

@@ -146,11 +146,12 @@ int Arranger::handle(int event){
       }
       else if(event_button()==3){//right mouse
         if(over_seqpat()==NULL){//begin box
+          delete_sel = NULL;
           main_sel = NULL;
         }
         else{//set up for deletion
           delete_flag = 1;
-          main_sel = over_seqpat();
+          delete_sel = over_seqpat();
         }
       }
       redraw();
@@ -214,9 +215,9 @@ int Arranger::handle(int event){
         paste_flag=0;
       }
       else if(event_button()==3){
-        if(delete_flag && over_seqpat() == main_sel){
+        if(delete_flag && over_seqpat() == delete_sel){
           //here we need more branches for deleting the entire selection
-          c=new DeleteSeqpat(main_sel);
+          c=new DeleteSeqpat(delete_sel);
           set_undo(c);
           undo_push(1);
         }
@@ -277,24 +278,37 @@ void Arranger::draw(){
   seqpat* s;
   fltk::Color c;
 
-  int c1,c2,c3;
+  int c11,c12,c13;
+  int c21,c22,c23;
+  int c31,c32,c33;
 
   for(int i=0; i<tracks.size(); i++){
 
     s = tracks[i]->head->next;
     while(s){
-      if(s == main_sel){
-        c1 = 255;
-        c2 = 255;
-        c3 = 255;
+
+      c11 = s->color[0][0];
+      c12 = s->color[0][1];
+      c13 = s->color[0][2];
+      if(s!=main_sel){
+        c21 = s->color[1][0];
+        c22 = s->color[1][1];
+        c23 = s->color[1][2];
+        c31 = s->color[2][0];
+        c32 = s->color[2][1];
+        c33 = s->color[2][2];
       }
       else{
-        c1 = s->color[0][0];
-        c2 = s->color[0][1];
-        c3 = s->color[0][2];
+        c21 = 128;
+        c22 = 255;
+        c23 = 128;
+        c31 = 128;
+        c32 = 255;
+        c33 = 128;
       }
 
-      fltk::setcolor(fltk::color(c1,c2,c3));
+
+      fltk::setcolor(fltk::color(c11,c12,c13));
       int X = tick2xpix(s->tick)+1;
       int Y = s->track * 30;
       int W = tick2xpix(s->tick+s->dur) - X;
@@ -302,13 +316,34 @@ void Arranger::draw(){
       fillrect(X+1,Y+1,W-2,27);
       float a = 1.5f;
 
-      fltk::setcolor(fltk::color(c1*3/4,c2*3/4,c3*3/4));
+
+      fltk::setcolor(fltk::color(c21,c22,c23));
       fillrect(X+W-1,Y,1,29);
       fillrect(X,Y+28,W-1,1);
 
-      fltk::setcolor(fltk::color(c1*3/4+64,c2*3/4+64,c3*3/4+64));
+
+      fltk::setcolor(fltk::color(c31,c32,c33));
       fillrect(X,Y,1,28);
       fillrect(X,Y,W,1);
+
+      fltk::push_clip(tick2xpix(s->tick),s->track*30,tick2xpix(s->dur),30);
+      fltk::setcolor(fltk::color(c11/2,c12/2,c13/2));
+      mevent* e = s->p->events;
+      while(e){
+        if(e->tick >= s->dur){
+          break;
+        }
+        if(e->type == MIDI_NOTE_ON){
+          X = tick2xpix(e->tick) + tick2xpix(s->tick)+1;
+          Y = s->track*30 + 27 - e->value1*27/127;
+          W = tick2xpix(e->dur);
+          if(W==0){W=1;}
+          fillrect(X,Y,W,1);
+        }
+        e=e->next;
+      }
+      fltk::pop_clip();
+
       s=s->next;
     }
   }
