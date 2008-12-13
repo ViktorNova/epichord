@@ -76,6 +76,7 @@ void press_play(){
   }
   else{
     pause_backend();
+    all_notes_off();
     ui->play_button->label("@>");
   }
 }
