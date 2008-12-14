@@ -36,6 +36,8 @@
 
 #include "saveload.h"
 
+#include "util.h"
+
 extern UI* ui;
 
 extern std::vector<track*> tracks;
@@ -188,12 +190,12 @@ int save(const char* filename){
     while(s){
       file << endl << endl << "seqpat " << endl;
       file << s->tick << " " << s->dur << endl;
-      for(int i=0; i<3; i++){
+      /*for(int i=0; i<3; i++){
         for(int j=0; j<3; j++){
           file << (int)s->color[i][j] << " ";
         }
-      }
-      file << endl;
+      }*/
+      file << s->h << " " << s->v << endl;
       file << s->scrollx << " " << s->scrolly << endl;
       p = patterns->next;
       int q = 0;
@@ -386,17 +388,39 @@ int load(const char* filename){
           file >> s->tick;
           file >> s->dur;
           int C;
-          for(int i=0; i<3; i++){
-            for(int j=0; j<3; j++){
-              file >> C;
-              s->color[i][j] = C;
-            }
-          }
+          //for(int i=0; i<3; i++){
+          //  for(int j=0; j<3; j++){
+          //    file >> C;
+          //    s->color[i][j] = C;
+          //  }
+          //}
+
+          float h;
+          float v;
+          file >> h;
+          file >> v;
+
+/*file >> C;
+file >> C;
+file >> C;
+file >> C;
+file >> C;
+file >> C;
+file >> C;
+file >> C;
+file >> C;*/
+
+          s->regen_colors(h,v);
+
           file >> s->scrollx >> s->scrolly;
           file >> pattern_number;
           pattern* p = patterns->next;
           int n = 0;
           while(n++ < pattern_number){
+            if(p == NULL){
+              printf("error opening file, bad pattern reference\n");
+              return -1;
+            }
             p = p->next;
           }
           s->p = p;

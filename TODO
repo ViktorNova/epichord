@@ -17,9 +17,6 @@ import midi file
 record midi input
 undo and redo
 graphical upgrades
-  horizontal rule
-  allow disconnected noteon, noteoffs
-  pattern xray
 trackselect in piano roll
   toggle tracks shown
   switch edited track

@@ -196,6 +196,23 @@ void do_redo(){
 }
 
 
+void seqpat::regen_colors(float zh, float zv){
+
+  h = zh;
+  v = zv;
+
+  hsv_to_rgb(h,1,v,&r1,&g1,&b1);
+  hsv_to_rgb(h,1,v/2,&r2,&g2,&b2);
+  hsv_to_rgb(h,1,v+0.2 > 1 ? 1 : v+0.2,&r3,&g3,&b3);
+  if(v > 0.5){
+    hsv_to_rgb(h,1,v-0.2,&rx,&gx,&bx);
+  }
+  else{
+    hsv_to_rgb(h,1,0.7,&rx,&gx,&bx);
+  }
+
+}
+
 
 CreateSeqpat::CreateSeqpat(int track, int tick, seqpat* zs){
   s = new seqpat(zs);
@@ -219,7 +236,8 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
   unsigned char r,g,b;
 
   //float X = rand()*1.0 / RAND_MAX * 360;
-  float X = ((track%16) / 16.0) * 360;
+  s->regen_colors(((track%16) / 16.0) * 360,0.8);
+  /*float X = ;
   hsv_to_rgb(X,1,0.8,&r,&g,&b);
   s->color[0][0] = r;
   s->color[0][1] = g;
@@ -231,7 +249,7 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
   hsv_to_rgb(X,1,1,&r,&g,&b);
   s->color[2][0] = r;
   s->color[2][1] = g;
-  s->color[2][2] = b;
+  s->color[2][2] = b;*/
   
 
   s->scrolly = 300;

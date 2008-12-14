@@ -287,16 +287,16 @@ void Arranger::draw(){
     s = tracks[i]->head->next;
     while(s){
 
-      c11 = s->color[0][0];
-      c12 = s->color[0][1];
-      c13 = s->color[0][2];
+      c11 = s->r1;
+      c12 = s->g1;
+      c13 = s->b1;
       if(s!=main_sel){
-        c21 = s->color[1][0];
-        c22 = s->color[1][1];
-        c23 = s->color[1][2];
-        c31 = s->color[2][0];
-        c32 = s->color[2][1];
-        c33 = s->color[2][2];
+        c21 = s->r2;
+        c22 = s->g2;
+        c23 = s->b2;
+        c31 = s->r3;
+        c32 = s->g3;
+        c33 = s->b3;
       }
       else{
         c21 = 128;
@@ -327,14 +327,16 @@ void Arranger::draw(){
       fillrect(X,Y,W,1);
 
       fltk::push_clip(tick2xpix(s->tick),s->track*30,tick2xpix(s->dur),30);
-      fltk::setcolor(fltk::color(c11/2,c12/2,c13/2));
+
+      fltk::setcolor(fltk::color(s->rx,s->gx,s->bx));
+
       mevent* e = s->p->events;
       while(e){
         if(e->tick >= s->dur){
           break;
         }
         if(e->type == MIDI_NOTE_ON){
-          X = tick2xpix(e->tick) + tick2xpix(s->tick)+1;
+          X = tick2xpix(e->tick) + tick2xpix(s->tick)+2;
           Y = s->track*30 + 27 - e->value1*27/127;
           W = tick2xpix(e->dur);
           if(W==0){W=1;}

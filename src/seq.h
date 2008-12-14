@@ -119,8 +119,15 @@ struct seqpat {
   struct seqpat* prev;
   struct seqpat* next;
 
-  unsigned char color[3][3];
+ // unsigned char color[3][3];
+  unsigned char r1,g1,b1;//main color
+  unsigned char r2,g2,b2;//bottom color
+  unsigned char r3,g3,b3;//top color
+  unsigned char rx,gx,bx;//xray color
+  float h, v; //hue and value
   int scrollx, scrolly;
+
+  void regen_colors(float zh, float zv);
 
   seqpat(){
     p = NULL;
@@ -137,15 +144,7 @@ struct seqpat {
     skip = NULL;
     prev = NULL;
     next = NULL;
-    color[0][0]=0;
-    color[0][1]=128;
-    color[0][2]=0;
-    color[1][0]=0;
-    color[1][1]=83;
-    color[1][2]=0;
-    color[2][0]=0;
-    color[2][1]=190;
-    color[2][2]=0;
+    regen_colors(0,0.8);
   }
 
   seqpat(seqpat* s){
@@ -158,15 +157,7 @@ struct seqpat {
     skip = p->events;
     prev = s->prev;
     next = s->next;
-    color[0][0] = s->color[0][0];
-    color[0][1] = s->color[0][1];
-    color[0][2] = s->color[0][2];
-    color[1][0] = s->color[1][0];
-    color[1][1] = s->color[1][1];
-    color[1][2] = s->color[1][2];
-    color[2][0] = s->color[2][0];
-    color[2][1] = s->color[2][1];
-    color[2][2] = s->color[2][2];
+    regen_colors(s->h,s->v);
 
     scrollx = s->scrollx;
     scrolly = s->scrolly;
