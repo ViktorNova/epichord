@@ -536,6 +536,8 @@ int init_seq();
 int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick));
 int set_seq_pos(int new_tick);
 
+void set_rec_track(int t);
+
 void set_undo(Command* c);
 void undo_push(int n);
 void do_undo();

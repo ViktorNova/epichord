@@ -36,6 +36,7 @@ class TrackInfo : public fltk::Group {
 
     void toggle_controls();
     void unset_solo();
+    void set_rec(int t);
 
     void update();
   

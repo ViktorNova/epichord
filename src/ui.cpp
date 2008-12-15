@@ -243,7 +243,7 @@ UI::UI() {
           o->begin();
            {Arranger* o = arranger = new Arranger(0, 0, 245, 220, "arranger");
             o->box(fltk::FLAT_BOX);
-            o->resize(1000,1000);
+            o->resize(1000,30*16);
           }
           o->end();
           o->type(fltk::ScrollGroup::BOTH_ALWAYS);
@@ -596,5 +596,6 @@ UI::UI() {
   qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
   qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
   qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));
+  track_info->set_rec(0);
   main_window->show();
 }

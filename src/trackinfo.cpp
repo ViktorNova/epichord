@@ -98,3 +98,15 @@ void TrackInfo::unset_solo(){
     ((TrackModule*)child(i))->unset_solo();
   }
 }
+
+void TrackInfo::set_rec(int t){
+  for(int i=0; i<children(); i++){
+    if(t==i){
+      ((TrackModule*)child(i))->set_rec();
+    }
+    else{
+      ((TrackModule*)child(i))->unset_rec();
+    }
+  }
+}
+

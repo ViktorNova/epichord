@@ -46,6 +46,7 @@ void toggle_loop();
 void set_solo(int s);
 int get_solo();
 
+
 void set_bpm(int new_bpm);
 
 int get_play_position();

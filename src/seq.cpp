@@ -38,9 +38,12 @@ std::list<Command*> undo_stack;
 std::list<int> undo_number;
 std::list<Command*>::iterator undo_ptr;
 
-int solo_flag;
+int solo_flag = 0;
+
+int rec_track = 0;
 
 int init_seq(){
+
   track* t;
   for(int i=0; i<16; i++){
     t = new track();
@@ -165,6 +168,10 @@ int set_seq_pos(int new_tick){
       e = e->next;
     }
   }
+}
+
+void set_rec_track(int t){
+  rec_track = t;
 }
 
 

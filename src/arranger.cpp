@@ -123,6 +123,7 @@ int Arranger::handle(int event){
             ui->pattern_scroll->scrollTo(main_sel->scrollx,main_sel->scrolly);
             ui->keyboard->cur_port = tracks[main_sel->track]->port;
             ui->keyboard->cur_chan = tracks[main_sel->track]->chan;
+            ui->track_info->set_rec(main_sel->track);
             ui->song_edit->hide();
             ui->song_edit->deactivate();
             ui->pattern_edit->take_focus();
@@ -365,7 +366,10 @@ void Arranger::layout(){
 
   int hp = ui->song_scroll->h();
   if(hp > h()){
-    h(hp+120);
+    h(hp);
+  }
+  else{
+    h(16*30);
   }
 
   int xp = ui->song_scroll->xposition();

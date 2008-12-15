@@ -52,7 +52,7 @@ class UI {open
       callback {config_window->hide();
 help_window->hide();
 action_window->hide();
-o->hide();}
+o->hide();} open
       xywh {507 27 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -98,11 +98,11 @@ o->label_scale=4;}
             extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
           } {
             {fltk::Widget} arranger {
-              label arranger
+              label arranger selected
               xywh {0 0 245 220} box FLAT_BOX
               extra_code {\#include "seq.h"
 \#include "arranger.h"
-o->resize(1000,1000);}
+o->resize(1000,30*16);}
               class Arranger
             }
           }
@@ -300,7 +300,7 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label config selected
+      label config
       xywh {28 464 315 260} resizable visible
     } {
       {fltk::ValueInput} {} {
@@ -508,6 +508,7 @@ qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
 qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
 qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
+    code {track_info->set_rec(0);} {}
     code {main_window->show();} {}
   }
 } 

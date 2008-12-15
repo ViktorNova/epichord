@@ -67,8 +67,10 @@ class HGauge : public Gauge {
 
 };
 
-class Toggle : public fltk::Widget {
+class Toggle : public fltk::Button {
   public:
+
+  int key_flag;
 
   char c[4];
   int r;
@@ -90,12 +92,6 @@ class Toggle : public fltk::Widget {
 
 
 class TrackModule : public fltk::Group {
-//contains
-//1 vgauge (change volume)
-//1 hgauge (change pan)
-//1 text input (change track name)
-//3 value inputs (change channel, program, and port)
-//2 toggles (toggle solo or mute)
 
   int settings_shown;
 
@@ -107,10 +103,11 @@ class TrackModule : public fltk::Group {
   Toggle solo;
   Toggle mute;
   fltk::Input name;
-  fltk::ValueInput chan;
-  fltk::ValueInput prog;
-  fltk::ValueInput port;
-  fltk::Button multi;
+  VGauge chan;
+  VGauge prog;
+  VGauge port;
+  VGauge bank;
+  Toggle rec;
 
   void toggle();
 
@@ -118,6 +115,8 @@ class TrackModule : public fltk::Group {
   int handle(int event);
 
   void set_channel(int i);
+  void unset_rec();
+  void set_rec();
   void unset_solo();
 
   void update();
