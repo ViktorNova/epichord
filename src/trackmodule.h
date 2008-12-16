@@ -36,6 +36,7 @@ class Gauge : public fltk::Widget {
   Gauge(int x, int y, int w, int h, const char* label=0);
 
   int value;
+  int last_value;
   int max;
   int step;
   int scale;
@@ -43,6 +44,10 @@ class Gauge : public fltk::Widget {
   int R,G,B;
 
   int label_flag;
+  int label_always;
+  int label_plusone;
+  int label_hex;
+  int gauge_off;
 };
 
 class VGauge : public Gauge {

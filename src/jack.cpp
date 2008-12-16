@@ -60,6 +60,8 @@ static int loop_end = 512;
 static int pass_through = 1;
 static int rec_port = 0;
 
+static int init_chans = 1;
+
 static uint64_t cur_frame = 0;
 static uint64_t last_frame = 0;
 static int frame_jump = 0;
@@ -137,6 +139,8 @@ static int process(jack_nframes_t nframes, void* arg){
 
   frame_count = nframes;
 
+  
+
   //handle incoming midi events
   for(int i=0; i<PORT_COUNT; i++){
     pbo[i] = jack_port_get_buffer(outport[i],nframes);
@@ -171,6 +175,40 @@ static int process(jack_nframes_t nframes, void* arg){
       jack_ringbuffer_write(inbuf,(char*)&rec_tick,4);
       jack_ringbuffer_write(inbuf,(char*)&size,2);
       jack_ringbuffer_write(inbuf,(char*)md1,me.size);
+    }
+  }
+
+  //init chans
+  if(init_chans && playing){
+    init_chans=0;
+    char buf[3];
+    for(int j=0; j<tracks.size(); j++){
+      int ch = tracks[j]->chan;
+      int pt = tracks[j]->port;
+
+      //bank select
+      buf[0] = 0xB0 | ch;
+      buf[1] = 0;
+      buf[2] = tracks[j]->bank;
+      send_midi(buf,3,pt);
+
+      //program change
+      buf[0] = 0xC0 | ch;
+      buf[1] = tracks[j]->prog;
+      send_midi(buf,2,pt);
+
+      //channel volume
+      buf[0] = 0xB0 | ch;
+      buf[1] = 7;
+      buf[2] = tracks[j]->vol;
+      send_midi(buf,3,pt);
+
+      //channel pan
+      buf[0] = 0xB0 | ch;
+      buf[1] = 10;
+      buf[2] = tracks[j]->pan;
+      send_midi(buf,3,pt);
+
     }
   }
 
@@ -307,6 +345,9 @@ int pause_backend(){
 }
 
 int reset_backend(int tick){
+  if(tick==0){
+    init_chans = 1;
+  }
   cur_frame = t2f(tick);
   last_frame = cur_frame;
   last_tick = tick;
@@ -374,6 +415,50 @@ void program_change(int track, int prog){
   buf[0] = 0xC0 | chan;
   buf[1] = prog;
   send_midi(buf, 2, port);
+}
+
+void midi_bank_controller(int track, int bank){
+  int port = tracks[track]->port;
+  int chan = tracks[track]->chan;
+
+  char buf[3];
+  buf[0] = 0xB0 | chan;
+  buf[1] = 0;
+  buf[2] = bank;
+  send_midi(buf, 3, port);
+}
+
+void midi_volume_controller(int track, int vol){
+  int port = tracks[track]->port;
+  int chan = tracks[track]->chan;
+
+  char buf[3];
+  buf[0] = 0xB0 | chan;
+  buf[1] = 7;
+  buf[2] = vol;
+  send_midi(buf, 3, port);
+}
+
+void midi_pan_controller(int track, int pan){
+  int port = tracks[track]->port;
+  int chan = tracks[track]->chan;
+
+  char buf[3];
+  buf[0] = 0xB0 | chan;
+  buf[1] = 10;
+  buf[2] = pan;
+  send_midi(buf, 3, port);
+}
+
+void midi_expression_controller(int track, int expr){
+  int port = tracks[track]->port;
+  int chan = tracks[track]->chan;
+
+  char buf[3];
+  buf[0] = 0xB0 | chan;
+  buf[1] = 11;
+  buf[2] = expr;
+  send_midi(buf, 3, port);
 }
 
 

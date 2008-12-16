@@ -40,36 +40,36 @@ void portcb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
   Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  //int old_port = t->port;
-  //t->port = (int)o->value();
-  //midi_channel_off(t->chan,old_port);
+  int old_port = t->port;
+  t->port = (int)o->value;
+  midi_channel_off(t->chan,old_port);
 }
 
 void chancb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
   Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  //int old_chan = t->chan;
-  //t->chan = (int)o->value();
-  //midi_channel_off(old_chan,t->port);
+  int old_chan = t->chan;
+  t->chan = (int)o->value;
+  midi_channel_off(old_chan,t->port);
 }
 
 void progcb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
   Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  //int prog = (int)o->value();
-  //t->prog = prog;
-  //program_change(i, prog);
+  int prog = (int)o->value;
+  t->prog = prog;
+  program_change(i, prog);
 }
 
 void bankcb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
   Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  //int prog = (int)o->value();
-  //t->prog = prog;
-  //program_change(i, prog);
+  int bank = (int)o->value;
+  t->bank = bank;
+  midi_bank_controller(i, bank);
 }
 
 void namecb(fltk::Widget* w, long i){
@@ -129,6 +129,8 @@ void volcb(fltk::Widget* w, long i){
   track* t = tracks[i];
 
   t->vol = o->value;
+  midi_volume_controller(i, t->vol);
+  //perhaps record this
 }
 
 void pancb(fltk::Widget* w, long i){
@@ -136,6 +138,7 @@ void pancb(fltk::Widget* w, long i){
   track* t = tracks[i];
 
   t->pan = o->value;
+  midi_pan_controller(i, t->pan);
 }
 
 TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
@@ -184,37 +187,56 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   //port
 
   //prog.c[0] = 'P';
-  prog.r = 127;
-  prog.g = 127;
-  prog.b = 127;
-  prog.R = 191;
-  prog.G = 191;
-  prog.B = 191;
+  prog.r = 0x3b;
+  prog.g = 0x5a;
+  prog.b = 0x88;
+  prog.R = 0x94;
+  prog.G = 0xbf;
+  prog.B = 0xff;
   prog.value = 0;
-  chan.r = 127;
-  chan.g = 127;
-  chan.b = 127;
-  chan.R = 191;
-  chan.G = 191;
-  chan.B = 191;
-  chan.max = 15;
+  prog.last_value = 0;
+  prog.label_always = 1;
+  prog.gauge_off = 1;
+  prog.tooltip("program");
 
-  port.r = 127;
-  port.g = 127;
-  port.b = 127;
-  port.R = 191;
-  port.G = 191;
-  port.B = 191;
+  bank.r = 0x2c;
+  bank.g = 0x40;
+  bank.b = 0x5b;
+  bank.R = 0x5a;
+  bank.G = 0x83;
+  bank.B = 0xba;
+  bank.value = 0;
+  bank.last_value = 0;
+  bank.label_always = 1;
+  bank.gauge_off = 1;
+  bank.tooltip("bank");
+
+  chan.r = 0x8c;
+  chan.g = 0xaf;
+  chan.b = 0xb6;
+  chan.R = 0xeb;
+  chan.G = 0xef;
+  chan.B = 0xf0;
+  chan.max = 15;
+  chan.label_always = 1;
+  chan.label_plusone = 1;
+  chan.label_hex = 0;
+  chan.gauge_off = 1;
+  chan.tooltip("channel");
+
+  port.r = 0xc0;
+  port.g = 0xc0;
+  port.b = 0xc0;
+  port.R = 0xff;
+  port.G = 0xff;
+  port.B = 0xff;
   port.max = 7;
   port.value = 0;
+  port.last_value = 0;
+  port.label_always = 1;
+  port.gauge_off = 1;
+  port.tooltip("port");
 
-  bank.r = 127;
-  bank.g = 127;
-  bank.b = 127;
-  bank.R = 191;
-  bank.G = 191;
-  bank.B = 191;
-  bank.value = 0;
 
   port.callback(portcb, i);
   chan.callback(chancb, i);
@@ -300,6 +322,7 @@ void TrackModule::toggle(){
 
 void TrackModule::set_channel(int i){
   chan.value = i;
+  chan.last_value = i;
 }
 
 void TrackModule::unset_solo(){
@@ -327,6 +350,7 @@ void TrackModule::update(){
   port.value = t->port;
   chan.value = t->chan;
   prog.value = t->prog;
+  bank.value = t->bank;
 
   if(t->mute){
     mute.set(1);
@@ -350,7 +374,12 @@ Gauge::Gauge(int x, int y, int w, int h, const char* label) :
   fltk::Widget(x, y, w, h, label){
   max = 127;
   value = 64;
+  last_value = 64;
   label_flag = 0;
+  label_always = 0;
+  label_plusone = 0;
+  label_hex = 1;
+  gauge_off = 0;
 }
 
 VGauge::VGauge(int x, int y, int w, int h, const char* label) :
@@ -372,10 +401,13 @@ int VGauge::handle(int e){
   }
   if(e == fltk::DRAG){
     value += last - fltk::event_y();
-    do_callback();
-    last = fltk::event_y();
     if(value > max){value = max;}
     if(value < 0){value = 0;}
+    if(value != last_value){
+      last_value = value;
+      do_callback();
+    }
+    last = fltk::event_y();
     redraw();
     return 1;
   }
@@ -383,7 +415,7 @@ int VGauge::handle(int e){
     label_flag = 0;
     redraw();
   }
-  return 0;
+  return fltk::Widget::handle(e);
 }
 
 
@@ -406,10 +438,13 @@ int HGauge::handle(int e){
   }
   if(e == fltk::DRAG){
     value += fltk::event_x() - last;
-    do_callback();
-    last = fltk::event_x();
     if(value > max){value = max;}
     if(value < 0){value = 0;}
+    if(value != last_value){
+      last_value = value;
+      do_callback();
+    }
+    last = fltk::event_x();
     redraw();
     return 1;
   }
@@ -425,13 +460,22 @@ void VGauge::draw(){
   fltk::setcolor(fltk::color(r,g,b));
   fltk::fillrect(2,2,w()-4,h()-4);
 
-  fltk::setcolor(fltk::color(R,G,B));
+  if(!gauge_off){
+    fltk::setcolor(fltk::color(R,G,B));
+  }
   int H = value * (h()-4) / max;
   fltk::fillrect(2,h()-2-H,w()-4,H);
 
-  if(label_flag){
+  if(label_flag || label_always){
     char buf[3];
-    snprintf(buf,3,"%x",value);
+    int V = label_plusone ? value + 1 : value;
+    if(label_hex){
+      snprintf(buf,3,"%x",V);
+    }
+    else{
+      snprintf(buf,3,"%d",V);
+    }
+
 
     fltk::push_clip(2,2,w()-4,h()-4 - H);
     fltk::setcolor(fltk::color(R,G,B));
@@ -440,8 +484,11 @@ void VGauge::draw(){
     fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
     fltk::pop_clip();
 
+
     fltk::push_clip(2,h()-2-H,w()-4,H);
-    fltk::setcolor(fltk::color(r,g,b));
+    if(!gauge_off){
+      fltk::setcolor(fltk::color(r,g,b));
+    }
     fltk::setfont(fltk::HELVETICA,12);
     fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
     fltk::pop_clip();

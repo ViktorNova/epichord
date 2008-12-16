@@ -171,6 +171,7 @@ struct track {
   int port;
   int chan;
   int prog;
+  int bank;
   int mute;
   int solo;
   int vol;
@@ -184,6 +185,7 @@ struct track {
     port = 0;
     chan = 0;
     prog = 0;
+    bank = 0;
     mute = 0;
     solo = 0;
     vol = 127;

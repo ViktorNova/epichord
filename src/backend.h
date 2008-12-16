@@ -56,6 +56,10 @@ int recv_midi(int* chan, int* tick, int* type, int* val1, int* val2);
 void all_notes_off();
 
 void program_change(int track, int prog);
+void midi_bank_controller(int track, int bank);
+void midi_volume_controller(int track, int vol);
+void midi_pan_controller(int track, int pan);
+void midi_expression_controller(int track, int expr);
 
 void midi_note_off(int note, int chan, int port);
 void midi_channel_off(int chan, int port);

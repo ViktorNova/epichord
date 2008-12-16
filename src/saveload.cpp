@@ -178,6 +178,7 @@ int save(const char* filename){
     file << "port " << tracks[i]->port << endl;
     file << "chan " << tracks[i]->chan << endl;
     file << "prog " << tracks[i]->prog << endl;
+    file << "bank " << tracks[i]->bank << endl;
     file << "mute " << tracks[i]->mute << endl;
     file << "solo " << tracks[i]->solo << endl;
     file << "vol " << tracks[i]->vol << endl;
@@ -367,6 +368,7 @@ int load(const char* filename){
         if(key == "port"){ file >> t->port; }
         else if(key == "chan"){ file >> t->chan; }
         else if(key == "prog"){ file >> t->prog; }
+        else if(key == "bank"){ file >> t->bank; }
         else if(key == "mute"){ file >> t->mute; }
         else if(key == "solo"){ file >> t->solo; }
         else if(key == "vol"){ file >> t->vol; }
