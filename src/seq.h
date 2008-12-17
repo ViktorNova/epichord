@@ -23,8 +23,13 @@
 #ifndef seq_h
 #define seq_h
 
-#define MIDI_NOTE_ON 0x90
 #define MIDI_NOTE_OFF 0x80
+#define MIDI_NOTE_ON 0x90
+#define MIDI_AFTERTOUCH 0xA0
+#define MIDI_CONTROLLER_CHANGE 0xB0
+#define MIDI_PROGRAM_CHANGE 0xC0
+#define MIDI_CHANNEL_PRESSURE 0xD0
+#define MIDI_PITCH_WHEEL 0xE0
 
 #define MAX_TRACK_NAME 256
 
@@ -540,9 +545,10 @@ class CreateEvent : public Command {
 
   public:
 
-    CreateEvent(pattern* zp, int type, int tick, int value){
+    CreateEvent(pattern* zp, int type, int tick, int value1, int value2){
       p = zp;
-      e = new mevent(type,tick,value);
+      e = new mevent(type,tick,value1);
+      e->value2 = value2;
       e->prev = tfind<mevent>(zp->events,tick);
       e->next = e->prev->next;
     }

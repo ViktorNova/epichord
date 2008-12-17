@@ -131,6 +131,7 @@ int Arranger::handle(int event){
           main_sel = s;
           if(fltk::event_clicks() > 0){//'double click'
             ui->piano_roll->load(main_sel);
+            ui->event_edit->load(main_sel);
             ui->pattern_scroll->scrollTo(main_sel->scrollx,main_sel->scrolly);
             ui->keyboard->cur_port = tracks[main_sel->track]->port;
             ui->keyboard->cur_chan = tracks[main_sel->track]->chan;

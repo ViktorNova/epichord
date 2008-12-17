@@ -87,8 +87,10 @@ void playing_timeout_cb(void* v){
           c=new CreateNoteOff(p,val1,val2,tick-s->tick);
           set_undo(c);
           undo_push(1);
-          if(ui->piano_roll->visible())
+          if(ui->piano_roll->visible()){
             ui->piano_roll->redraw();
+            ui->event_edit->redraw();
+          }
           if(ui->arranger->visible())
             ui->arranger->redraw();
           break;
@@ -102,8 +104,10 @@ void playing_timeout_cb(void* v){
           c=new CreateNoteOn(p,val1,val2,tick-s->tick,16);
           set_undo(c);
           undo_push(1);
-          if(ui->piano_roll->visible())
+          if(ui->piano_roll->visible()){
             ui->piano_roll->redraw();
+            ui->event_edit->redraw();
+          }
           if(ui->arranger->visible())
             ui->arranger->redraw();
           break;
@@ -112,8 +116,21 @@ void playing_timeout_cb(void* v){
         case 0xc0://program change
         case 0xd0://channel pressure
         case 0xe0://pitch wheel
-          printf("other message\n");
-          //other messages
+          s = tfind<seqpat>(t->head,tick);
+          if(s->tick+s->dur < tick){
+            //printf("rec head outside block\n");
+            continue;
+          }
+          p = s->p;
+          c=new CreateEvent(p,type,tick,val1,val2);
+          set_undo(c);
+          undo_push(1);
+          if(ui->piano_roll->visible()){
+            ui->piano_roll->redraw();
+            ui->event_edit->redraw();
+          }
+          if(ui->arranger->visible())
+            ui->arranger->redraw();
           break;
       }
       /*

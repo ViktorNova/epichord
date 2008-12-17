@@ -183,6 +183,7 @@ int PianoRoll::handle(int event){
           undo_push(1);
           ui->keyboard->release_note(new_note,0);
           ui->keyboard->redraw();
+          ui->event_edit->redraw();
         }
         else if(move_flag && move_note < 128 && move_note >= 0){
           int play_pos = get_play_position();
@@ -202,6 +203,7 @@ int PianoRoll::handle(int event){
 
           ui->keyboard->release_note(move_note,0);
           ui->keyboard->redraw();
+          ui->event_edit->redraw();
         }
         new_drag=0;
         move_flag=0;
@@ -212,10 +214,13 @@ int PianoRoll::handle(int event){
           c=new DeleteNote(cur_seqpat->p, main_sel);
           set_undo(c);
           undo_push(1);
+
+          ui->event_edit->redraw();
         }
         delete_flag = 0;
       }
       redraw();
+
       return 1;
   }
   return 0;

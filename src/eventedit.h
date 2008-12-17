@@ -26,8 +26,21 @@
 class EventEdit : public fltk::Widget {
 
     int event_type;
+    int controller_type;
+
+    int tick2xpix(int tick);
+
+    char* event_type_name();
+    void event_type_next();
+    void event_type_prev();
+    void set_event_type(int type, int controller);
+
+    int q_tick;
 
   public:
+
+    seqpat* cur_seqpat;
+    track* cur_track;
 
     int zoom;
 
@@ -36,6 +49,9 @@ class EventEdit : public fltk::Widget {
     EventEdit(int x, int y, int w, int h, const char* label);
     int handle(int event);
     void draw();
+
+    void load(seqpat* s);
+    void set_qtick(int q){q_tick=q;}
 
 };
 
