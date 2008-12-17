@@ -83,17 +83,34 @@ struct pattern {
   struct pattern* next;
   int ref_c;
 
+  unsigned char r1,g1,b1;//main color
+  unsigned char r2,g2,b2;//bottom color
+  unsigned char r3,g3,b3;//top color
+  unsigned char rx,gx,bx;//xray color
+
+  float h, s, v; //color
+
+  void regen_colors();
+
   pattern(){
     events = new mevent();//dummy
     events->tick = 0;
     next = NULL;
     ref_c = 0;
+    h=0;
+    s=1;
+    v=0.8;
+    regen_colors();
   }
 
   pattern(pattern* p){
     events = NULL; /* FIXME need a copy routine here */
     next = p->next;
     ref_c = 0;
+    h = p->h;
+    s = p->s;
+    v = p->v;
+    regen_colors();
   }
 
   ~pattern(){
@@ -120,14 +137,9 @@ struct seqpat {
   struct seqpat* next;
 
  // unsigned char color[3][3];
-  unsigned char r1,g1,b1;//main color
-  unsigned char r2,g2,b2;//bottom color
-  unsigned char r3,g3,b3;//top color
-  unsigned char rx,gx,bx;//xray color
-  float h, v; //hue and value
-  int scrollx, scrolly;
 
-  void regen_colors(float zh, float zv);
+
+  int scrollx, scrolly;
 
   seqpat(){
     p = NULL;
@@ -135,6 +147,8 @@ struct seqpat {
     prev = NULL;
     next = NULL;
     dur=0;
+
+
   }
 
   seqpat(int ztrack, int ztick, int zdur, pattern* zp){
@@ -145,23 +159,21 @@ struct seqpat {
     skip = NULL;
     prev = NULL;
     next = NULL;
-    regen_colors(0,0.8);
   }
 
-  seqpat(seqpat* s){
-    p = s->p;
-    track = s->track;
-    dur = s->dur;
-    tick = s->tick;
+  seqpat(seqpat* zs){
+    p = zs->p;
+    track = zs->track;
+    dur = zs->dur;
+    tick = zs->tick;
     if(p){p->ref_c++;}
 
     skip = p->events;
-    prev = s->prev;
-    next = s->next;
-    regen_colors(s->h,s->v);
+    prev = zs->prev;
+    next = zs->next;
 
-    scrollx = s->scrollx;
-    scrolly = s->scrolly;
+    scrollx = zs->scrollx;
+    scrolly = zs->scrolly;
   }
   ~seqpat(){
    }
@@ -581,6 +593,8 @@ int set_seq_pos(int new_tick);
 
 void set_rec_track(int t);
 int get_rec_track();
+
+int set_default_hsv_value(float v);
 
 void set_undo(Command* c);
 void undo_push(int n);

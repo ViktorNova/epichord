@@ -142,6 +142,7 @@ int save(const char* filename){
   int P = 0;
   while(p){
     file << "pattern " << endl;
+    file << p->h << " " << p->s << " " << p->v << endl;
     e = p->events->next;
     mevent* eoff;
     int n = 0;
@@ -191,12 +192,6 @@ int save(const char* filename){
     while(s){
       file << endl << endl << "seqpat " << endl;
       file << s->tick << " " << s->dur << endl;
-      /*for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
-          file << (int)s->color[i][j] << " ";
-        }
-      }*/
-      file << s->h << " " << s->v << endl;
       file << s->scrollx << " " << s->scrolly << endl;
       p = patterns->next;
       int q = 0;
@@ -336,6 +331,10 @@ int load(const char* filename){
     }
     else if(str == "pattern"){
       pattern* p = new pattern();
+      file >> p->h;
+      file >> p->s;
+      file >> p->v;
+      p->regen_colors();
       mevent* eend = p->events;
       int off_index;
       int type;
@@ -397,22 +396,16 @@ int load(const char* filename){
           //  }
           //}
 
-          float h;
-          float v;
-          file >> h;
-          file >> v;
+          ////color info is in pattern section now
+          //float h;
+          //float v;
+          //file >> h;
+          //file >> v;
 
-/*file >> C;
-file >> C;
-file >> C;
-file >> C;
-file >> C;
-file >> C;
-file >> C;
-file >> C;
-file >> C;*/
+          //s->h = h;
+          //s->v = v;
 
-          s->regen_colors(h,v);
+          //s->regen_colors();
 
           file >> s->scrollx >> s->scrolly;
           file >> pattern_number;

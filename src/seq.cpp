@@ -21,6 +21,7 @@
 */
 
 #include <stdlib.h>
+#include <math.h>
 #include <list>
 #include <vector>
 
@@ -41,6 +42,8 @@ std::list<Command*>::iterator undo_ptr;
 int solo_flag = 0;
 
 int rec_track = 0;
+
+static float default_hsv_value = 0.8;
 
 int init_seq(){
 
@@ -178,6 +181,10 @@ int get_rec_track(){
   return rec_track;
 }
 
+int set_default_hsv_value(float v){
+  default_hsv_value = v;
+}
+
 void set_undo(Command* c){
   if(undo_ptr != undo_stack.end()){
     //then we need to clean house
@@ -206,19 +213,23 @@ void do_redo(){
 }
 
 
-void seqpat::regen_colors(float zh, float zv){
+void pattern::regen_colors(){
 
-  h = zh;
-  v = zv;
+  while(h>360){h-=360;}
+  while(h<0){h+=360;}
+  if(s < 0){s = 0;}
+  if(s > 1){s = 1;}
+  if(v < 0.2){v = 0.2;}
+  if(v > 0.8){v = 0.8;}
 
-  hsv_to_rgb(h,1,v,&r1,&g1,&b1);
-  hsv_to_rgb(h,1,v/2,&r2,&g2,&b2);
-  hsv_to_rgb(h,1,v+0.2 > 1 ? 1 : v+0.2,&r3,&g3,&b3);
+  hsv_to_rgb(h,s,v,&r1,&g1,&b1);
+  hsv_to_rgb(h,s,v/2,&r2,&g2,&b2);
+  hsv_to_rgb(h,s,v+0.2 > 1 ? 1 : v+0.2,&r3,&g3,&b3);
   if(v > 0.5){
-    hsv_to_rgb(h,1,v-0.2,&rx,&gx,&bx);
+    hsv_to_rgb(h,s,v-0.3,&rx,&gx,&bx);
   }
   else{
-    hsv_to_rgb(h,1,0.7,&rx,&gx,&bx);
+    hsv_to_rgb(h,s,0.7,&rx,&gx,&bx);
   }
 
 }
@@ -246,7 +257,10 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
   unsigned char r,g,b;
 
   //float X = rand()*1.0 / RAND_MAX * 360;
-  s->regen_colors(((track%16) / 16.0) * 360,0.8);
+  pattern* p = s->p;
+  p->h = ((track%16) / 16.0) * 360;
+  p->v = default_hsv_value;
+  p->regen_colors();
   /*float X = ;
   hsv_to_rgb(X,1,0.8,&r,&g,&b);
   s->color[0][0] = r;
@@ -265,8 +279,8 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
   s->scrolly = 300;
   s->scrollx = 0;
 
+  p = patterns;
   s->p->ref_c = 1;
-  pattern* p = patterns;
   while(p->next){
     p = p->next;
   }

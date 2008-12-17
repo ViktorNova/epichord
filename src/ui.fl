@@ -52,7 +52,7 @@ class UI {open
       callback {config_window->hide();
 help_window->hide();
 action_window->hide();
-o->hide();}
+o->hide();} open
       xywh {507 27 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -276,6 +276,7 @@ o->state(1);}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} color_toggle {
+          callback {arranger->color_flag = o->state();} selected
           tooltip {color tool}
           xywh {520 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
@@ -300,7 +301,7 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label config open
+      label config
       xywh {28 464 315 260} resizable visible
     } {
       {fltk::ValueInput} beats_per_measure {
@@ -324,7 +325,7 @@ ui->bpm_output->value(o->value());}
       }
       {fltk::ValueInput} mur {
         label {measures until record}
-        callback {set_mur((int)o->value());} selected
+        callback {set_mur((int)o->value());}
         xywh {145 85 45 20} maximum 128 step 1 value 1
       }
       {fltk::CheckButton} check_alwayscopy {

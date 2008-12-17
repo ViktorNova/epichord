@@ -108,7 +108,8 @@ int Arranger::handle(int event){
     case fltk::PUSH:
       take_focus();
       if(event_button()==1){//left mouse
-        if(over_seqpat()==NULL){//begin pattern creation
+        seqpat* s = over_seqpat();
+        if(s==NULL){//begin pattern creation
           new_drag = 1;
           new_left_t = quantize(xpix2tick(event_x()));
           new_orig_t = new_left_t;
@@ -117,7 +118,17 @@ int Arranger::handle(int event){
         }
         else{
           //if shift, add to selection
-          main_sel = over_seqpat();
+          if(color_flag){
+            color_sel = s->p;
+            color_orig_x = event_x();
+            color_orig_y = event_y();
+            color_orig_h = color_sel->h;
+            color_orig_v = color_sel->v;
+            color_h = color_orig_h;
+            color_v = color_orig_v;
+            return 1;
+          }
+          main_sel = s;
           if(fltk::event_clicks() > 0){//'double click'
             ui->piano_roll->load(main_sel);
             ui->pattern_scroll->scrollTo(main_sel->scrollx,main_sel->scrolly);
@@ -141,23 +152,54 @@ int Arranger::handle(int event){
         }
       }
       else if(event_button()==2){//middle mouse
-        paste_flag = 1;
-        paste_t = quantize(xpix2tick(event_x()));
-        paste_track = event_y() / 30;
+        if(main_sel){
+          paste_flag = 1;
+          paste_t = quantize(xpix2tick(event_x()));
+          paste_track = event_y() / 30;
+        }
+        seqpat* s = over_seqpat();
+        if(color_flag && s){
+          s->p->h = color_h;
+          s->p->v = color_v;
+          s->p->regen_colors();
+          redraw();
+        }
       }
       else if(event_button()==3){//right mouse
-        if(over_seqpat()==NULL){//begin box
+        seqpat* s = over_seqpat();
+        if(color_flag && s){
+          seqpat* ptr = tracks[s->track]->head->next;
+          while(ptr){
+            ptr->p->h = color_h;
+            ptr->p->v = color_v;
+            ptr->p->regen_colors();
+            ptr = ptr->next;
+          }
+          redraw();
+          return 1;
+        }
+        if(s==NULL){//begin box
           delete_sel = NULL;
           main_sel = NULL;
+          color_sel = NULL;
         }
         else{//set up for deletion
           delete_flag = 1;
-          delete_sel = over_seqpat();
+          delete_sel = s;
         }
       }
       redraw();
       return 1;
     case fltk::DRAG:
+      if(color_flag && color_sel){
+        color_sel->h = color_orig_h + (color_orig_x - event_x())/1.0;
+        color_sel->v = color_orig_v + (color_orig_y - event_y())/100.0;
+        color_sel->regen_colors();
+        color_h = color_sel->h;
+        color_v = color_sel->v;
+        set_default_hsv_value(color_v);
+        redraw();
+      }
       if(move_start){
         move_flag = 1;
       }
@@ -206,6 +248,7 @@ int Arranger::handle(int event){
         move_start=0;
         move_flag=0;
         new_drag=0;
+        color_sel = NULL;
       }
       else if(event_button()==2){
         if(paste_flag && paste_track < tracks.size()){
@@ -288,16 +331,17 @@ void Arranger::draw(){
     s = tracks[i]->head->next;
     while(s){
 
-      c11 = s->r1;
-      c12 = s->g1;
-      c13 = s->b1;
+      pattern* p = s->p;
+      c11 = p->r1;
+      c12 = p->g1;
+      c13 = p->b1;
       if(s!=main_sel){
-        c21 = s->r2;
-        c22 = s->g2;
-        c23 = s->b2;
-        c31 = s->r3;
-        c32 = s->g3;
-        c33 = s->b3;
+        c21 = p->r2;
+        c22 = p->g2;
+        c23 = p->b2;
+        c31 = p->r3;
+        c32 = p->g3;
+        c33 = p->b3;
       }
       else{
         c21 = 128;
@@ -329,7 +373,7 @@ void Arranger::draw(){
 
       fltk::push_clip(tick2xpix(s->tick),s->track*30,tick2xpix(s->dur),30);
 
-      fltk::setcolor(fltk::color(s->rx,s->gx,s->bx));
+      fltk::setcolor(fltk::color(p->rx,p->gx,p->bx));
 
       mevent* e = s->p->events;
       while(e){

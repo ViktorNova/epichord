@@ -134,6 +134,13 @@ void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
+inline void UI::cb_color_toggle_i(fltk::Button* o, void*) {
+  arranger->color_flag = o->state();
+}
+void UI::cb_color_toggle(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_color_toggle_i(o,v);
+}
+
 inline void UI::cb_config_button_i(fltk::Button*, void*) {
   ui->config_window->show();
 }
@@ -482,6 +489,7 @@ UI::UI() {
         o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = color_toggle = new fltk::Button(520, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_color_toggle);
         o->tooltip("color tool");
         o->type(fltk::Button::TOGGLE);
       }

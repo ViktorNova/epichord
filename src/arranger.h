@@ -58,10 +58,20 @@ class Arranger : public fltk::Widget {
 
     int delete_flag;
 
+    float color_h;
+    float color_v;
+    pattern* color_sel;
+    int color_orig_x;
+    int color_orig_y;
+    float color_orig_h;
+    float color_orig_v;
+
   public:
 
     int zoom;
     int zoom_n;
+
+    int color_flag;
 
     int q_tick;
 

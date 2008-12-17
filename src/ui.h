@@ -116,6 +116,10 @@ private:
       static void cb_loop_toggle(fltk::Button*, void*);
 public:
       fltk::Button *color_toggle;
+private:
+      inline void cb_color_toggle_i(fltk::Button*, void*);
+      static void cb_color_toggle(fltk::Button*, void*);
+public:
       fltk::Button *config_button;
 private:
       inline void cb_config_button_i(fltk::Button*, void*);
