@@ -23,10 +23,45 @@
    Boston, MA  02110-1301, USA
 */
 
+struct conf{
+  int beats_per_measure;
+  int measures_per_phrase;
+  int measures_until_record;
+  int alwayscopy;
+  int autotrackname;
+  int passthru;
+  int playinsert;
+  int recordonchan;
+  int playmove;
+  int follow;
+  int quantizedur;
+  int recordmode;
+};
+
+void config_init();
+
+
 void press_stop();
 void press_panic();
 void press_play();
 
 void set_quant(int q);
+
+
+
+void set_beats_per_measure(int n);
+void set_measures_per_phrase(int n);
+void set_mur(int n);
+
+void set_alwayscopy(int v);
+void set_autotrackname(int v);
+void set_passthru(int v);
+void set_playinsert(int v);
+void set_recordonchan(int v);
+void set_playmove(int v);
+void set_follow(int v);
+void set_quantizedur(int v);
+void set_recordmode(int n);
+
 
 #endif

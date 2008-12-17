@@ -32,9 +32,14 @@
 
 #include "ui.h"
 #include "backend.h"
+#include "uihelper.h"
 
 extern std::vector<track*> tracks;
 extern UI* ui;
+
+extern char gm_names[128][64];
+
+extern struct conf config;
 
 void portcb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
@@ -61,6 +66,10 @@ void progcb(fltk::Widget* w, long i){
   int prog = (int)o->value;
   t->prog = prog;
   program_change(i, prog);
+  if(config.autotrackname){
+    strncpy(t->name,gm_names[prog],64);
+    ui->track_info->update();
+  }
 }
 
 void bankcb(fltk::Widget* w, long i){

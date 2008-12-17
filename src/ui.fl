@@ -52,7 +52,7 @@ class UI {open
       callback {config_window->hide();
 help_window->hide();
 action_window->hide();
-o->hide();} open
+o->hide();}
       xywh {507 27 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -98,7 +98,7 @@ o->label_scale=4;}
             extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
           } {
             {fltk::Widget} arranger {
-              label arranger selected
+              label arranger
               xywh {0 0 245 220} box FLAT_BOX
               extra_code {\#include "seq.h"
 \#include "arranger.h"
@@ -275,8 +275,8 @@ o->state(1);}
           xywh {490 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
-        {fltk::Button} keyboard_toggle {
-          tooltip {keyboard layout}
+        {fltk::Button} color_toggle {
+          tooltip {color tool}
           xywh {520 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
@@ -300,15 +300,17 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label config
+      label config open
       xywh {28 464 315 260} resizable visible
     } {
-      {fltk::ValueInput} {} {
+      {fltk::ValueInput} beats_per_measure {
         label {beats per measure}
+        callback {set_beats_per_measure((int)o->value());}
         xywh {145 10 45 20} minimum 2 maximum 31 step 1 value 4
       }
       {fltk::ValueInput} {} {
         label {measures per phrase}
+        callback {set_measures_per_phrase((int)o->value());}
         xywh {145 35 45 20} maximum 128 step 1 value 4
       }
       {fltk::ValueOutput} bpm_output {
@@ -320,36 +322,57 @@ ui->action_window->show();}
 ui->bpm_output->value(o->value());}
         xywh {195 60 105 20} align 4 minimum 1 maximum 1000 step 1 value 120
       }
-      {fltk::ValueInput} {} {
-        label {metronome lead-in}
-        xywh {145 85 45 20} maximum 128 step 1 value 4
+      {fltk::ValueInput} mur {
+        label {measures until record}
+        callback {set_mur((int)o->value());} selected
+        xywh {145 85 45 20} maximum 128 step 1 value 1
       }
-      {fltk::CheckButton} {} {
+      {fltk::CheckButton} check_alwayscopy {
         label {always hard copy}
+        callback {set_alwayscopy(o->value());}
+        tooltip {instead of making a linked clone when you copy a block in the song view.}
         xywh {145 110 25 25} align 4
       }
-      {fltk::CheckButton} {} {
+      {fltk::CheckButton} check_autotrackname {
         label {auto track name}
+        callback {set_autotrackname(o->value());}
+        tooltip {Fill in GM instruments for track names when you change the program.}
         xywh {285 110 25 25} align 4
       }
-      {fltk::CheckButton} {} {
+      {fltk::CheckButton} check_passthru {
         label {record pass-thru}
+        callback {set_passthru(o->value());}
+        tooltip {Echo midi input to midi output.}
         xywh {145 135 25 26} horizontal align 4 value 1
       }
-      {fltk::CheckButton} {} {
+      {fltk::CheckButton} check_playinsert {
         label {play note insertion}
+        callback {set_playinsert(o->value());}
+        tooltip {Send midi note on when you create notes.}
         xywh {285 135 25 26} horizontal align 4 value 1
       }
-      {fltk::CheckButton} {} {
-        label {follow playback}
-        xywh {145 160 25 26} horizontal align 4 value 1
+      {fltk::CheckButton} check_recordonchan {
+        label {record on channel}
+        callback {set_recordonchan(o->value());}
+        tooltip {Record on first track that matches channel of midi input instead of selected track.}
+        xywh {145 160 25 25} align 4
       }
-      {fltk::CheckButton} {} {
-        label {play note selection}
+      {fltk::CheckButton} check_playmove {
+        label {play note move}
+        callback {set_playmove(o->value());}
+        tooltip {Send midi note on when you move notes.}
         xywh {285 160 25 26} horizontal align 4 value 1
       }
-      {fltk::CheckButton} {} {
+      {fltk::CheckButton} check_follow {
+        label {follow playback}
+        callback {set_follow(o->value());}
+        tooltip {Auto scroll horizontally when play head leaves viewing area.}
+        xywh {145 184 25 26} horizontal align 4 value 1
+      }
+      {fltk::CheckButton} check_quantizedur {
         label {quantize note off}
+        callback {set_quantizedur(o->value());}
+        tooltip {Quantize the length of notes when using the quantizer.}
         xywh {285 185 25 25} align 4 value 1
       }
       {fltk::Choice} {} {
@@ -358,17 +381,16 @@ ui->bpm_output->value(o->value());}
       } {
         {fltk::Item} {} {
           label merge
+          callback {set_recordmode(0);}
           }
         {fltk::Item} {} {
           label overwrite
+          callback {set_recordmode(1);}
           }
         {fltk::Item} {} {
           label layer
+          callback {set_recordmode(2);}
           }
-      }
-      {fltk::CheckButton} {} {
-        label {pattern x-ray}
-        xywh {145 185 25 25} align 4 value 1
       }
     }
     {fltk::Window} help_window {
@@ -496,7 +518,7 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       }
     }
     code {loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
-keyboard_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/keys.gif"));
+color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
 config_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
 file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
 help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
@@ -509,6 +531,7 @@ qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
 qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {track_info->set_rec(0);} {}
+    code {config_init();} {}
     code {main_window->show();} {}
   }
 } 

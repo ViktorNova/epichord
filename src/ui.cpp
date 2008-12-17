@@ -156,12 +156,110 @@ void UI::cb_help_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_help_button_i(o,v);
 }
 
+inline void UI::cb_beats_per_measure_i(fltk::ValueInput* o, void*) {
+  set_beats_per_measure((int)o->value());
+}
+void UI::cb_beats_per_measure(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_beats_per_measure_i(o,v);
+}
+
+inline void UI::cb_measures_i(fltk::ValueInput* o, void*) {
+  set_measures_per_phrase((int)o->value());
+}
+void UI::cb_measures(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_measures_i(o,v);
+}
+
 inline void UI::cb_bpm_wheel_i(fltk::ThumbWheel* o, void*) {
   set_bpm((int)o->value());
   ui->bpm_output->value(o->value());
 }
 void UI::cb_bpm_wheel(fltk::ThumbWheel* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_bpm_wheel_i(o,v);
+}
+
+inline void UI::cb_mur_i(fltk::ValueInput* o, void*) {
+  set_mur((int)o->value());
+}
+void UI::cb_mur(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_mur_i(o,v);
+}
+
+inline void UI::cb_check_alwayscopy_i(fltk::CheckButton* o, void*) {
+  set_alwayscopy(o->value());
+}
+void UI::cb_check_alwayscopy(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_alwayscopy_i(o,v);
+}
+
+inline void UI::cb_check_autotrackname_i(fltk::CheckButton* o, void*) {
+  set_autotrackname(o->value());
+}
+void UI::cb_check_autotrackname(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_autotrackname_i(o,v);
+}
+
+inline void UI::cb_check_passthru_i(fltk::CheckButton* o, void*) {
+  set_passthru(o->value());
+}
+void UI::cb_check_passthru(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_passthru_i(o,v);
+}
+
+inline void UI::cb_check_playinsert_i(fltk::CheckButton* o, void*) {
+  set_playinsert(o->value());
+}
+void UI::cb_check_playinsert(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_playinsert_i(o,v);
+}
+
+inline void UI::cb_check_recordonchan_i(fltk::CheckButton* o, void*) {
+  set_recordonchan(o->value());
+}
+void UI::cb_check_recordonchan(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_recordonchan_i(o,v);
+}
+
+inline void UI::cb_check_playmove_i(fltk::CheckButton* o, void*) {
+  set_playmove(o->value());
+}
+void UI::cb_check_playmove(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_playmove_i(o,v);
+}
+
+inline void UI::cb_check_follow_i(fltk::CheckButton* o, void*) {
+  set_follow(o->value());
+}
+void UI::cb_check_follow(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_follow_i(o,v);
+}
+
+inline void UI::cb_check_quantizedur_i(fltk::CheckButton* o, void*) {
+  set_quantizedur(o->value());
+}
+void UI::cb_check_quantizedur(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_check_quantizedur_i(o,v);
+}
+
+inline void UI::cb_merge_i(fltk::Item*, void*) {
+  set_recordmode(0);
+}
+void UI::cb_merge(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_merge_i(o,v);
+}
+
+inline void UI::cb_overwrite_i(fltk::Item*, void*) {
+  set_recordmode(1);
+}
+void UI::cb_overwrite(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_overwrite_i(o,v);
+}
+
+inline void UI::cb_layer_i(fltk::Item*, void*) {
+  set_recordmode(2);
+}
+void UI::cb_layer(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_layer_i(o,v);
 }
 
 inline void UI::cb_new_i(fltk::Button*, void*) {
@@ -383,8 +481,8 @@ UI::UI() {
         o->tooltip("toggle looping");
         o->type(fltk::Button::TOGGLE);
       }
-       {fltk::Button* o = keyboard_toggle = new fltk::Button(520, 5, 25, 25);
-        o->tooltip("keyboard layout");
+       {fltk::Button* o = color_toggle = new fltk::Button(520, 5, 25, 25);
+        o->tooltip("color tool");
         o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = config_button = new fltk::Button(550, 5, 25, 25);
@@ -409,16 +507,18 @@ UI::UI() {
     o->shortcut(0xff1b);
     o->user_data((void*)(this));
     o->begin();
-     {fltk::ValueInput* o = new fltk::ValueInput(145, 10, 45, 20, "beats per measure");
+     {fltk::ValueInput* o = beats_per_measure = new fltk::ValueInput(145, 10, 45, 20, "beats per measure");
       o->minimum(2);
       o->maximum(31);
       o->step(1);
       o->value(4);
+      o->callback((fltk::Callback*)cb_beats_per_measure);
     }
      {fltk::ValueInput* o = new fltk::ValueInput(145, 35, 45, 20, "measures per phrase");
       o->maximum(128);
       o->step(1);
       o->value(4);
+      o->callback((fltk::Callback*)cb_measures);
     }
      {fltk::ValueOutput* o = bpm_output = new fltk::ValueOutput(145, 60, 45, 20, "bpm");
       o->minimum(1);
@@ -434,47 +534,70 @@ UI::UI() {
       o->callback((fltk::Callback*)cb_bpm_wheel);
       o->align(fltk::ALIGN_LEFT);
     }
-     {fltk::ValueInput* o = new fltk::ValueInput(145, 85, 45, 20, "metronome lead-in");
+     {fltk::ValueInput* o = mur = new fltk::ValueInput(145, 85, 45, 20, "measures until record");
       o->maximum(128);
       o->step(1);
-      o->value(4);
+      o->value(1);
+      o->callback((fltk::Callback*)cb_mur);
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(145, 110, 25, 25, "always hard copy");
+     {fltk::CheckButton* o = check_alwayscopy = new fltk::CheckButton(145, 110, 25, 25, "always hard copy");
+      o->callback((fltk::Callback*)cb_check_alwayscopy);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("instead of making a linked clone when you copy a block in the song view.");
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(285, 110, 25, 25, "auto track name");
+     {fltk::CheckButton* o = check_autotrackname = new fltk::CheckButton(285, 110, 25, 25, "auto track name");
+      o->callback((fltk::Callback*)cb_check_autotrackname);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Fill in GM instruments for track names when you change the program.");
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(145, 135, 25, 26, "record pass-thru");
+     {fltk::CheckButton* o = check_passthru = new fltk::CheckButton(145, 135, 25, 26, "record pass-thru");
       o->set_flag(fltk::STATE);
+      o->callback((fltk::Callback*)cb_check_passthru);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Echo midi input to midi output.");
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(285, 135, 25, 26, "play note insertion");
+     {fltk::CheckButton* o = check_playinsert = new fltk::CheckButton(285, 135, 25, 26, "play note insertion");
       o->set_flag(fltk::STATE);
+      o->callback((fltk::Callback*)cb_check_playinsert);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Send midi note on when you create notes.");
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(145, 160, 25, 26, "follow playback");
-      o->set_flag(fltk::STATE);
+     {fltk::CheckButton* o = check_recordonchan = new fltk::CheckButton(145, 160, 25, 25, "record on channel");
+      o->callback((fltk::Callback*)cb_check_recordonchan);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Record on first track that matches channel of midi input instead of selected \
+track.");
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(285, 160, 25, 26, "play note selection");
+     {fltk::CheckButton* o = check_playmove = new fltk::CheckButton(285, 160, 25, 26, "play note move");
       o->set_flag(fltk::STATE);
+      o->callback((fltk::Callback*)cb_check_playmove);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Send midi note on when you move notes.");
     }
-     {fltk::CheckButton* o = new fltk::CheckButton(285, 185, 25, 25, "quantize note off");
+     {fltk::CheckButton* o = check_follow = new fltk::CheckButton(145, 184, 25, 26, "follow playback");
       o->set_flag(fltk::STATE);
+      o->callback((fltk::Callback*)cb_check_follow);
       o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Auto scroll horizontally when play head leaves viewing area.");
+    }
+     {fltk::CheckButton* o = check_quantizedur = new fltk::CheckButton(285, 185, 25, 25, "quantize note off");
+      o->set_flag(fltk::STATE);
+      o->callback((fltk::Callback*)cb_check_quantizedur);
+      o->align(fltk::ALIGN_LEFT);
+      o->tooltip("Quantize the length of notes when using the quantizer.");
     }
      {fltk::Choice* o = new fltk::Choice(145, 215, 160, 25, "record mode");
       o->begin();
-      new fltk::Item("merge");
-      new fltk::Item("overwrite");
-      new fltk::Item("layer");
+       {fltk::Item* o = new fltk::Item("merge");
+        o->callback((fltk::Callback*)cb_merge);
+      }
+       {fltk::Item* o = new fltk::Item("overwrite");
+        o->callback((fltk::Callback*)cb_overwrite);
+      }
+       {fltk::Item* o = new fltk::Item("layer");
+        o->callback((fltk::Callback*)cb_layer);
+      }
       o->end();
-    }
-     {fltk::CheckButton* o = new fltk::CheckButton(145, 185, 25, 25, "pattern x-ray");
-      o->set_flag(fltk::STATE);
-      o->align(fltk::ALIGN_LEFT);
     }
     o->end();
     o->resizable(o);
@@ -584,7 +707,7 @@ UI::UI() {
     o->end();
   }
   loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
-  keyboard_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/keys.gif"));
+  color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
   config_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
   file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
   help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
@@ -597,5 +720,6 @@ UI::UI() {
   qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
   qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));
   track_info->set_rec(0);
+  config_init();
   main_window->show();
 }

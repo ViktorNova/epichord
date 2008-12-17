@@ -29,11 +29,18 @@
 #include "ui.h"
 #include "backend.h"
 
+#include "uihelper.h"
 
 extern UI* ui;
 extern std::vector<track*> tracks;
 
+struct conf config;
 
+
+void config_init(){
+  //todo: load a config file instead
+  config.autotrackname = 0;
+}
 
 void playing_timeout_cb(void* v){
   if(!is_backend_playing()){
@@ -226,3 +233,54 @@ void set_quant(int q){
       break;
   }
 }
+
+
+void set_beats_per_measure(int n){
+  config.beats_per_measure = n;
+}
+
+void set_measures_per_phrase(int n){
+  config.measures_per_phrase = n;
+}
+
+void set_mur(int n){
+  config.measures_until_record = n;
+}
+
+void set_alwayscopy(int v){
+  config.alwayscopy = v;
+}
+
+void set_autotrackname(int v){
+  config.autotrackname = v;
+}
+
+void set_passthru(int v){
+  config.passthru = v;
+}
+
+void set_playinsert(int v){
+  config.playinsert = v;
+}
+
+void set_recordonchan(int v){
+  config.recordonchan = v;
+}
+
+void set_playmove(int v){
+  config.playmove = v;
+}
+
+void set_follow(int v){
+  config.follow = v;
+}
+
+void set_quantizedur(int v){
+  config.quantizedur = v;
+}
+
+void set_recordmode(int n){
+  config.recordmode = n;
+}
+
+

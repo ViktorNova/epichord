@@ -81,7 +81,7 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   keymap::lower[15] = ';';
   keymap::lower[16] = '/';
   keymap::lower[17] = '\'';
-  keymap::lower[18] = 'a';
+  keymap::lower[18] = ' ';
 
   keymap::upper[0] = 'q';
   keymap::upper[1] = '2';
@@ -96,11 +96,11 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   keymap::upper[10] = '7';
   keymap::upper[11] = 'u';
   keymap::upper[12] = 'i';
-  keymap::upper[13] = '9';
+  keymap::upper[13] = ' ';
   keymap::upper[14] = 'o';
   keymap::upper[15] = '0';
   keymap::upper[16] = 'p';
-  keymap::upper[17] = '4';
+  keymap::upper[17] = ' ';
 
   keymap::octaveup = ']';
   keymap::octavedown = '[';

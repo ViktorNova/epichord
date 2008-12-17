@@ -115,7 +115,7 @@ private:
       inline void cb_loop_toggle_i(fltk::Button*, void*);
       static void cb_loop_toggle(fltk::Button*, void*);
 public:
-      fltk::Button *keyboard_toggle;
+      fltk::Button *color_toggle;
       fltk::Button *config_button;
 private:
       inline void cb_config_button_i(fltk::Button*, void*);
@@ -132,11 +132,69 @@ private:
       static void cb_help_button(fltk::Button*, void*);
 public:
   fltk::Window *config_window;
+    fltk::ValueInput *beats_per_measure;
+private:
+    inline void cb_beats_per_measure_i(fltk::ValueInput*, void*);
+    static void cb_beats_per_measure(fltk::ValueInput*, void*);
+    inline void cb_measures_i(fltk::ValueInput*, void*);
+    static void cb_measures(fltk::ValueInput*, void*);
+public:
     fltk::ValueOutput *bpm_output;
     fltk::ThumbWheel *bpm_wheel;
 private:
     inline void cb_bpm_wheel_i(fltk::ThumbWheel*, void*);
     static void cb_bpm_wheel(fltk::ThumbWheel*, void*);
+public:
+    fltk::ValueInput *mur;
+private:
+    inline void cb_mur_i(fltk::ValueInput*, void*);
+    static void cb_mur(fltk::ValueInput*, void*);
+public:
+    fltk::CheckButton *check_alwayscopy;
+private:
+    inline void cb_check_alwayscopy_i(fltk::CheckButton*, void*);
+    static void cb_check_alwayscopy(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_autotrackname;
+private:
+    inline void cb_check_autotrackname_i(fltk::CheckButton*, void*);
+    static void cb_check_autotrackname(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_passthru;
+private:
+    inline void cb_check_passthru_i(fltk::CheckButton*, void*);
+    static void cb_check_passthru(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_playinsert;
+private:
+    inline void cb_check_playinsert_i(fltk::CheckButton*, void*);
+    static void cb_check_playinsert(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_recordonchan;
+private:
+    inline void cb_check_recordonchan_i(fltk::CheckButton*, void*);
+    static void cb_check_recordonchan(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_playmove;
+private:
+    inline void cb_check_playmove_i(fltk::CheckButton*, void*);
+    static void cb_check_playmove(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_follow;
+private:
+    inline void cb_check_follow_i(fltk::CheckButton*, void*);
+    static void cb_check_follow(fltk::CheckButton*, void*);
+public:
+    fltk::CheckButton *check_quantizedur;
+private:
+    inline void cb_check_quantizedur_i(fltk::CheckButton*, void*);
+    static void cb_check_quantizedur(fltk::CheckButton*, void*);
+      inline void cb_merge_i(fltk::Item*, void*);
+      static void cb_merge(fltk::Item*, void*);
+      inline void cb_overwrite_i(fltk::Item*, void*);
+      static void cb_overwrite(fltk::Item*, void*);
+      inline void cb_layer_i(fltk::Item*, void*);
+      static void cb_layer(fltk::Item*, void*);
 public:
   fltk::Window *help_window;
         fltk::Input *title_text;
