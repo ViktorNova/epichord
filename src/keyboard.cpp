@@ -294,8 +294,8 @@ void Keyboard::set_sustain(int state){
   if(state==0){
     for(int i=0; i<128; i++){
       if(ons[i]==1 && helds[i]==0){
-        ons[i]=0;
-        midi_note_off(i,cur_chan,cur_port);
+        //midi_note_off(i,cur_chan,cur_port);
+        release_note(i,1);
       }
     }
     redraw();
@@ -313,7 +313,7 @@ int Keyboard::handle(int event){
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
       cur_note = note;
       helds[note] = 1;
-      play_note(note);
+      play_note(note,1);
       return 1;
     case fltk::RELEASE:
       if(cur_note!=-1){
@@ -321,7 +321,7 @@ int Keyboard::handle(int event){
       }
       cur_note=-1;
       if(sustain == 0){
-        cut_notes();
+        cut_notes(1);
         redraw();
       }
       return 1;
@@ -331,17 +331,17 @@ int Keyboard::handle(int event){
         helds[cur_note]=0;
         cur_note = note;
         if(sustain == 0){
-          cut_notes();
+          cut_notes(1);
         }
         helds[note]=1;
-        play_note(note);
+        play_note(note,1);
       }
       return 1;
   }
   return 0;
 }
 
-void Keyboard::play_note(int note){
+void Keyboard::play_note(int note, int rec){
   if(ons[note]==1){
     return;
   }
@@ -354,10 +354,15 @@ void Keyboard::play_note(int note){
 
   ons[note] = 1;
   helds[note] = 1;
+
+  if(rec && is_backend_recording()){
+    send_midi_local(buf,3);
+  }
+
   redraw();
 }
 
-void Keyboard::release_note(int note){
+void Keyboard::release_note(int note, int rec){
   if(ons[note]==0){
     return;
   }
@@ -375,42 +380,45 @@ void Keyboard::release_note(int note){
   send_midi(buf,3,cur_port);
 
   ons[note] = 0;
+  if(rec && is_backend_recording()){
+    send_midi_local(buf,3);
+  }
+
   redraw();
 }
 
 void Keyboard::kb_play_note(int note){
   int raw = octave*12 + note;
   if(raw < 128 && raw >= 0){
-    play_note(raw);
+    play_note(raw,1);
   }
 }
 
 void Keyboard::kb_release_note(int note){
   int raw = octave*12 + note;
   if(raw < 128 && raw >= 0){
-    release_note(raw);
+    release_note(raw,1);
   }
 }
 
 void Keyboard::octave_up(){
   if(octave < 9){
-    cut_notes();
+    cut_notes(1);
     octave++;
   }
 }
 
 void Keyboard::octave_down(){
   if(octave > 0){
-    cut_notes();
+    cut_notes(1);
     octave--;
   }
 }
 
-void Keyboard::cut_notes(){
+void Keyboard::cut_notes(int rec){
   for(int i=0; i<128; i++){
     if(ons[i]){
-      ons[i] = 0;
-      midi_note_off(i,cur_chan,cur_port);
+      release_note(i,rec);
     }
   }
 }

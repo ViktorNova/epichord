@@ -52,6 +52,7 @@ void set_bpm(int new_bpm);
 int get_play_position();
 
 void send_midi(char* raw, uint16_t n, uint8_t p);
+void send_midi_local(char* raw, uint16_t n);
 int recv_midi(int* chan, int* tick, int* type, int* val1, int* val2);
 void all_notes_off();
 

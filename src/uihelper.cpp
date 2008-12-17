@@ -49,9 +49,55 @@ void playing_timeout_cb(void* v){
   int val1;
   int val2;
   
-  while(recv_midi(&chan,&tick,&type,&val1,&val2)){
-      printf("recording midi input\n");
+  track* t = tracks[get_rec_track()];
+  Command* c;
+  seqpat* s;
+  pattern* p;
 
+
+  while(recv_midi(&chan,&tick,&type,&val1,&val2)){
+     // printf("recv_midi: ch:%d t:%d m:%x %x %x\n",chan,tick,type,val1,val2);
+
+      switch(type){
+        case 0x80://note off
+          s = tfind<seqpat>(t->head,tick);
+          if(s->tick+s->dur < tick){
+            //printf("rec head outside block\n");
+            continue;
+          }
+          p = s->p;
+          c=new CreateNoteOff(p,val1,val2,tick-s->tick);
+          set_undo(c);
+          undo_push(1);
+          if(ui->piano_roll->visible())
+            ui->piano_roll->redraw();
+          if(ui->arranger->visible())
+            ui->arranger->redraw();
+          break;
+        case 0x90://note on
+          s = tfind<seqpat>(t->head,tick);
+          if(s->tick+s->dur < tick){
+            //printf("rec head outside block\n");
+            continue;
+          }
+          p = s->p;
+          c=new CreateNoteOn(p,val1,val2,tick-s->tick,16);
+          set_undo(c);
+          undo_push(1);
+          if(ui->piano_roll->visible())
+            ui->piano_roll->redraw();
+          if(ui->arranger->visible())
+            ui->arranger->redraw();
+          break;
+        case 0xa0://aftertouch
+        case 0xb0://controller
+        case 0xc0://program change
+        case 0xd0://channel pressure
+        case 0xe0://pitch wheel
+          printf("other message\n");
+          //other messages
+          break;
+      }
       /*
 note on - insert a note on event with dur 32
 note off - insert a note off event, then resize previous note on

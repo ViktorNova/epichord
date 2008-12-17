@@ -42,6 +42,7 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   wkeyh = 12;
   bkeyh = 7;
   cur_seqpat = NULL;
+  main_sel = NULL;
 
   zoom = 30;
   zoom_n = 4;
@@ -98,7 +99,7 @@ int PianoRoll::handle(int event){
 
           last_note = new_note;
           if(1){//play on insert
-            ui->keyboard->play_note(last_note);
+            ui->keyboard->play_note(last_note,0);
           }
         }
         else{
@@ -115,7 +116,7 @@ int PianoRoll::handle(int event){
 
             last_note = move_note;
             if(1){//play on move
-              ui->keyboard->play_note(last_note);
+              ui->keyboard->play_note(last_note,0);
             }
           }
           redraw();
@@ -147,11 +148,11 @@ int PianoRoll::handle(int event){
         }
         new_note = ypix2note(event_y(),1);
         if(new_note != last_note){
-          last_note = new_note;
           if(1){//play on insert
-            ui->keyboard->cut_notes();
-            ui->keyboard->play_note(last_note);
+            ui->keyboard->release_note(last_note,0);
+            ui->keyboard->play_note(new_note,0);
           }
+          last_note = new_note;
         }
         redraw();
         return 1;
@@ -160,11 +161,11 @@ int PianoRoll::handle(int event){
         move_t = quantize(xpix2tick(event_x())) - move_offset;
         move_note = ypix2note(event_y(),1);
         if(move_note != last_note){
-          last_note = move_note;
           if(1){//play on move
-            ui->keyboard->cut_notes();
-            ui->keyboard->play_note(last_note);
+            ui->keyboard->release_note(last_note,0);
+            ui->keyboard->play_note(move_note,0);
           }
+          last_note = move_note;
         }
         redraw();
         return 1;
@@ -173,10 +174,10 @@ int PianoRoll::handle(int event){
       if(event_button()==1){
         if(new_drag && new_note < 128 && new_note >= 0){
           p = cur_seqpat->p;
-          c=new CreateNote(p,new_note,new_left_t,new_right_t-new_left_t);
+          c=new CreateNote(p,new_note,127,new_left_t,new_right_t-new_left_t);
           set_undo(c);
           undo_push(1);
-          ui->keyboard->cut_notes();
+          ui->keyboard->release_note(new_note,0);
           ui->keyboard->redraw();
         }
         else if(move_flag && move_note < 128 && move_note >= 0){
@@ -195,7 +196,7 @@ int PianoRoll::handle(int event){
           int cur_port = tracks[cur_seqpat->track]->port;
           midi_note_off(old_note,cur_chan,cur_port);
 
-          ui->keyboard->cut_notes();
+          ui->keyboard->release_note(move_note,0);
           ui->keyboard->redraw();
         }
         new_drag=0;

@@ -15,6 +15,10 @@ the event editor
   menu
 import midi file
 record midi input
+  overwrite mode
+  layer mode
+  out of bounds behavior
+  metronome lead in
 undo and redo
 graphical upgrades
 trackselect in piano roll

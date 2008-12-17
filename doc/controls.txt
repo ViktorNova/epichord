@@ -17,21 +17,20 @@ middle click - paste clone pattern
 !control y - redo
 !control a - select none / select all
 
-!= - zoom in
-!- - zoom out
+= - zoom in
+- - zoom out
 
 !control s - save
 !control o - open
 !control w - save as
 !control n - erase everything
 
-!space bar - start/pause playback
 !backspace - reset play head
 !return - toggle recording
 
 
 
-You can play notes with the keyboard. (doesnt work yet)
+You can play notes with the keyboard.
 This is the layout for qwerty. (customize doesnt work yet)
 
  # #   # # #   # #
@@ -43,8 +42,8 @@ q w e r t y u i o p
  s d   g h j   k l
 z x c v b n m , . /
 
-![ - octave down one
-!] - octave up one
+[ - octave down one
+] - octave up one
 
 
 

@@ -379,6 +379,14 @@ void send_midi(char* raw, uint16_t n, uint8_t port){
   jack_ringbuffer_write(outbuf,buf,3+n);
 }
 
+void send_midi_local(char* raw, uint16_t n){
+  uint32_t tick = cur_tick;
+  uint16_t size = n;
+  jack_ringbuffer_write(inbuf,(char*)&tick,4);
+  jack_ringbuffer_write(inbuf,(char*)&size,2);
+  jack_ringbuffer_write(inbuf,raw,n);
+}
+
 //get next incoming midi event for gui thread
 int recv_midi(int* chan, int* tick, int* type, int* val1, int* val2){
   uint16_t n;
@@ -521,7 +529,7 @@ int is_backend_playing(){
 }
 
 int is_backend_recording(){
-  return recording;
+  return recording&&playing;
 }
 
 void toggle_loop(){

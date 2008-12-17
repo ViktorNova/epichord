@@ -6,14 +6,27 @@ The first screen that opens is the song view. You can use this to configure
 the initial state of the tracks and manipulate the song at a high level.
 
 On the left is the track info panel which has a vertical list of tracks and
-their configuration. In each track entry there is a multi-function button, the
-track name, the volume adjuster, the pan adjuster, the solo button and the
-mute button. Right click the multifunction button to delete the track. Click
-under the last track to create a new blank track.
+their configuration. Each track has the following widgets in the track 
+info from left to right:
 
-By pressing the + button at the top of the track info panel, you toggle the
-track info between two modes. The second mode allows you to set the output
-port, the midi channel, and the initial program for each track.
+input selector - clicking here makes the keys appear next that track. 
+midi input and keyboard input will be recorded on this track.
+
+track name - type anything you want here to describe the track.
+
+volume control - sets the initial volume of the channel.
+pan control - sets the initial pan of the channel.
+solo toggle - if enabled only this channel will play
+mute toggle - if enabled this channel will not play.
+
+by pressing the + button at the top of the track info panel, you toggle
+whether four more track settings are shown, from leftmost to rightmost:
+
+program - select the program for this track
+bank - select the bank for this track
+channel - select the channel for this track
+port - select which port this track sends on
+
 
 On the right is the pattern arranger. You use this to create delete copy move
 and resize patterns in the song.
@@ -31,7 +44,7 @@ stop button (square)  - stop playback and reset to time zero
 record button (circle)- toggle whether midi input is recorded
 
 loop button - toggle whether the play will loop between current loop endpoints.
-keyboard button - toggle whether computer keyboard acts as midi keyboard.
+keyboard button - change keyboard layout
 oscillo button - open the configuration window
 floppy button - open the save/load menu
 question button - open the info/help window

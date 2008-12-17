@@ -41,9 +41,9 @@ class Keyboard : public fltk::Widget {
 
     Keyboard(int x, int y, int w, int h, const char* label);
 
-    void play_note(int note);
-    void release_note(int note);
-    void cut_notes();
+    void play_note(int note, int rec);
+    void release_note(int note, int rec);
+    void cut_notes(int rec);
     void set_sustain(int state);
 
     void kb_play_note(int note);

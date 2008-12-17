@@ -174,6 +174,9 @@ void set_rec_track(int t){
   rec_track = t;
 }
 
+int get_rec_track(){
+  return rec_track;
+}
 
 void set_undo(Command* c){
   if(undo_ptr != undo_stack.end()){
@@ -386,14 +389,70 @@ void CreateNote::undo(){
   tremove<mevent>(e2);
 }
 
+void CreateNoteOn::redo(){
+  mevent* targ = tfind<mevent>(p->events, e1->tick);
+  tinsert<mevent>(targ, e1);
+  //targ = tfind<mevent>(p->events, e2->tick);
+  //tinsert<mevent>(targ, e2);
+}
+
+void CreateNoteOn::undo(){
+  tremove<mevent>(e1);
+  //tremove<mevent>(e2);
+}
+
+
+CreateNoteOff::CreateNoteOff(pattern* zp, int note, int vel, int tick){
+  p = zp;
+  e1 = NULL;
+  mevent* ptr = tfind<mevent>(zp->events,tick);
+  while(ptr){
+    if(ptr->type == MIDI_NOTE_ON && ptr->value1 == note){
+      dur1 = ptr->dur;
+      dur2 = tick - ptr->tick;
+      e1 = ptr;
+      break;
+    }
+    if(ptr->type == MIDI_NOTE_OFF && ptr->value1 == note){
+      break;
+    }
+    ptr = ptr->prev;
+  }
+  e2 = new mevent(MIDI_NOTE_OFF, tick, note);
+  e2->value2 = vel;
+}
+
+void CreateNoteOff::redo(){
+  //mevent* targ = tfind<mevent>(p->events, e1->tick);
+  //tinsert<mevent>(targ, e1);
+  mevent* targ;
+  targ = tfind<mevent>(p->events, e2->tick);
+  tinsert<mevent>(targ, e2);
+  if(e1){
+    e1->dur = dur2;
+  }
+}
+
+void CreateNoteOff::undo(){
+  //tremove<mevent>(e1);
+  if(e1){
+    e1->dur = dur1;
+  }
+  tremove<mevent>(e2);
+}
+
 void DeleteNote::redo(){
   tremove<mevent>(e1);
-  tremove<mevent>(e2);
+  if(e2){
+    tremove<mevent>(e2);
+  }
 }
 
 void DeleteNote::undo(){
   tinsert<mevent>(e1->prev,e1);
-  tinsert<mevent>(e2->prev,e2);
+  if(e2){
+    tinsert<mevent>(e2->prev,e2);
+  }
 }
 
 

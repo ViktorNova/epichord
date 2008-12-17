@@ -134,6 +134,7 @@ struct seqpat {
     skip = NULL;
     prev = NULL;
     next = NULL;
+    dur=0;
   }
 
   seqpat(int ztrack, int ztick, int zdur, pattern* zp){
@@ -388,16 +389,56 @@ class CreateNote : public Command {
 
   public:
 
-    CreateNote(pattern* zp, int note, int tick, int dur){
+    CreateNote(pattern* zp, int note, int vel, int tick, int dur){
       p = zp;
       e1 = new mevent(MIDI_NOTE_ON, tick, note);
       e1->dur = dur;
+      e1->value2 = vel;
       e2 = new mevent(MIDI_NOTE_OFF, tick+dur, note);
       //e->off = new mevent(MIDI_NOTE_OFF, tick+dur, note);
     }
     ~CreateNote(){
       //delete e->off;
       delete e1;
+      delete e2;
+    }
+
+    void redo();
+    void undo();
+};
+
+class CreateNoteOn : public Command {
+    pattern* p;
+    mevent* e1;
+
+  public:
+
+    CreateNoteOn(pattern* zp, int note, int vel, int tick, int dur){
+      p = zp;
+      e1 = new mevent(MIDI_NOTE_ON, tick, note);
+      e1->value2 = vel;
+      e1->dur = dur;
+    }
+    ~CreateNoteOn(){
+      delete e1;
+    }
+
+    void redo();
+    void undo();
+};
+
+class CreateNoteOff : public Command {
+    pattern* p;
+    mevent* e1;
+    mevent* e2;
+
+    int dur1;
+    int dur2;
+
+  public:
+
+    CreateNoteOff(pattern* zp, int note, int vel, int tick);
+    ~CreateNoteOff(){
       delete e2;
     }
 
@@ -539,6 +580,7 @@ int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick));
 int set_seq_pos(int new_tick);
 
 void set_rec_track(int t);
+int get_rec_track();
 
 void set_undo(Command* c);
 void undo_push(int n);
