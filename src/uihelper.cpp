@@ -268,6 +268,7 @@ void set_autotrackname(int v){
 
 void set_passthru(int v){
   config.passthru = v;
+  backend_set_passthru(v);
 }
 
 void set_playinsert(int v){

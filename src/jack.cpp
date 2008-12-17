@@ -57,7 +57,7 @@ static int looping = 0;
 static int recording=0;
 static int loop_start = 0;
 static int loop_end = 512;
-static int pass_through = 1;
+static int passthru = 1;
 static int rec_port = 0;
 
 static int init_chans = 1;
@@ -159,7 +159,7 @@ static int process(jack_nframes_t nframes, void* arg){
     jack_midi_event_get(&me,pbi,i);
     md1 = me.buffer;
     //printf("%d got midi event, type 0x%x, value 0x%x 0x%x\n",i,md1[0],md1[1],md1[2]);
-    if(pass_through){
+    if(passthru){
       md2 = jack_midi_event_reserve(pbo[rec_port],0,me.size);
       if(md2 == NULL){
         printf("passthru: can't reserve midi event\n");
@@ -493,6 +493,11 @@ void midi_channel_off(int chan, int port){
   buf[0] = 0xB0 | chan;
   buf[1] = 120;
   send_midi(buf,3,port);
+}
+
+
+void backend_set_passthru(int v){
+  passthru = v;
 }
 
 void set_loop_start(int tick){
