@@ -39,7 +39,18 @@ struct conf config;
 
 void config_init(){
   //todo: load a config file instead
+  config.beats_per_measure = 4;
+  config.measures_per_phrase = 4;
+  config.measures_until_record = 1;
+  config.alwayscopy = 0;
   config.autotrackname = 0;
+  config.passthru = 1;
+  config.playinsert = 1;
+  config.recordonchan = 0;
+  config.playmove = 1;
+  config.follow = 1;
+  config.quantizedur = 1;
+  config.recordmode = 0;
 }
 
 void playing_timeout_cb(void* v){

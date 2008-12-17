@@ -33,8 +33,12 @@
 
 #include "backend.h"
 
+#include "uihelper.h"
+
 extern UI* ui;
 extern std::vector<track*> tracks;
+
+extern struct conf config;
 
 using namespace fltk;
 
@@ -98,7 +102,7 @@ int PianoRoll::handle(int event){
           new_right_t = new_left_t + q_tick;
 
           last_note = new_note;
-          if(1){//play on insert
+          if(config.playinsert){
             ui->keyboard->play_note(last_note,0);
           }
         }
@@ -115,7 +119,7 @@ int PianoRoll::handle(int event){
             move_note = ypix2note(event_y(),1);
 
             last_note = move_note;
-            if(1){//play on move
+            if(config.playmove){
               ui->keyboard->play_note(last_note,0);
             }
           }
@@ -148,7 +152,7 @@ int PianoRoll::handle(int event){
         }
         new_note = ypix2note(event_y(),1);
         if(new_note != last_note){
-          if(1){//play on insert
+          if(config.playinsert){//play on insert
             ui->keyboard->release_note(last_note,0);
             ui->keyboard->play_note(new_note,0);
           }
@@ -161,7 +165,7 @@ int PianoRoll::handle(int event){
         move_t = quantize(xpix2tick(event_x())) - move_offset;
         move_note = ypix2note(event_y(),1);
         if(move_note != last_note){
-          if(1){//play on move
+          if(config.playmove){//play on move
             ui->keyboard->release_note(last_note,0);
             ui->keyboard->play_note(move_note,0);
           }
