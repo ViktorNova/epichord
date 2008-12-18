@@ -28,11 +28,13 @@
 
 #include "ui.h"
 
-
+#include "uihelper.h"
 
 extern UI* ui;
 
 extern std::vector<track*> tracks;
+
+extern struct conf config;
 
 using namespace fltk;
 
@@ -114,7 +116,7 @@ int Arranger::handle(int event){
           new_left_t = quantize(xpix2tick(event_x()));
           new_orig_t = new_left_t;
           new_track = event_y() / 30;
-          new_right_t = new_left_t + q_tick;
+          new_right_t = new_left_t + quantize(q_tick);
         }
         else{
           //if shift, add to selection
@@ -138,15 +140,19 @@ int Arranger::handle(int event){
             ui->track_info->set_rec(main_sel->track);
             ui->song_edit->hide();
             ui->song_edit->deactivate();
+            ui->song_buttons->hide();
+            //ui->song_buttons->deactivate();
             ui->pattern_edit->take_focus();
             ui->pattern_edit->show();
+            ui->pattern_buttons->show();
+            //ui->pattern_buttons->activate();
             return 1;
           }
           if(over_handle(main_sel)){//begin resize or resize move
           }
           else{//begin move
             move_start = 1;
-            move_t = main_sel->tick;
+            move_t = quantize(main_sel->tick);
             move_offset = quantize(xpix2tick(event_x())) - move_t;
             move_track = event_y() / 30;
           }
@@ -207,7 +213,7 @@ int Arranger::handle(int event){
       if(new_drag){
         new_right_t = quantize(xpix2tick(event_x())+q_tick);
         if(new_right_t <= new_orig_t){
-          new_left_t = new_right_t - q_tick;
+          new_left_t = new_right_t - quantize(q_tick);
           new_right_t = new_orig_t;
         }
         else{
@@ -281,12 +287,20 @@ void Arranger::draw(){
   fltk::fillrect(0,0,w(),h());
 
   fltk::setcolor(fltk::GRAY20);
-  for(int i=zoom; i<w(); i+=zoom){
-    fltk::drawline(i,0,i,h());
+  int M = config.beats_per_measure;
+  int I=0;
+  for(int i=1; I<w(); i++){
+    I = i*zoom*M/4;
+    fltk::fillrect(I,0,1,h());
   }
   fltk::setcolor(fltk::GRAY50);
-  for(int i=zoom*4; i<w(); i+=zoom*4){
-    fltk::drawline(i,0,i,h());
+  int P = config.measures_per_phrase;
+  if(P){
+    I=0;
+    for(int i=1; I<w(); i++){
+      I = i*zoom*4*P*M/4/4;
+      fltk::fillrect(I,0,1,h());
+    }
   }
 
   if(new_drag){
@@ -467,6 +481,7 @@ int Arranger::xpix2tick(int xpix){
 }
 
 int Arranger::quantize(int tick){
-  return tick/q_tick * q_tick;
+  int M = config.beats_per_measure;
+  return tick/(q_tick*M/4) * (q_tick*M/4);
 }
 

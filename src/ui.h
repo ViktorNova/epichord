@@ -75,6 +75,7 @@ private:
       inline void cb_record_button_i(fltk::Button*, void*);
       static void cb_record_button(fltk::Button*, void*);
 public:
+      fltk::Group *pattern_buttons;
         fltk::Button *qbutton4;
 private:
         inline void cb_qbutton4_i(fltk::Button*, void*);
@@ -110,15 +111,20 @@ private:
         inline void cb_qbutton0_i(fltk::Button*, void*);
         static void cb_qbutton0(fltk::Button*, void*);
 public:
+        fltk::Button *quant_button;
+      fltk::Group *song_buttons;
+        fltk::Button *color_toggle;
+private:
+        inline void cb_color_toggle_i(fltk::Button*, void*);
+        static void cb_color_toggle(fltk::Button*, void*);
+public:
+        fltk::Button *unclone_button;
+        fltk::Button *join_button;
+        fltk::Button *split_button;
       fltk::Button *loop_toggle;
 private:
       inline void cb_loop_toggle_i(fltk::Button*, void*);
       static void cb_loop_toggle(fltk::Button*, void*);
-public:
-      fltk::Button *color_toggle;
-private:
-      inline void cb_color_toggle_i(fltk::Button*, void*);
-      static void cb_color_toggle(fltk::Button*, void*);
 public:
       fltk::Button *config_button;
 private:

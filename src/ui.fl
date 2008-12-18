@@ -117,9 +117,10 @@ o->resize(1000,30*16);}
               xywh {0 0 595 15}
             } {
               {fltk::Widget} pattern_timeline {
-                label timeline
+                label timeline selected
                 xywh {0 0 580 15} resizable box FLAT_BOX
-                extra_code {\#include "timeline.h"}
+                extra_code {\#include "timeline.h"
+o->edit_flag = 1;}
                 class Timeline
               }
             }
@@ -199,9 +200,11 @@ o->resize(960,900);}
             {fltk::Button} {} {
               label {@<-}
               callback {ui->pattern_edit->hide();
+ui->pattern_buttons->hide();
 ui->song_edit->activate();
 ui->song_edit->show();
-ui->song_edit->take_focus();}
+ui->song_edit->take_focus();
+ui->song_buttons->show();}
               xywh {0 370 45 75}
             }
           }
@@ -229,8 +232,8 @@ ui->song_edit->take_focus();}
         {fltk::Group} {} {open
           xywh {95 0 20 35} resizable
         } {}
-        {fltk::Group} {} {open
-          xywh {275 5 175 25}
+        {fltk::Group} pattern_buttons {open
+          xywh {280 5 205 25} hide
         } {
           {fltk::Button} qbutton4 {
             callback {set_quant(4);}
@@ -268,16 +271,39 @@ o->state(1);}
             xywh {150 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
+          {fltk::Button} quant_button {
+            label qua
+            xywh {180 0 25 25}
+          }
+        }
+        {fltk::Group} song_buttons {
+          xywh {370 5 115 25}
+        } {
+          {fltk::Button} color_toggle {
+            callback {arranger->color_flag = o->state();}
+            tooltip {color tool}
+            xywh {0 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} unclone_button {
+            label dclo
+            tooltip {color tool}
+            xywh {30 0 25 25}
+          }
+          {fltk::Button} join_button {
+            label join
+            tooltip {color tool}
+            xywh {60 0 25 25}
+          }
+          {fltk::Button} split_button {
+            label split
+            tooltip {color tool}
+            xywh {90 0 25 25}
+          }
         }
         {fltk::Button} loop_toggle {
           callback {toggle_loop();}
           tooltip {toggle looping}
-          xywh {490 5 25 25}
-          extra_code {o->type(fltk::Button::TOGGLE);}
-        }
-        {fltk::Button} color_toggle {
-          callback {arranger->color_flag = o->state();} selected
-          tooltip {color tool}
           xywh {520 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }

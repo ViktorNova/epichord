@@ -48,8 +48,8 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   cur_seqpat = NULL;
   main_sel = NULL;
 
-  zoom = 30;
-  zoom_n = 4;
+  zoom = 15;
+  zoom_n = 3;
 
   q_tick = 32;
 }
@@ -113,7 +113,7 @@ int PianoRoll::handle(int event){
           }
           else{//begin move
             move_flag = 1;
-            move_t = main_sel->tick;
+            move_t = quantize(main_sel->tick);
             move_offset = quantize(xpix2tick(event_x())) - move_t;
             //move_track = event_y() / 30;
             move_note = ypix2note(event_y(),1);
@@ -248,6 +248,16 @@ void PianoRoll::draw(){
     fltk::drawline(i,0,i,h());
   }
 
+  fltk::setcolor(fltk::WHITE);
+  int M = config.beats_per_measure;
+  for(int i=zoom*4*M; i<w(); i+=zoom*4*M){
+    fltk::fillrect(i,0,1,h());
+  }
+
+  fltk::setcolor(fltk::RED);
+  int rightend = tick2xpix(cur_seqpat->dur);
+  fltk::fillrect(rightend,0,1,h());
+
   fltk::setcolor(fltk::color(128,128,0));
   fltk::drawline(0,12*40,w(),12*40);
 
@@ -319,6 +329,9 @@ void PianoRoll::layout(){
     kludge--;
     return;
   }
+
+  ui->pattern_timeline->zoom = zoom;
+  ui->event_edit->zoom = zoom;
 
   if(cur_seqpat){
     int W = tick2xpix(cur_seqpat->dur);

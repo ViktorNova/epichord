@@ -49,9 +49,11 @@ void UI::cb_(fltk::Button* o, void* v) {
 
 inline void UI::cb_1_i(fltk::Button*, void*) {
   ui->pattern_edit->hide();
+  ui->pattern_buttons->hide();
   ui->song_edit->activate();
   ui->song_edit->show();
   ui->song_edit->take_focus();
+  ui->song_buttons->show();
 }
 void UI::cb_1(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_1_i(o,v);
@@ -127,18 +129,18 @@ void UI::cb_qbutton0(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_qbutton0_i(o,v);
 }
 
+inline void UI::cb_color_toggle_i(fltk::Button* o, void*) {
+  arranger->color_flag = o->state();
+}
+void UI::cb_color_toggle(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_color_toggle_i(o,v);
+}
+
 inline void UI::cb_loop_toggle_i(fltk::Button*, void*) {
   toggle_loop();
 }
 void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
-}
-
-inline void UI::cb_color_toggle_i(fltk::Button* o, void*) {
-  arranger->color_flag = o->state();
-}
-void UI::cb_color_toggle(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_color_toggle_i(o,v);
 }
 
 inline void UI::cb_config_button_i(fltk::Button*, void*) {
@@ -366,6 +368,7 @@ UI::UI() {
              {Timeline* o = pattern_timeline = new Timeline(0, 0, 580, 15, "timeline");
               o->box(fltk::FLAT_BOX);
               fltk::Group::current()->resizable(o);
+              o->edit_flag = 1;
             }
             o->end();
           }
@@ -450,7 +453,8 @@ UI::UI() {
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }
-       {fltk::Group* o = new fltk::Group(275, 5, 175, 25);
+       {fltk::Group* o = pattern_buttons = new fltk::Group(280, 5, 205, 25);
+        o->hide();
         o->begin();
          {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);
@@ -481,16 +485,30 @@ UI::UI() {
           o->callback((fltk::Callback*)cb_qbutton0);
           o->type(fltk::Button::TOGGLE);
         }
+        quant_button = new fltk::Button(180, 0, 25, 25, "qua");
         o->end();
       }
-       {fltk::Button* o = loop_toggle = new fltk::Button(490, 5, 25, 25);
+       {fltk::Group* o = song_buttons = new fltk::Group(370, 5, 115, 25);
+        o->begin();
+         {fltk::Button* o = color_toggle = new fltk::Button(0, 0, 25, 25);
+          o->callback((fltk::Callback*)cb_color_toggle);
+          o->tooltip("color tool");
+          o->type(fltk::Button::TOGGLE);
+        }
+         {fltk::Button* o = unclone_button = new fltk::Button(30, 0, 25, 25, "dclo");
+          o->tooltip("color tool");
+        }
+         {fltk::Button* o = join_button = new fltk::Button(60, 0, 25, 25, "join");
+          o->tooltip("color tool");
+        }
+         {fltk::Button* o = split_button = new fltk::Button(90, 0, 25, 25, "split");
+          o->tooltip("color tool");
+        }
+        o->end();
+      }
+       {fltk::Button* o = loop_toggle = new fltk::Button(520, 5, 25, 25);
         o->callback((fltk::Callback*)cb_loop_toggle);
         o->tooltip("toggle looping");
-        o->type(fltk::Button::TOGGLE);
-      }
-       {fltk::Button* o = color_toggle = new fltk::Button(520, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_color_toggle);
-        o->tooltip("color tool");
         o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = config_button = new fltk::Button(550, 5, 25, 25);

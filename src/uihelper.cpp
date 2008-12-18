@@ -265,10 +265,18 @@ void set_quant(int q){
 
 void set_beats_per_measure(int n){
   config.beats_per_measure = n;
+  ui->piano_roll->redraw();
+  ui->arranger->redraw();
+  ui->song_timeline->redraw();
+  ui->pattern_timeline->redraw();
 }
 
 void set_measures_per_phrase(int n){
   config.measures_per_phrase = n;
+  ui->piano_roll->redraw();
+  ui->arranger->redraw();
+  ui->song_timeline->redraw();
+  ui->pattern_timeline->redraw();
 }
 
 void set_mur(int n){

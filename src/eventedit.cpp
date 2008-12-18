@@ -32,6 +32,10 @@
 
 #include "eventedit.h"
 
+#include "uihelper.h"
+
+extern struct conf config;
+
 extern UI* ui;
 extern std::vector<track*> tracks;
 
@@ -71,7 +75,7 @@ void EventEdit::draw(){
   fltk::push_clip(0,0,w(),h());
 
   fltk::setcolor(fltk::GRAY20);
-  fltk::drawtext(event_type_name(), 2, h()-3);
+  fltk::drawtext(event_type_name(), 2, h()-5);
 
   fltk::setcolor(fltk::GRAY20);
   fltk::fillrect(0,h()-3,w(),1);
@@ -83,6 +87,18 @@ void EventEdit::draw(){
   for(int i=zoom*4-scroll; i<w(); i+=zoom*4){
     fltk::drawline(i,0,i,h()-1);
   }
+
+  fltk::setcolor(fltk::WHITE);
+  int M = config.beats_per_measure;
+  int I = 0;
+  for(int i=1; I<w(); i++){
+    I = i*zoom*4*M - scroll;
+    fltk::fillrect(I,0,1,h());
+  }
+
+  fltk::setcolor(fltk::RED);
+  int rightend = tick2xpix(cur_seqpat->dur)-scroll;
+  fltk::fillrect(rightend,0,1,h());
 
   mevent* e = cur_seqpat->p->events->next;
   int v;

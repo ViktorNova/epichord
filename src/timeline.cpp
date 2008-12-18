@@ -36,6 +36,10 @@ extern UI* ui;
 
 #include "config.h"
 
+#include "uihelper.h"
+
+extern struct conf config;
+
 using namespace fltk;
 
 Timeline::Timeline(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
@@ -94,29 +98,64 @@ int Timeline::handle(int event){
 void Timeline::draw(){
 
   fltk::setfont(fltk::HELVETICA,12);
-
   fltk::setcolor(fltk::WHITE);
   fltk::fillrect(0,0,w(),h());
 
   fltk::push_clip(0,0,w(),h());
-
   fltk::setcolor(fltk::BLACK);
   fltk::drawline(0,h()-1,w()-1,h()-1);
-  for(int i=-scroll; i<w(); i+=zoom){
-    fltk::drawline(i,h()/2,i,h());
+
+  if(edit_flag){//draw pattern timeline
+
+    int M = config.beats_per_measure;
+
+    int I=0;
+    for(int i=0; I<w(); i++){
+      I = i*zoom - scroll;
+      fltk::fillrect(I,h()/2,1,h()/2);
+    }
+
+    fltk::setcolor(fltk::BLACK);
+
+    char buf[64];
+    int j = 0;
+
+    I=0;
+    for(int i=0; I<w(); i++){
+      I = i*zoom*4 - scroll;
+      fltk::fillrect(I,0,1,h()/2);
+      sprintf(buf,"%u",j*label_scale);
+      fltk::drawtext(buf,I+3,h()-3);
+      j++;
+    }
+
   }
+  else{//draw song timeline
 
-  fltk::setcolor(fltk::BLACK);
+    int M = config.beats_per_measure;
+    int P = config.measures_per_phrase;
+    int I=0;
+    for(int i=0; I<w(); i++){
+      I = i*zoom*M/4 - scroll;
+      fltk::fillrect(I,h()/2,1,h()/2);
+    }
 
-  char buf[64];
-  int j = 0;
-  for(int i=-scroll; i<w(); i+=zoom*4){
-    fltk::drawline(i,0,i,h()/2);
-    sprintf(buf,"%u",j*label_scale);
-    fltk::drawtext(buf,i+3,h()-3);
-    j++;
+    fltk::setcolor(fltk::BLACK);
+
+    char buf[64];
+    int j = 0;
+
+    int p = P>0 ? P : 4;
+    I=0;
+    for(int i=0; I<w(); i++){
+      I = i*zoom*4*p*M/4/4 - scroll;
+      fltk::fillrect(I,0,1,h()/2);
+      sprintf(buf,"%u",j*label_scale*p/4);
+      fltk::drawtext(buf,I+3,h()-3);
+      j++;
+    }
+
   }
-
 
   int X = tick2xpix(get_loop_start()*4/scale);
   fltk::setcolor(fltk::color(0,0,255));
