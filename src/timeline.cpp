@@ -47,6 +47,7 @@ Timeline::Timeline(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   label_scale = 1;
   zoom = 30;
   ticks_offset = 0;
+  edit_flag = 0;
 }
 
 int Timeline::handle(int event){
@@ -69,9 +70,13 @@ int Timeline::handle(int event){
       else if(event_button() == 2){//set song position
         tick = quantize(xpix2tick(event_x())*scale/4);
         //printf("%d %d %d\n",tick,loop_start,loop_end);
-        pointer_x = tick2xpix(tick);
+        //pointer_x = tick2xpix(tick);
+        ui->song_timeline->update(tick);
+        ui->pattern_timeline->update(tick);
         all_notes_off();
         reset_backend(tick);
+        ui->song_timeline->redraw();
+        ui->pattern_timeline->redraw();
       }
       else if(event_button() == 3){//set right limit
         tick = quantize(xpix2tick(event_x())*scale/4);
@@ -112,6 +117,7 @@ void Timeline::draw(){
     j++;
   }
 
+
   int X = tick2xpix(get_loop_start()*4/scale);
   fltk::setcolor(fltk::color(0,0,255));
   fillrect(X+0,0,1,h()-1);
@@ -147,11 +153,13 @@ void Timeline::update(int ticks){
 }
 
 int Timeline::tick2xpix(int tick){
-  return (tick - ticks_offset) * zoom / 128 - scroll;
+  //return (tick - ticks_offset) * zoom / 128 - scroll;
+  return tick * zoom / 128 - scroll - ticks_offset*zoom/32;
 }
 
 int Timeline::xpix2tick(int xpix){
-  return ((xpix+scroll) + ticks_offset*zoom)*128 / zoom;
+  //return (xpix+scroll+ticks_offset*32/zoom)*128 / zoom;
+  return (xpix+scroll) * 128 / zoom + ticks_offset*120/zoom;
 }
 
 int Timeline::quantize(int tick){

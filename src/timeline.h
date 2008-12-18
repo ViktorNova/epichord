@@ -35,6 +35,8 @@ class Timeline : public fltk::Widget {
     int xpix2tick(int xpix);
     int quantize(int tick);
 
+    int edit_flag;
+
   public:
 
     int scroll;
