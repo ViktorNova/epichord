@@ -332,6 +332,7 @@ int shutdown_backend(){
   all_notes_off();
   sleep(1);
   jack_deactivate(client);
+  //sleep(1);
   return 0;
 }
 

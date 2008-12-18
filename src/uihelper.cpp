@@ -57,8 +57,13 @@ void playing_timeout_cb(void* v){
   if(!is_backend_playing()){
     return;
   }
-  ui->song_timeline->update(get_play_position());
-  ui->pattern_timeline->update(get_play_position());
+  int pos = get_play_position();
+  ui->song_timeline->update(pos);
+  ui->pattern_timeline->update(pos);
+  if(config.follow){
+    ui->arranger->update(pos);
+    ui->piano_roll->update(pos);
+  }
 
   //check for midi input
   int tick;
@@ -75,6 +80,14 @@ void playing_timeout_cb(void* v){
 
   while(recv_midi(&chan,&tick,&type,&val1,&val2)){
      // printf("recv_midi: ch:%d t:%d m:%x %x %x\n",chan,tick,type,val1,val2);
+
+      if(config.recordonchan){
+        for(int i=0; i<tracks.size(); i++){
+          if(tracks[i]->chan == chan){
+            t = tracks[i];
+          }
+        }
+      }
 
       switch(type){
         case 0x80://note off

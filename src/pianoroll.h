@@ -78,6 +78,8 @@ class PianoRoll : public fltk::Widget {
     void set_zoom(int z);
     void set_qtick(int q){q_tick=q;}
 
+    void update(int pos);
+
 };
 
 #endif

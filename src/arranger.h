@@ -79,6 +79,8 @@ class Arranger : public fltk::Widget {
     int handle(int event);
     void draw();
 
+    void update(int pos);
+
     void layout();
 
 };

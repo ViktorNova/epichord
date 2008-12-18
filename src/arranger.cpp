@@ -138,6 +138,7 @@ int Arranger::handle(int event){
             ui->keyboard->cur_port = tracks[main_sel->track]->port;
             ui->keyboard->cur_chan = tracks[main_sel->track]->chan;
             ui->track_info->set_rec(main_sel->track);
+            set_rec_track(main_sel->track);
             ui->song_edit->hide();
             ui->song_edit->deactivate();
             ui->song_buttons->hide();
@@ -485,3 +486,20 @@ int Arranger::quantize(int tick){
   return tick/(q_tick*M/4) * (q_tick*M/4);
 }
 
+
+void Arranger::update(int pos){
+  int wp = ui->song_scroll->w();
+  int xp = ui->song_scroll->xposition();
+  int yp = ui->song_scroll->yposition();
+  int X1 = tick2xpix(pos);
+  int X2 = X1 - xp;
+  if(X1 > w()-40){
+    return;
+  }
+  if(X2 < 0){
+    ui->song_scroll->scrollTo(X1-50<0?0:X1-50,yp);
+  }
+  if(X2 > wp-30){
+    ui->song_scroll->scrollTo(X1-50,yp);
+  }
+}

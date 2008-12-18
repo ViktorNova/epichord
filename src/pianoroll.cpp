@@ -437,3 +437,23 @@ mevent* PianoRoll::over_note(){
 int PianoRoll::over_handle(mevent* e){
   return 0;
 }
+
+
+
+void PianoRoll::update(int pos){
+  int wp = ui->pattern_scroll->w();
+  int xp = ui->pattern_scroll->xposition();
+  int yp = ui->pattern_scroll->yposition();
+  int X1 = tick2xpix(pos);
+  int X2 = X1 - xp;
+  if(X1 > w()-40){
+    return;
+  }
+  if(X2 < 0){
+    ui->pattern_scroll->scrollTo(X1-50<0?0:X1-50,yp);
+  }
+  if(X2 > wp-30){
+    ui->pattern_scroll->scrollTo(X1-50,yp);
+  }
+}
+
