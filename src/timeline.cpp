@@ -198,7 +198,7 @@ int Timeline::tick2xpix(int tick){
 
 int Timeline::xpix2tick(int xpix){
   //return (xpix+scroll+ticks_offset*32/zoom)*128 / zoom;
-  return (xpix+scroll) * 128 / zoom + ticks_offset*120/zoom;
+  return (xpix+scroll) * 128 / zoom + ticks_offset*120/30;
 }
 
 int Timeline::quantize(int tick){

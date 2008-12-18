@@ -30,6 +30,8 @@
 
 #include "uihelper.h"
 
+#include "backend.h"
+
 extern UI* ui;
 
 extern std::vector<track*> tracks;
@@ -90,6 +92,7 @@ int Arranger::handle(int event){
           zoom_n--;
           zoom = 30*(1<<zoom_n)/16;
           ui->song_timeline->zoom = 30*(1<<zoom_n)/16;
+          ui->song_timeline->update(get_play_position());
           ui->song_timeline->redraw();
         }
         redraw();
@@ -101,6 +104,7 @@ int Arranger::handle(int event){
           zoom_n++;
           zoom = 30*(1<<zoom_n)/16;
           ui->song_timeline->zoom = 30*(1<<zoom_n)/16;
+          ui->song_timeline->update(get_play_position());
           ui->song_timeline->redraw();
         }
         redraw();
@@ -135,6 +139,7 @@ int Arranger::handle(int event){
             ui->piano_roll->load(main_sel);
             ui->event_edit->load(main_sel);
             ui->pattern_scroll->scrollTo(main_sel->scrollx,main_sel->scrolly);
+            ui->pattern_timeline->update(get_play_position());
             ui->keyboard->cur_port = tracks[main_sel->track]->port;
             ui->keyboard->cur_chan = tracks[main_sel->track]->chan;
             ui->track_info->set_rec(main_sel->track);

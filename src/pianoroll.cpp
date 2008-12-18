@@ -71,6 +71,7 @@ int PianoRoll::handle(int event){
           zoom_n--;
           set_zoom(30*(1<<zoom_n)/16);
           ui->pattern_timeline->zoom = zoom;
+          ui->pattern_timeline->update(get_play_position());
           ui->pattern_timeline->redraw();
           ui->event_edit->zoom = zoom;
           ui->event_edit->redraw();
@@ -83,6 +84,7 @@ int PianoRoll::handle(int event){
           zoom_n++;
           set_zoom(30*(1<<zoom_n)/16);
           ui->pattern_timeline->zoom = zoom;
+          ui->pattern_timeline->update(get_play_position());
           ui->pattern_timeline->redraw();
           ui->event_edit->zoom = zoom;
           ui->event_edit->redraw();
