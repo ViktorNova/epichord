@@ -117,7 +117,7 @@ o->resize(1000,30*16);}
               xywh {0 0 595 15}
             } {
               {fltk::Widget} pattern_timeline {
-                label timeline selected
+                label timeline
                 xywh {0 0 580 15} resizable box FLAT_BOX
                 extra_code {\#include "timeline.h"
 o->edit_flag = 1;}
@@ -273,10 +273,11 @@ o->state(1);}
           }
           {fltk::Button} quant_button {
             label qua
+            tooltip {quantize selected notes}
             xywh {180 0 25 25}
           }
         }
-        {fltk::Group} song_buttons {
+        {fltk::Group} song_buttons {open
           xywh {370 5 115 25}
         } {
           {fltk::Button} color_toggle {
@@ -287,17 +288,17 @@ o->state(1);}
           }
           {fltk::Button} unclone_button {
             label dclo
-            tooltip {color tool}
+            tooltip {unclone selected block}
             xywh {30 0 25 25}
           }
           {fltk::Button} join_button {
             label join
-            tooltip {color tool}
+            tooltip {join selected blocks}
             xywh {60 0 25 25}
           }
           {fltk::Button} split_button {
-            label split
-            tooltip {color tool}
+            label split selected
+            tooltip {split selected block}
             xywh {90 0 25 25}
           }
         }

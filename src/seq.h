@@ -108,15 +108,7 @@ struct pattern {
     regen_colors();
   }
 
-  pattern(pattern* p){
-    events = NULL; /* FIXME need a copy routine here */
-    next = p->next;
-    ref_c = 0;
-    h = p->h;
-    s = p->s;
-    v = p->v;
-    regen_colors();
-  }
+  pattern(pattern* p);
 
   ~pattern(){
     mevent* e = events;
@@ -180,6 +172,22 @@ struct seqpat {
     scrollx = zs->scrollx;
     scrolly = zs->scrolly;
   }
+
+  seqpat(seqpat* zs, pattern* zp){
+    p = zp;
+    track = zs->track;
+    dur = zs->dur;
+    tick = zs->tick;
+    if(p){p->ref_c++;}
+
+    skip = p->events;
+    prev = zs->prev;
+    next = zs->next;
+
+    scrollx = zs->scrollx;
+    scrolly = zs->scrolly;
+  }
+
   ~seqpat(){
    }
 };
@@ -304,7 +312,7 @@ class CreateSeqpat : public Command {
   public:
 
     CreateSeqpat(){}
-    CreateSeqpat(int track, int tick, seqpat* zs);
+    CreateSeqpat(int track, int tick, seqpat* zs, int copy);
 
     ~CreateSeqpat(){
       if(s->p->ref_c-- == 0){

@@ -213,6 +213,34 @@ void do_redo(){
 }
 
 
+pattern::pattern(pattern* p){
+    mevent* ptr = p->events;
+    mevent* ptr2;
+    events = new mevent(ptr);
+    ptr2 = events;
+    ptr=ptr->next;
+    while(ptr){
+      ptr2->next = new mevent(ptr);
+      ptr2->next->prev = ptr2;
+      ptr=ptr->next;
+      ptr2=ptr2->next; 
+    }
+    ptr2->next = NULL;
+
+    pattern* tmp = patterns;
+    while(tmp->next){
+      tmp=tmp->next;
+    }
+    tmp->next = this;
+
+    next = NULL;
+    ref_c = 0;
+    h = p->h;
+    s = p->s;
+    v = p->v;
+    regen_colors();
+}
+
 void pattern::regen_colors(){
 
   while(h>360){h-=360;}
@@ -235,8 +263,12 @@ void pattern::regen_colors(){
 }
 
 
-CreateSeqpat::CreateSeqpat(int track, int tick, seqpat* zs){
+CreateSeqpat::CreateSeqpat(int track, int tick, seqpat* zs, int copy){
   s = new seqpat(zs);
+  if(copy){
+    s->p = new pattern(zs->p);
+    s->skip = s->p->events;
+  }
   s->track = track;
   s->tick = tick;
 

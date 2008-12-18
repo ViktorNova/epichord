@@ -260,7 +260,12 @@ int Arranger::handle(int event){
       }
       else if(event_button()==2){
         if(paste_flag && paste_track < tracks.size()){
-          c = new CreateSeqpat(paste_track,paste_t,main_sel);
+          if(!config.alwayscopy){
+            c = new CreateSeqpat(paste_track,paste_t,main_sel,0);
+          }
+          else{
+            c = new CreateSeqpat(paste_track,paste_t,main_sel,1);
+          }
           set_undo(c);
           undo_push(1);
         }

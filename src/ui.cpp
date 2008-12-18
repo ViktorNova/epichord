@@ -485,7 +485,9 @@ UI::UI() {
           o->callback((fltk::Callback*)cb_qbutton0);
           o->type(fltk::Button::TOGGLE);
         }
-        quant_button = new fltk::Button(180, 0, 25, 25, "qua");
+         {fltk::Button* o = quant_button = new fltk::Button(180, 0, 25, 25, "qua");
+          o->tooltip("quantize selected notes");
+        }
         o->end();
       }
        {fltk::Group* o = song_buttons = new fltk::Group(370, 5, 115, 25);
@@ -496,13 +498,13 @@ UI::UI() {
           o->type(fltk::Button::TOGGLE);
         }
          {fltk::Button* o = unclone_button = new fltk::Button(30, 0, 25, 25, "dclo");
-          o->tooltip("color tool");
+          o->tooltip("unclone selected block");
         }
          {fltk::Button* o = join_button = new fltk::Button(60, 0, 25, 25, "join");
-          o->tooltip("color tool");
+          o->tooltip("join selected blocks");
         }
          {fltk::Button* o = split_button = new fltk::Button(90, 0, 25, 25, "split");
-          o->tooltip("color tool");
+          o->tooltip("split selected block");
         }
         o->end();
       }
