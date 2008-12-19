@@ -52,6 +52,7 @@ class UI {open
       callback {config_window->hide();
 help_window->hide();
 action_window->hide();
+scope_window->hide();
 o->hide();} open
       xywh {507 27 640 480} resizable
       extra_code {\#include <unistd.h>
@@ -61,10 +62,10 @@ o->hide();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -93,7 +94,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::ScrollGroup} song_scroll {open
+          {fltk::ScrollGroup} song_scroll {
             xywh {255 15 385 430} resizable
             extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
           } {
@@ -107,7 +108,7 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {open
+        {fltk::Group} pattern_edit {
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -229,11 +230,15 @@ ui->song_buttons->show();}
           xywh {65 5 25 25} labelcolor 0xff000000
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
-        {fltk::Group} {} {open
-          xywh {95 0 20 35} resizable
+        {fltk::Widget} metronome {
+          label metr
+          xywh {125 5 25 25}
+        }
+        {fltk::Group} {} {
+          xywh {180 0 20 35} resizable
         } {}
-        {fltk::Group} pattern_buttons {open
-          xywh {280 5 205 25} hide
+        {fltk::Group} pattern_buttons {
+          xywh {250 5 205 25} hide
         } {
           {fltk::Button} qbutton4 {
             callback {set_quant(4);}
@@ -277,8 +282,8 @@ o->state(1);}
             xywh {180 0 25 25}
           }
         }
-        {fltk::Group} song_buttons {open
-          xywh {370 5 115 25}
+        {fltk::Group} song_buttons {
+          xywh {340 5 115 25}
         } {
           {fltk::Button} color_toggle {
             callback {arranger->color_flag = o->state();}
@@ -297,7 +302,7 @@ o->state(1);}
             xywh {60 0 25 25}
           }
           {fltk::Button} split_button {
-            label split selected
+            label split
             tooltip {split selected block}
             xywh {90 0 25 25}
           }
@@ -305,12 +310,18 @@ o->state(1);}
         {fltk::Button} loop_toggle {
           callback {toggle_loop();}
           tooltip {toggle looping}
-          xywh {520 5 25 25}
+          xywh {490 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} config_button {
+          label conf
           callback {ui->config_window->show();}
-          tooltip config
+          tooltip configuration
+          xywh {520 5 25 25}
+        }
+        {fltk::Button} scope_button {
+          callback {ui->scope_window->show();}
+          tooltip scope
           xywh {550 5 25 25}
         }
         {fltk::Button} file_button {
@@ -328,97 +339,318 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label config
-      xywh {28 464 315 260} resizable visible
+      label controls
+      xywh {66 237 320 285} hide
     } {
-      {fltk::ValueInput} beats_per_measure {
-        label {beats per measure}
-        callback {set_beats_per_measure((int)o->value());}
-        xywh {145 10 45 20} minimum 2 maximum 31 step 1 value 4
-      }
-      {fltk::ValueInput} {} {
-        label {measures per phrase}
-        callback {set_measures_per_phrase((int)o->value());}
-        xywh {145 35 45 20} maximum 128 step 1 value 4
-      }
-      {fltk::ValueOutput} bpm_output {
-        label bpm
-        xywh {145 60 45 20} minimum 1 maximum 1000 step 1 value 120
-      }
-      {fltk::ThumbWheel} bpm_wheel {
-        callback {set_bpm((int)o->value());
-ui->bpm_output->value(o->value());}
-        xywh {195 60 105 20} align 4 minimum 1 maximum 1000 step 1 value 120
-      }
-      {fltk::ValueInput} mur {
-        label {measures until record}
-        callback {set_mur((int)o->value());}
-        xywh {145 85 45 20} maximum 128 step 1 value 1
-      }
-      {fltk::CheckButton} check_alwayscopy {
-        label {always hard copy}
-        callback {set_alwayscopy(o->value());}
-        tooltip {instead of making a linked clone when you copy a block in the song view.}
-        xywh {145 110 25 25} align 4
-      }
-      {fltk::CheckButton} check_autotrackname {
-        label {auto track name}
-        callback {set_autotrackname(o->value());}
-        tooltip {Fill in GM instruments for track names when you change the program.}
-        xywh {285 110 25 25} align 4
-      }
-      {fltk::CheckButton} check_passthru {
-        label {record pass-thru}
-        callback {set_passthru(o->value());}
-        tooltip {Echo midi input to midi output.}
-        xywh {145 135 25 26} horizontal align 4 value 1
-      }
-      {fltk::CheckButton} check_playinsert {
-        label {play note insertion}
-        callback {set_playinsert(o->value());}
-        tooltip {Send midi note on when you create notes.}
-        xywh {285 135 25 26} horizontal align 4 value 1
-      }
-      {fltk::CheckButton} check_recordonchan {
-        label {record on channel}
-        callback {set_recordonchan(o->value());}
-        tooltip {Record on first track that matches channel of midi input instead of selected track.}
-        xywh {145 160 25 25} align 4
-      }
-      {fltk::CheckButton} check_playmove {
-        label {play note move}
-        callback {set_playmove(o->value());}
-        tooltip {Send midi note on when you move notes.}
-        xywh {285 160 25 26} horizontal align 4 value 1
-      }
-      {fltk::CheckButton} check_follow {
-        label {follow playback}
-        callback {set_follow(o->value());}
-        tooltip {Auto scroll horizontally when play head leaves viewing area.}
-        xywh {145 184 25 26} horizontal align 4 value 1
-      }
-      {fltk::CheckButton} check_quantizedur {
-        label {quantize note off}
-        callback {set_quantizedur(o->value());}
-        tooltip {Quantize the length of notes when using the quantizer.}
-        xywh {285 185 25 25} align 4 value 1
-      }
-      {fltk::Choice} {} {
-        label {record mode} open
-        xywh {145 215 160 25}
+      {fltk::TabGroup} {} {open
+        xywh {0 0 320 285}
       } {
-        {fltk::Item} {} {
-          label merge
-          callback {set_recordmode(0);}
+        {fltk::Group} {} {
+          label options
+          xywh {145 15 170 265} horizontal
+        } {
+          {fltk::ValueInput} beats_per_measure {
+            label {beats per measure}
+            callback {set_beats_per_measure((int)o->value());}
+            xywh {5 5 45 20} minimum 2 maximum 31 step 1 value 4
           }
-        {fltk::Item} {} {
-          label overwrite
-          callback {set_recordmode(1);}
+          {fltk::ValueInput} {} {
+            label {measures per phrase}
+            callback {set_measures_per_phrase((int)o->value());}
+            xywh {5 30 45 20} maximum 128 step 1 value 4
           }
-        {fltk::Item} {} {
-          label layer
-          callback {set_recordmode(2);}
+          {fltk::ValueOutput} bpm_output {
+            label bpm
+            xywh {5 55 45 20} minimum 1 maximum 1000 step 1 value 120
           }
+          {fltk::ThumbWheel} bpm_wheel {
+            callback {set_bpm((int)o->value());
+ui->bpm_output->value(o->value());}
+            xywh {55 55 105 20} align 4 minimum 1 maximum 1000 step 1 value 120
+          }
+          {fltk::ValueInput} mur {
+            label {measures until record}
+            callback {set_mur((int)o->value());}
+            xywh {5 80 45 20} maximum 128 step 1 value 1
+          }
+          {fltk::CheckButton} check_alwayscopy {
+            label {always hard copy}
+            callback {set_alwayscopy(o->value());}
+            tooltip {instead of making a linked clone when you copy a block in the song view.}
+            xywh {5 105 25 25} align 4
+          }
+          {fltk::CheckButton} check_autotrackname {
+            label {auto track name}
+            callback {set_autotrackname(o->value());}
+            tooltip {Fill in GM instruments for track names when you change the program.}
+            xywh {145 105 25 25} align 4
+          }
+          {fltk::CheckButton} check_passthru {
+            label {record pass-thru}
+            callback {set_passthru(o->value());}
+            tooltip {Echo midi input to midi output.}
+            xywh {5 130 25 26} horizontal align 4 value 1
+          }
+          {fltk::CheckButton} check_playinsert {
+            label {play note insertion}
+            callback {set_playinsert(o->value());}
+            tooltip {Send midi note on when you create notes.}
+            xywh {145 130 25 26} horizontal align 4 value 1
+          }
+          {fltk::CheckButton} check_recordonchan {
+            label {record on channel}
+            callback {set_recordonchan(o->value());}
+            tooltip {Record on first track that matches channel of midi input instead of selected track.}
+            xywh {5 155 25 25} align 4
+          }
+          {fltk::CheckButton} check_playmove {
+            label {play note move}
+            callback {set_playmove(o->value());}
+            tooltip {Send midi note on when you move notes.}
+            xywh {145 155 25 26} horizontal align 4 value 1
+          }
+          {fltk::CheckButton} check_follow {
+            label {follow playback}
+            callback {set_follow(o->value());}
+            tooltip {Auto scroll horizontally when play head leaves viewing area.}
+            xywh {5 179 25 26} horizontal align 4 value 1
+          }
+          {fltk::CheckButton} check_quantizedur {
+            label {quantize note off}
+            callback {set_quantizedur(o->value());}
+            tooltip {Quantize the length of notes when using the quantizer.}
+            xywh {145 180 25 25} align 4 value 1
+          }
+          {fltk::Choice} {} {
+            label {record mode} open
+            xywh {5 210 160 25}
+          } {
+            {fltk::Item} {} {
+              label merge
+              callback {set_recordmode(0);}
+              }
+            {fltk::Item} {} {
+              label overwrite
+              callback {set_recordmode(1);}
+              }
+            {fltk::Item} {} {
+              label layer
+              callback {set_recordmode(2);}
+              }
+          }
+          {fltk::Choice} {} {
+            label {record outside block} open
+            xywh {5 240 160 25}
+          } {
+            {fltk::Item} {} {
+              label {do nothing}
+              callback {set_robmode(0);}
+              }
+            {fltk::Item} {} {
+              label {new block}
+              callback {set_robmode(1);}
+              }
+            {fltk::Item} {} {
+              label {extend block}
+              callback {set_robmode(2);}
+              }
+          }
+        }
+        {fltk::Group} {} {
+          label keyboard
+          xywh {0 15 320 270} hide
+        } {
+          {fltk::Widget} {} {
+            label C0
+            xywh {35 5 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {C\#0}
+            xywh {35 20 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label D0
+            xywh {35 35 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {D\#0}
+            xywh {35 50 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label E0
+            xywh {35 65 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label F0
+            xywh {35 80 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {F\#0}
+            xywh {35 95 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label G0
+            xywh {35 110 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {G\#0}
+            xywh {35 125 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label A0
+            xywh {35 140 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {A\#0}
+            xywh {35 155 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label B0
+            xywh {35 170 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label C1
+            xywh {35 185 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {C\#1}
+            xywh {35 200 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label D1
+            xywh {35 215 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {D\#1}
+            xywh {35 230 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label E1
+            xywh {35 245 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label C1
+            xywh {130 5 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {C\#1}
+            xywh {130 20 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label D1
+            xywh {130 35 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {D\#1}
+            xywh {130 50 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label E1
+            xywh {130 65 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label F1
+            xywh {130 80 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {F\#1}
+            xywh {130 95 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label G1
+            xywh {130 110 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {G\#1}
+            xywh {130 125 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label A1
+            xywh {130 140 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {A\#1}
+            xywh {130 155 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label B1
+            xywh {130 170 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label C2
+            xywh {130 185 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {C\#2}
+            xywh {130 200 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label D2
+            xywh {130 215 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {D\#2}
+            xywh {130 230 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label E2
+            xywh {130 245 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {zoom in}
+            xywh {265 5 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {zoom out}
+            xywh {265 20 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {octave up}
+            xywh {265 35 45 15} align 4
+            class KeyGrabber
+          }
+          {fltk::Widget} {} {
+            label {octave down}
+            xywh {265 50 45 15} align 4
+            class KeyGrabber
+          }
+        }
       }
     }
     {fltk::Window} help_window {
@@ -524,30 +756,23 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
         xywh {5 105 90 20}
       }
     }
-    {fltk::Window} key_config {
-      label {key layout}
-      xywh {497 354 650 370} hide
+    {fltk::Window} scope_window {
+      label scope selected
+      xywh {647 310 425 280} hide resizable
     } {
-      {fltk::Widget} {} {
-        label C1
-        xywh {45 105 25 25} align 2
+      {fltk::TextDisplay} scope {
+        xywh {5 5 415 245} textfont 4 color 0x280000 textcolor 0xff0000
+        extra_code {o->wrap_mode(1);}
       }
-      {fltk::Widget} {} {
-        label {octave up}
-        xywh {615 15 25 25} align 4
-      }
-      {fltk::Widget} {} {
-        label {zoom in}
-        xywh {615 75 25 25} align 4
-      }
-      {fltk::Widget} {} {
-        label {zoom out}
-        xywh {615 105 25 25} align 4
+      {fltk::Button} {} {
+        label on
+        xywh {5 255 30 20}
+        extra_code {o->type(fltk::Button::TOGGLE);}
       }
     }
     code {loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
 color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
-config_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
+scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
 file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
 help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
 

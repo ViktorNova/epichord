@@ -59,4 +59,19 @@ class Keyboard : public fltk::Widget {
 
 int keyboard_handler(int e, fltk::Window* w);
 
+
+class KeyGrabber : public fltk::Widget {
+
+    unsigned key;
+
+  public:
+
+    KeyGrabber(int x, int y, int w, int h, const char* label);
+
+    int handle(int event);
+    void draw();
+
+};
+
+
 #endif

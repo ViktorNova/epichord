@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <vector>
+#include <string>
 
 #include <pthread.h>
 #include <jack/jack.h>
@@ -170,12 +171,12 @@ static int process(jack_nframes_t nframes, void* arg){
     }
     rec_tick = last_tick + (me.time*bpm*tpb)/(sample_rate*60);
 
-    if(playing && recording){
+    //if(playing && recording){
       uint16_t size = me.size;
       jack_ringbuffer_write(inbuf,(char*)&rec_tick,4);
       jack_ringbuffer_write(inbuf,(char*)&size,2);
       jack_ringbuffer_write(inbuf,(char*)md1,me.size);
-    }
+   // }
   }
 
   //init chans
@@ -388,27 +389,45 @@ void send_midi_local(char* raw, uint16_t n){
   jack_ringbuffer_write(inbuf,raw,n);
 }
 
+
+
+std::string sysexbuf;
 //get next incoming midi event for gui thread
 int recv_midi(int* chan, int* tick, int* type, int* val1, int* val2){
   uint16_t n;
   uint32_t t;
-  char* buf;
+  unsigned char* buf;
   if(jack_ringbuffer_read(inbuf,(char*)&t,4) == 0){
     return 0;
   }
   jack_ringbuffer_read(inbuf,(char*)&n,2);
-  buf = (char*)malloc(n);
-  jack_ringbuffer_read(inbuf,buf,n);
+  buf = (unsigned char*)malloc(n);
+  jack_ringbuffer_read(inbuf,(char*)buf,n);
 
   *tick = t;
   *chan = buf[0]&0x0f;
   *type = buf[0]&0xf0;
-  *val1 = buf[1]; 
+  *val1 = buf[1];
   *val2 = buf[2];
+
+  char hbuf[8];
+
+  if (buf[0]==0xf0){
+    sysexbuf = "";
+    for(int i=2; i<n-1; i++){
+      snprintf(hbuf,8,"%02x ",buf[i]);
+      sysexbuf.append(hbuf);
+    }
+  }
 
   free(buf);
   return 1;
 }
+
+const char* getsysexbuf(){
+  return sysexbuf.c_str();
+}
+
 
 void all_notes_off(){
   for(int i=0; i<tracks.size(); i++){

@@ -51,6 +51,7 @@ void config_init(){
   config.follow = 1;
   config.quantizedur = 1;
   config.recordmode = 0;
+  config.robmode = 0;
 }
 
 void playing_timeout_cb(void* v){
@@ -77,9 +78,9 @@ void playing_timeout_cb(void* v){
   seqpat* s;
   pattern* p;
 
+  char report[256];
 
   while(recv_midi(&chan,&tick,&type,&val1,&val2)){
-     // printf("recv_midi: ch:%d t:%d m:%x %x %x\n",chan,tick,type,val1,val2);
 
       if(config.recordonchan){
         for(int i=0; i<tracks.size(); i++){
@@ -91,6 +92,12 @@ void playing_timeout_cb(void* v){
 
       switch(type){
         case 0x80://note off
+          snprintf(report,256,"%02x %02x %02x : note off - ch %d note %d vel %d\n",type|chan,val1,val2,chan,val1,val2);
+          scope_print(report);
+
+          if(!is_backend_recording())
+            break;
+
           s = tfind<seqpat>(t->head,tick);
           if(s->tick+s->dur < tick){
             //printf("rec head outside block\n");
@@ -108,6 +115,12 @@ void playing_timeout_cb(void* v){
             ui->arranger->redraw();
           break;
         case 0x90://note on
+          snprintf(report,256,"%02x %02x %02x : note on - ch %d note %d vel %d\n",type|chan,val1,val2,chan,val1,val2);
+          scope_print(report);
+
+          if(!is_backend_recording())
+            break;
+
           s = tfind<seqpat>(t->head,tick);
           if(s->tick+s->dur < tick){
             //printf("rec head outside block\n");
@@ -129,9 +142,32 @@ void playing_timeout_cb(void* v){
         case 0xc0://program change
         case 0xd0://channel pressure
         case 0xe0://pitch wheel
+
+          switch(type){
+            case 0xa0:
+              snprintf(report,256,"%02x %02x %02x : aftertouch - ch %d note %d %d\n",type|chan,val1,val2,chan,val1,val2);
+              break;
+            case 0xb0:
+              snprintf(report,256,"%02x %02x %02x : controller change - ch %d cntr %d val %d\n",type|chan,val1,val2,chan,val1,val2);
+              break;
+            case 0xc0:
+              snprintf(report,256,"%02x %02x    : program change - ch %d pgrm %d \n",type|chan,val1,chan,val1);
+              break;
+            case 0xd0:
+              snprintf(report,256,"%02x %02x    : channel pressure - ch %d val %d \n",type|chan,val1,chan,val1);
+              break;
+            case 0xe0:
+              snprintf(report,256,"%02x %02x %02x : pitch wheel - ch %d val %d \n",type|chan,val1,val2,chan,(val2<<7)|val1);
+              break;
+          }
+          scope_print(report);
+
+          if(!is_backend_recording())
+            break;
+
           s = tfind<seqpat>(t->head,tick);
           if(s->tick+s->dur < tick){
-            //printf("rec head outside block\n");
+            //scope_print("record head outside block\n");
             continue;
           }
           p = s->p;
@@ -145,19 +181,63 @@ void playing_timeout_cb(void* v){
           if(ui->arranger->visible())
             ui->arranger->redraw();
           break;
+        case 0xf0:
+          switch(chan){
+            case 1://undefined (reserved) system common message
+              snprintf(report,256,"%02x       : undefined (reserved) system common message\n",type|chan);
+              break;
+            case 2://song position pointer
+              snprintf(report,256,"%02x %02x %02x : song position - %d \n",type|chan,val1,val2,(val2<<7)|val1);
+              break;
+            case 3://song select
+              snprintf(report,256,"%02x %02x    : song select - %d \n",type|chan,val1,val1);
+              break;
+            case 4://undefined (reserved) system common message
+            case 5://undefined (reserved) system common message
+              snprintf(report,256,"%02x       : undefined (reserved) system common message\n",type|chan);
+              break;
+            case 6://tune request
+              snprintf(report,256,"%02x       : tune request\n",type|chan);
+              break;
+            case 7://end of exclusive
+              snprintf(report,256,"%02x       : end of exclusive\n",type|chan);
+              break;
+            case 8://timing clock
+              snprintf(report,256,"%02x       : timing clock\n",type|chan);
+              break;
+            case 9://undefined (reserved) system common message
+              snprintf(report,256,"%02x       : undefined (reserved) system common message\n",type|chan);
+              break;
+            case 10://start
+              snprintf(report,256,"%02x       : start\n",type|chan);
+              break;
+            case 11://continue
+              snprintf(report,256,"%02x       : continue\n",type|chan);
+              break;
+            case 12://stop
+              snprintf(report,256,"%02x       : stop\n",type|chan);
+              break;
+            case 13://undefined
+              snprintf(report,256,"%02x       : undefined (reserved) system common message\n",type|chan);
+              break;
+            case 14://active sensing
+              snprintf(report,256,"%02x       : active sensing\n",type|chan);
+              break;
+            case 15://reset
+              snprintf(report,256,"%02x       : reset\n",type|chan);
+              break;
+          }
+          if(chan==0){
+            snprintf(report,256,"%02x %02x    : system exclusive - id %d ; data follows\n",type|chan,val1,val1);
+            scope_print(report);
+            scope_print((char*)getsysexbuf());
+            scope_print("\nf7       : end of sysex\n");
+          }
+          else{
+            scope_print(report);
+          }
       }
-      /*
-note on - insert a note on event with dur 32
-note off - insert a note off event, then resize previous note on
-      */
-      /*
-      merge - insert events into selected track, current pattern
 
-      overwrite - erase all notes in current pattern upon loop / new event
-
-      layer - create new pattern and switch record head upon loop / new event
-
-      */
   }
   fltk::repeat_timeout(0.01, playing_timeout_cb, NULL);
 }
@@ -333,4 +413,14 @@ void set_recordmode(int n){
   config.recordmode = n;
 }
 
+void set_robmode(int n){
+  config.robmode = n;
+}
+
+
+void scope_print(char* text){
+  ui->scope->append(text);
+  int N = ui->scope->buffer()->length();
+  ui->scope->scroll(N,0);
+}
 

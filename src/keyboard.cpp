@@ -474,3 +474,16 @@ void Keyboard::draw(){
   fltk::pop_clip();
 }
 
+
+KeyGrabber::KeyGrabber(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
+  key = ' ';
+}
+
+int KeyGrabber::handle(int event){
+  return 0;
+}
+
+void KeyGrabber::draw(){
+  draw_box();
+}
+

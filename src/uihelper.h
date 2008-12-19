@@ -36,6 +36,7 @@ struct conf{
   int follow;
   int quantizedur;
   int recordmode;
+  int robmode;
 };
 
 void config_init();
@@ -47,6 +48,7 @@ void press_play();
 
 void set_quant(int q);
 
+void scope_print(char* text);
 
 
 void set_beats_per_measure(int n);
@@ -62,6 +64,7 @@ void set_playmove(int v);
 void set_follow(int v);
 void set_quantizedur(int v);
 void set_recordmode(int n);
+void set_robmode(int n);
 
 
 #endif
