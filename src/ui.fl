@@ -231,8 +231,10 @@ ui->song_buttons->show();}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Widget} metronome {
-          label metr
-          xywh {125 5 25 25}
+          label 0
+          xywh {95 5 100 25} color 56 labelcolor 0xffffff00
+          extra_code {\#include <metronome.h>}
+          class Metronome
         }
         {fltk::Group} {} {
           xywh {180 0 20 35} resizable
@@ -757,7 +759,7 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       }
     }
     {fltk::Window} scope_window {
-      label scope selected
+      label scope
       xywh {647 310 425 280} hide resizable
     } {
       {fltk::TextDisplay} scope {
@@ -785,6 +787,8 @@ qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
 qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {track_info->set_rec(0);} {}
     code {config_init();} {}
+    code {start_monitor();} {selected
+    }
     code {main_window->show();} {}
   }
 } 

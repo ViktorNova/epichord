@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <vector>
 
+#include <math.h>
+
 #include <fltk/run.h>
 
 #include "seq.h"
@@ -54,13 +56,18 @@ void config_init(){
   config.robmode = 0;
 }
 
+
+
+
 void playing_timeout_cb(void* v){
-  if(!is_backend_playing()){
-    return;
-  }
+  //if(!is_backend_playing()){
+  //  return;
+  //}
+
   int pos = get_play_position();
   ui->song_timeline->update(pos);
   ui->pattern_timeline->update(pos);
+  ui->metronome->update(pos);
   if(config.follow){
     ui->arranger->update(pos);
     ui->piano_roll->update(pos);
@@ -72,7 +79,7 @@ void playing_timeout_cb(void* v){
   int type;
   int val1;
   int val2;
-  
+
   track* t = tracks[get_rec_track()];
   Command* c;
   seqpat* s;
@@ -239,14 +246,25 @@ void playing_timeout_cb(void* v){
       }
 
   }
-  fltk::repeat_timeout(0.01, playing_timeout_cb, NULL);
+
+  if(is_backend_playing()){
+    fltk::repeat_timeout(0.01, playing_timeout_cb, NULL);
+  }
+  else{
+    fltk::repeat_timeout(0.1, playing_timeout_cb, NULL);
+  }
+}
+
+void start_monitor(){
+printf("started\n");
+  fltk::add_timeout(0.1, playing_timeout_cb, NULL);
 }
 
 void press_play(){
   if(!is_backend_playing()){
     start_backend();
     ui->play_button->label("@||");
-    fltk::add_timeout(0.01, playing_timeout_cb, NULL);
+    //fltk::add_timeout(0.01, playing_timeout_cb, NULL);
   }
   else{
     pause_backend();
@@ -276,6 +294,8 @@ void press_stop(){
 
   ui->play_button->label("@>");
   ui->play_button->redraw();
+
+  ui->metronome->update(0);
 
 }
 
@@ -358,8 +378,10 @@ void set_quant(int q){
 
 void set_beats_per_measure(int n){
   config.beats_per_measure = n;
+  ui->metronome->set_N(n);
   ui->piano_roll->redraw();
   ui->arranger->redraw();
+  ui->arranger->q_tick = n*TICKS_PER_BEAT;
   ui->song_timeline->redraw();
   ui->pattern_timeline->redraw();
 }

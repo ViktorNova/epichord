@@ -40,7 +40,7 @@ struct conf{
 };
 
 void config_init();
-
+void start_monitor();
 
 void press_stop();
 void press_panic();

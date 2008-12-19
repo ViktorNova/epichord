@@ -217,7 +217,8 @@ int Arranger::handle(int event){
         move_flag = 1;
       }
       if(new_drag){
-        new_right_t = quantize(xpix2tick(event_x())+q_tick);
+        //new_right_t = quantize(xpix2tick(event_x())) + quantize(q_tick);
+        new_right_t = quantize(xpix2tick(event_x()+tick2xpix(q_tick)));
         if(new_right_t <= new_orig_t){
           new_left_t = new_right_t - quantize(q_tick);
           new_right_t = new_orig_t;
@@ -492,8 +493,7 @@ int Arranger::xpix2tick(int xpix){
 }
 
 int Arranger::quantize(int tick){
-  int M = config.beats_per_measure;
-  return tick/(q_tick*M/4) * (q_tick*M/4);
+  return tick/q_tick * q_tick;
 }
 
 

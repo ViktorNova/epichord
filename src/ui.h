@@ -18,7 +18,7 @@
 #include "trackselect.h"
 #include "sampleview.h"
 #include "keyboard.h"
-#include <fltk/Widget.h>
+#include <metronome.h>
 #include "saveload.h"
 #include <fltk/TabGroup.h>
 #include <fltk/ValueInput.h>
@@ -75,7 +75,7 @@ private:
       inline void cb_record_button_i(fltk::Button*, void*);
       static void cb_record_button(fltk::Button*, void*);
 public:
-      fltk::Widget *metronome;
+      Metronome *metronome;
       fltk::Group *pattern_buttons;
         fltk::Button *qbutton4;
 private:

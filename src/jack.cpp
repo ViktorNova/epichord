@@ -70,7 +70,7 @@ static int cur_tick;
 static int last_tick;
 static int bpm = 120;
 static int new_bpm = 120;
-static int tpb = 128;
+static int tpb = TICKS_PER_BEAT;
 static int sample_rate = 0;
 static int frame_count = 0;
 

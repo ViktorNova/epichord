@@ -478,7 +478,10 @@ UI::UI() {
         o->callback((fltk::Callback*)cb_record_button);
         o->type(fltk::Button::TOGGLE);
       }
-      metronome = new fltk::Widget(125, 5, 25, 25, "metr");
+       {Metronome* o = metronome = new Metronome(95, 5, 100, 25, "0");
+        o->color((fltk::Color)56);
+        o->labelcolor((fltk::Color)0xffffff00);
+      }
        {fltk::Group* o = new fltk::Group(180, 0, 20, 35);
         o->set_vertical();
         fltk::Group::current()->resizable(o);
@@ -920,5 +923,6 @@ track.");
   qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));
   track_info->set_rec(0);
   config_init();
+  start_monitor();
   main_window->show();
 }
