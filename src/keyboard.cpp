@@ -326,6 +326,9 @@ int Keyboard::handle(int event){
       }
       return 1;
     case fltk::DRAG:
+      if(event_y() > h() || event_y() < 12){
+        return 1;
+      }
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
       if(cur_note != note){
         helds[cur_note]=0;
