@@ -482,7 +482,7 @@ UI::UI() {
         o->color((fltk::Color)56);
         o->labelcolor((fltk::Color)0xffffff00);
       }
-       {fltk::Group* o = new fltk::Group(180, 0, 20, 35);
+       {fltk::Group* o = new fltk::Group(200, 0, 20, 35);
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }

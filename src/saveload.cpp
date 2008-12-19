@@ -38,10 +38,14 @@
 
 #include "util.h"
 
+#include "uihelper.h"
+
 extern UI* ui;
 
 extern std::vector<track*> tracks;
 extern pattern* patterns;
+
+extern struct conf config;
 
 using namespace std;
 
@@ -55,6 +59,9 @@ int clear(){
   reset_backend(0);
 
   last_filename = "";
+
+  set_beats_per_measure(4);
+  set_measures_per_phrase(4);
 
   track* t;
   int total = tracks.size();
@@ -128,8 +135,8 @@ int save(const char* filename){
                    << ui->info_text->text() << endl;
 
   file << "bpm " << ui->bpm_wheel->value() << endl;
-  //file << "beatspermeasure" << 4 << endl;
-  //file << "measuresperphrase" << 4 << endl;
+  file << "beatspermeasure " << config.beats_per_measure << endl;
+  file << "measuresperphrase " << config.measures_per_phrase << endl;
 
   file << "loopstart " << get_loop_start() << endl;
   file << "loopend " << get_loop_end() << endl;
@@ -319,6 +326,16 @@ int load(const char* filename){
       ui->bpm_wheel->value(bpm);
       ui->bpm_output->value(bpm);
     }
+    else if(str == "beatspermeasure"){
+      int N;
+      file >> N;
+      set_beats_per_measure(N);
+    }
+    else if(str == "measuresperphrase"){
+      int N;
+      file >> N;
+      set_measures_per_phrase(N);
+    }
     else if(str == "loopstart"){
       int ls;
       file >> ls;
@@ -413,7 +430,7 @@ int load(const char* filename){
           int n = 0;
           while(n++ < pattern_number){
             if(p == NULL){
-              printf("error opening file, bad pattern reference\n");
+              printf("load: error opening file, bad pattern reference\n");
               return -1;
             }
             p = p->next;
@@ -425,6 +442,10 @@ int load(const char* filename){
         file >> key;
       }
       tracks.push_back(t);
+    }
+    else{
+      printf("load: unrecognized line (fixme, ignore these lines)\n");
+      return -1;
     }
   }
 

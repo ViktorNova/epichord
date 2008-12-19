@@ -236,8 +236,8 @@ ui->song_buttons->show();}
           extra_code {\#include <metronome.h>}
           class Metronome
         }
-        {fltk::Group} {} {
-          xywh {180 0 20 35} resizable
+        {fltk::Group} {} {selected
+          xywh {200 0 20 35} resizable
         } {}
         {fltk::Group} pattern_buttons {
           xywh {250 5 205 25} hide
@@ -787,8 +787,7 @@ qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
 qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {track_info->set_rec(0);} {}
     code {config_init();} {}
-    code {start_monitor();} {selected
-    }
+    code {start_monitor();} {}
     code {main_window->show();} {}
   }
 } 
