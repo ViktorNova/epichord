@@ -43,6 +43,10 @@ class Gauge : public fltk::Widget {
   int r,g,b;
   int R,G,B;
 
+  int sens;
+
+  int label_temp;
+
   int label_flag;
   int label_always;
   int label_plusone;

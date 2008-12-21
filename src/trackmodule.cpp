@@ -27,6 +27,7 @@
 #include <fltk/Widget.h>
 
 #include <fltk/draw.h>
+#include <fltk/run.h>
 
 #include <vector>
 
@@ -379,6 +380,23 @@ void TrackModule::update(){
   solo.redraw();
 }
 
+
+
+void gauge_temp_cb(void* v){
+  Gauge* g = (Gauge*)v;
+
+  if(g->label_temp==0){
+    return;
+  }
+  g->label_temp--;
+  if(g->label_temp==0){
+    g->redraw();
+  }
+  else{
+    //fltk::repeat_timeout(0.5, gauge_temp_cb, v);
+  }
+}
+
 Gauge::Gauge(int x, int y, int w, int h, const char* label) :
   fltk::Widget(x, y, w, h, label){
   max = 127;
@@ -389,6 +407,8 @@ Gauge::Gauge(int x, int y, int w, int h, const char* label) :
   label_plusone = 0;
   label_hex = 1;
   gauge_off = 0;
+  label_temp=0;
+  sens=1;
 }
 
 VGauge::VGauge(int x, int y, int w, int h, const char* label) :
@@ -402,6 +422,17 @@ VGauge::VGauge(int x, int y, int w, int h, const char* label) :
 }
 int last;
 int VGauge::handle(int e){
+  if(e == fltk::MOUSEWHEEL){
+    value-=fltk::event_dy();
+    if(value > max){value = max;}
+    if(value < 0){value = 0;}
+    last_value = value;
+    label_temp++;
+    fltk::add_timeout(1,gauge_temp_cb,this);
+    do_callback();
+    redraw();
+    return 1;
+  }
   if(e == fltk::PUSH){
     last = fltk::event_y();
     label_flag = 1;
@@ -409,7 +440,7 @@ int VGauge::handle(int e){
     return 1;
   }
   if(e == fltk::DRAG){
-    value += last - fltk::event_y();
+    value += (last - fltk::event_y());
     if(value > max){value = max;}
     if(value < 0){value = 0;}
     if(value != last_value){
@@ -439,6 +470,17 @@ HGauge::HGauge(int x, int y, int w, int h, const char* label) :
 }
 
 int HGauge::handle(int e){
+  if(e == fltk::MOUSEWHEEL){
+    value-=fltk::event_dy();
+    if(value > max){value = max;}
+    if(value < 0){value = 0;}
+    last_value = value;
+    label_temp++;
+    fltk::add_timeout(1,gauge_temp_cb,this);
+    do_callback();
+    redraw();
+    return 1;
+  }
   if(e == fltk::PUSH){
     last = fltk::event_x();
     label_flag = 1;
@@ -475,7 +517,7 @@ void VGauge::draw(){
   int H = value * (h()-4) / max;
   fltk::fillrect(2,h()-2-H,w()-4,H);
 
-  if(label_flag || label_always){
+  if(label_flag || label_always || label_temp){
     char buf[3];
     int V = label_plusone ? value + 1 : value;
     if(label_hex){
@@ -513,7 +555,7 @@ void HGauge::draw(){
   int V = value * (h()-4) / max;
   fltk::fillrect(2,2,V,h()-4);
 
-  if(label_flag){
+  if(label_flag || label_always || label_temp){
     char buf[3];
     snprintf(buf,3,"%x",value);
 
