@@ -98,11 +98,18 @@ int EventEdit::handle(int event){
       break;
     case RELEASE:
       line_flag=0;
-        int t1 = ui->piano_roll->xpix2tick(line_orig_x+scroll);
-        int t2 = ui->piano_roll->xpix2tick(line_x+scroll);
-        int v1 = ypix2mag(line_orig_y);
-        int v2 = ypix2mag(line_y);
-
+      int t1 = ui->piano_roll->xpix2tick(line_orig_x+scroll);
+      int t2 = ui->piano_roll->xpix2tick(line_x+scroll);
+      int v1 = ypix2mag(line_orig_y);
+      int v2 = ypix2mag(line_y);
+      if(t1>t2){
+        int tmp = t2;
+        t2 = t1;
+        t1 = tmp;
+        tmp = v2;
+        v2 = v1;
+        v1 = tmp;
+      }
       apply_line(t1,t2,v1,v2);
       redraw();
       break;
@@ -143,12 +150,12 @@ void EventEdit::draw(){
   fltk::fillrect(rightend,0,1,h());
 
   mevent* e = cur_seqpat->p->events->next;
-  int v;
+
   while(e){
     if(e->type==event_type){
       if(e->type==MIDI_CONTROLLER_CHANGE){
         if(e->value1 == controller_type){
-          v = e->value2;
+          M = val2mag(e->value2);
         }
         else{
           e=e->next;
@@ -162,15 +169,34 @@ void EventEdit::draw(){
             continue;
           case MIDI_PROGRAM_CHANGE:
           case MIDI_CHANNEL_PRESSURE:
-            v = e->value1;
+            M = val2mag(e->value1);
             break;
           default:
-            v = e->value2;
+            M = val2mag(e->value2);
             break;
         }
       }
+      int T1 = ui->piano_roll->xpix2tick(line_orig_x+scroll);
+      int T2 = ui->piano_roll->xpix2tick(line_x+scroll);
+      int M1 = ypix2mag(line_orig_y);
+      int M2 = ypix2mag(line_y);
+      if(T1>T2){
+        int tmp = T2;
+        T2 = T1;
+        T1 = tmp;
+        tmp = M2;
+        M2 = M1;
+        M1 = tmp;
+      }
+      if(line_flag && e->tick > T1 && e->tick < T2){
+        float m = (float)(M2-M1)/(T2-T1);
+        float b = M1 - T1*m;
+        M = (int)(m*e->tick + b);
+        if(M<0){M=0;}
+        if(M>MAG_MAX){M=MAG_MAX;}
+      }
       int X = tick2xpix(e->tick) - scroll;
-      int Y = mag2ypix(val2mag(v));
+      int Y = mag2ypix(M);
       int H = h()-Y;
       fltk::setcolor(fltk::color(169,75,229));
       fltk::fillrect(X,Y+1,1,H);
@@ -322,8 +348,8 @@ void EventEdit::apply_line(int t1, int t2, int M1, int M2){
     }
     if(match_event_type(e)){
       float m = (float)(M2-M1)/(t2-t1);
-      int b = M1 - m*t1;
-      int M = e->tick*m + b;
+      float b = M1 - m*t1;
+      int M = (int)(m*e->tick + b);
       int V1, V2;
       if(M<0){M=0;}
       if(M>MAG_MAX){M=MAG_MAX;}
