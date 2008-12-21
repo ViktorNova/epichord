@@ -498,6 +498,9 @@ int Arranger::quantize(int tick){
 
 
 void Arranger::update(int pos){
+  if(!is_backend_playing()){
+    return;
+  }
   int wp = ui->song_scroll->w();
   int xp = ui->song_scroll->xposition();
   int yp = ui->song_scroll->yposition();

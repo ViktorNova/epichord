@@ -34,6 +34,9 @@
 
 #include "uihelper.h"
 
+
+#define MAG_MAX 16383
+
 extern struct conf config;
 
 extern UI* ui;
@@ -63,6 +66,45 @@ int EventEdit::handle(int event){
       }
       redraw();
       return 1;
+      break;
+    case PUSH:
+      if(event_button()==1){
+        //actually, check for
+        //shift box select
+        //control insert event
+        line_flag=1;
+        line_orig_x=event_x();
+        line_orig_y=event_y();
+        line_x = event_x();
+        line_y = event_y();
+        //more state
+        redraw();
+        return 1;
+      }
+      else if(event_button()==2){//paste
+      }
+      else if(event_button()==3){//delete
+      }
+      break;
+    case DRAG:
+      if(line_flag){
+        line_x = event_x();
+        line_y = event_y();
+
+
+
+      }
+      redraw();
+      break;
+    case RELEASE:
+      line_flag=0;
+        int t1 = ui->piano_roll->xpix2tick(line_orig_x+scroll);
+        int t2 = ui->piano_roll->xpix2tick(line_x+scroll);
+        int v1 = ypix2mag(line_orig_y);
+        int v2 = ypix2mag(line_y);
+
+      apply_line(t1,t2,v1,v2);
+      redraw();
       break;
   }
   return 0;
@@ -128,16 +170,22 @@ void EventEdit::draw(){
         }
       }
       int X = tick2xpix(e->tick) - scroll;
-      int H = v*(h()-3)/127;
+      int Y = mag2ypix(val2mag(v));
+      int H = h()-Y;
       fltk::setcolor(fltk::color(169,75,229));
-      fltk::fillrect(X,h()-H+1-3,1,H-1+3);
-      fltk::fillrect(X+1,h()-H-3,1,1);
+      fltk::fillrect(X,Y+1,1,H);
+      fltk::fillrect(X+1,Y,1,1);
       fltk::setcolor(fltk::color(95,58,119));
-      fltk::fillrect(X+1,h()-H+1-3,1,H-1+3);
+      fltk::fillrect(X+1,Y+1,1,H);
       fltk::setcolor(fltk::color(198,109,225));
-      fltk::fillrect(X,h()-H-3,1,1);
+      fltk::fillrect(X,Y,1,1);
     }
     e = e->next;
+  }
+
+  if(line_flag){
+    fltk::setcolor(fltk::BLUE);
+    fltk::drawline(line_orig_x,line_orig_y,line_x,line_y);
   }
 
   fltk::pop_clip();
@@ -235,4 +283,88 @@ void EventEdit::set_event_type(int type, int controller){
   event_type = type;
   controller_type = controller;
 }
+
+
+int EventEdit::ypix2mag(int ypix){
+  int H = h()-3;
+  int R = ypix*MAG_MAX/H;
+  //if(R>MAG_MAX){return 0;}
+  //if(R<0){return MAG_MAX;}
+  return MAG_MAX-R;
+}
+
+int EventEdit::mag2ypix(int mag){
+  int H = mag*(h()-3)/MAG_MAX;
+  return h()-H-3;
+}
+
+int EventEdit::mag2val(int mag){
+  return mag*127/MAG_MAX;
+}
+
+int EventEdit::val2mag(int val){
+  return val*MAG_MAX/127;
+}
+
+void EventEdit::apply_line(int t1, int t2, int M1, int M2){
+  mevent* e = cur_seqpat->p->events;
+  Command* c;
+  int N = 0;
+  while(e->tick < t1){
+    e = e->next;
+    if(!e){
+      return;
+    }
+  }
+  while(e){
+    if(e->tick > t2){
+      break;
+    }
+    if(match_event_type(e)){
+      float m = (float)(M2-M1)/(t2-t1);
+      int b = M1 - m*t1;
+      int M = e->tick*m + b;
+      int V1, V2;
+      if(M<0){M=0;}
+      if(M>MAG_MAX){M=MAG_MAX;}
+      switch(e->type){
+        case MIDI_NOTE_OFF:
+        case MIDI_NOTE_ON:
+        case MIDI_AFTERTOUCH:
+        case MIDI_CONTROLLER_CHANGE:
+          V1 = e->value1;
+          V2 = mag2val(M);
+          break;
+        case MIDI_PROGRAM_CHANGE:
+        case MIDI_CHANNEL_PRESSURE:
+          V1 = mag2val(M);
+          break;
+        case MIDI_PITCH_WHEEL:
+printf("%d\n",M);
+          V1 = M&0x7f;
+          V2 = (M&0x3f80) >> 7;
+          break;
+      }
+      c = new ChangeEvent(e,V1,V2);
+      set_undo(c);
+      N++;
+    }
+    e = e->next;
+  }
+  undo_push(N);
+}
+
+int EventEdit::match_event_type(mevent* e){
+  if(e->type == event_type){
+    if(e->type == MIDI_CONTROLLER_CHANGE){
+      if(e->value1 == controller_type){
+        return 1;
+      }
+    }
+    else{
+      return 1;
+    }
+  }
+  return 0;
+ }
 

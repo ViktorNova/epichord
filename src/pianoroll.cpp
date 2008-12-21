@@ -443,6 +443,9 @@ int PianoRoll::over_handle(mevent* e){
 
 
 void PianoRoll::update(int pos){
+  if(!is_backend_playing()){
+    return;
+  }
   int wp = ui->pattern_scroll->w();
   int xp = ui->pattern_scroll->xposition();
   int yp = ui->pattern_scroll->yposition();

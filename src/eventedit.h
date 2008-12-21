@@ -37,6 +37,20 @@ class EventEdit : public fltk::Widget {
 
     int q_tick;
 
+    int line_flag;
+    int line_x;
+    int line_y;
+    int line_orig_x;
+    int line_orig_y;
+
+    int ypix2mag(int ypix);
+    int mag2ypix(int mag);
+    int mag2val(int mag);
+    int val2mag(int val);
+
+    void apply_line(int t1, int t2, int v1, int v2);
+    int match_event_type(mevent* e);
+
   public:
 
     seqpat* cur_seqpat;

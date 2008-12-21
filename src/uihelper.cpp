@@ -256,7 +256,6 @@ void playing_timeout_cb(void* v){
 }
 
 void start_monitor(){
-printf("started\n");
   fltk::add_timeout(0.1, playing_timeout_cb, NULL);
 }
 
