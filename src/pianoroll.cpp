@@ -256,7 +256,7 @@ void PianoRoll::draw(){
     fltk::fillrect(i,0,1,h());
   }
 
-  fltk::setcolor(fltk::RED);
+  fltk::setcolor(fltk::color(128,0,0));
   int rightend = tick2xpix(cur_seqpat->dur);
   fltk::fillrect(rightend,0,1,h());
 
@@ -272,7 +272,7 @@ void PianoRoll::draw(){
   }
 
   if(move_flag){
-    fltk::setcolor(fltk::RED);
+    fltk::setcolor(fltk::color(255,0,0));
     int X = tick2xpix(move_t)+1;
     int Y = note2ypix(move_note);
     int W = tick2xpix(main_sel->dur);

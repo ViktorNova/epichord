@@ -23,6 +23,8 @@
 #ifndef eventedit_h
 #define eventedit_h
 
+#include <vector>
+
 class EventEdit : public fltk::Widget {
 
     int event_type;
@@ -37,18 +39,53 @@ class EventEdit : public fltk::Widget {
 
     int q_tick;
 
-    int line_flag;
-    int line_x;
-    int line_y;
-    int line_orig_x;
-    int line_orig_y;
+    std::vector<mevent*> selection;
 
+    int line_flag;
+    int line_t1;
+    int line_M1;
+    int line_t2;
+    int line_M2;
+    int line_x1;
+    int line_x2;
+    int line_y1;
+    int line_y2;
+
+    int box_flag;
+    int box_x1;
+    int box_y1;
+    int box_x2;
+    int box_y2;
+    int box_t1;
+    int box_t2;
+
+    int insert_flag;
+    int insert_x;
+    int insert_y;
+    int insert_t;
+    int insert_M;
+
+    int paste_flag;
+    int paste_x;
+    int paste_t;
+
+    int delete_flag;
+    int delete_t1;
+    int delete_t2;
+    int delete_x1;
+    int delete_x2;
+
+    int xpix2tick(int xpix);
     int ypix2mag(int ypix);
     int mag2ypix(int mag);
     int mag2val(int mag);
     int val2mag(int val);
 
-    void apply_line(int t1, int t2, int v1, int v2);
+    void apply_line();
+    void apply_box();
+    void apply_insert();
+    void apply_delete();
+    void apply_paste();
     int match_event_type(mevent* e);
 
   public:
@@ -68,6 +105,9 @@ class EventEdit : public fltk::Widget {
 
     void load(seqpat* s);
     void set_qtick(int q){q_tick=q;}
+
+    void clear_events();
+    void clear_all_events();
 
 };
 

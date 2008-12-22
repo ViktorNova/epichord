@@ -56,6 +56,20 @@ void UI::cb_L(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_L_i(o,v);
 }
 
+inline void UI::cb_C_i(fltk::Button*, void*) {
+  ui->event_edit->clear_events();
+}
+void UI::cb_C(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_C_i(o,v);
+}
+
+inline void UI::cb_X_i(fltk::Button*, void*) {
+  ui->event_edit->clear_all_events();
+}
+void UI::cb_X(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_X_i(o,v);
+}
+
 inline void UI::cb_1_i(fltk::Button*, void*) {
   ui->pattern_edit->hide();
   ui->pattern_buttons->hide();
@@ -438,8 +452,14 @@ UI::UI() {
               o->tooltip("toggle event value labels");
               o->type(fltk::Button::TOGGLE);
             }
-            new fltk::Button(580, 45, 15, 15, "?");
-            new fltk::Button(580, 60, 15, 15, "?");
+             {fltk::Button* o = new fltk::Button(580, 45, 15, 15, "C");
+              o->callback((fltk::Callback*)cb_C);
+              o->tooltip("clear these events");
+            }
+             {fltk::Button* o = new fltk::Button(580, 60, 15, 15, "X");
+              o->callback((fltk::Callback*)cb_X);
+              o->tooltip("clear all events in pattern");
+            }
             o->end();
           }
           o->end();

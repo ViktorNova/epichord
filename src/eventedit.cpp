@@ -58,6 +58,7 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
 }
 
 int EventEdit::handle(int event){
+  int X,Y;
   switch(event){
     case MOUSEWHEEL:
       if(event_dy() < 0){
@@ -70,49 +71,104 @@ int EventEdit::handle(int event){
       return 1;
       break;
     case PUSH:
+      X=event_x();
+      Y=event_y();
       if(event_button()==1){
-        //actually, check for
-        //shift box select
-        //control insert event
-        line_flag=1;
-        line_orig_x=event_x();
-        line_orig_y=event_y();
-        line_x = event_x();
-        line_y = event_y();
-        //more state
-        redraw();
-        return 1;
+        if(event_state()&fltk::CTRL){//insert
+          insert_flag = 1;
+          insert_x = X;
+          insert_y = Y;
+          insert_t = xpix2tick(X);
+          insert_M = ypix2mag(Y);
+        }
+        else if(event_state()&fltk::SHIFT){//box select
+          box_flag=1;
+          box_x1=X;
+          box_x2=X;
+          box_y1=Y;
+          box_y2=Y;
+          box_t1=xpix2tick(X);
+          box_t2=xpix2tick(X);
+        }
+        else{//line
+          line_flag=1;
+          line_x1=X;
+          line_x2=X;
+          line_y1=Y;
+          line_y2=Y;
+          line_t1=xpix2tick(X);
+          line_M1=ypix2mag(Y);
+          line_t2=line_t1;
+          line_M2=line_M1;
+        }
       }
       else if(event_button()==2){//paste
+        paste_flag = 1;
+        paste_x = X;
+        paste_t = xpix2tick(X);
       }
       else if(event_button()==3){//delete
+        delete_flag = 1;
+        delete_x1 = X;
+        delete_x2 = X;
+        delete_t1 = xpix2tick(X);
+        delete_t2 = delete_t1;
       }
+      redraw();
+      return 1;
       break;
     case DRAG:
+      X=event_x();
+      Y=event_y();
       if(line_flag){
-        line_x = event_x();
-        line_y = event_y();
-
-
-
+        line_x2 = X;
+        line_y2 = Y;
+        line_t2 = xpix2tick(X);
+        line_M2 = ypix2mag(Y);
+      }
+      if(box_flag){
+        box_x2 = X;
+        box_y2 = Y;
+      }
+      if(insert_flag){
+        insert_x = X;
+        insert_y = Y;
+        insert_t = xpix2tick(X);
+        insert_M = ypix2mag(Y);
+      }
+      if(delete_flag){
+        delete_x2 = X;
+        delete_t2 = xpix2tick(X);
+      }
+      if(paste_flag){
+        paste_x = X;
+        paste_t = xpix2tick(X);
       }
       redraw();
       break;
     case RELEASE:
-      line_flag=0;
-      int t1 = ui->piano_roll->xpix2tick(line_orig_x+scroll);
-      int t2 = ui->piano_roll->xpix2tick(line_x+scroll);
-      int v1 = ypix2mag(line_orig_y);
-      int v2 = ypix2mag(line_y);
-      if(t1>t2){
-        int tmp = t2;
-        t2 = t1;
-        t1 = tmp;
-        tmp = v2;
-        v2 = v1;
-        v1 = tmp;
+      if(event_button()==1){//insert, box, line
+        if(line_flag){
+          apply_line();
+          line_flag=0;
+        }
+        if(box_flag){
+          apply_box();
+          box_flag=0;
+        }
+        if(insert_flag){
+          apply_insert();
+          insert_flag=0;
+        }
       }
-      apply_line(t1,t2,v1,v2);
+      else if(event_button()==2){//complete paste
+        apply_paste();
+        paste_flag=0;
+      }
+      else if(event_button()==3){//delete
+        apply_delete();
+        delete_flag = 0;
+      }
       redraw();
       break;
   }
@@ -124,6 +180,20 @@ void EventEdit::draw(){
   fltk::fillrect(0,0,w(),h());
 
   fltk::push_clip(0,0,w(),h());
+
+  if(delete_flag){
+    fltk::setcolor(fltk::color(64,0,0));
+    int X1,X2;
+    if(delete_x1>delete_x2){
+      X1=delete_x2;
+      X2=delete_x1;
+    }
+    else{
+      X1=delete_x1;
+      X2=delete_x2;
+    }
+    fltk::fillrect(X1,0,X2-X1,h());
+  }
 
   fltk::setcolor(fltk::GRAY20);
   fltk::drawtext(event_type_name(), 2, h()-5);
@@ -147,7 +217,7 @@ void EventEdit::draw(){
     fltk::fillrect(I,0,1,h());
   }
 
-  fltk::setcolor(fltk::RED);
+  fltk::setcolor(fltk::color(128,0,0));
   int rightend = tick2xpix(cur_seqpat->dur)-scroll;
   fltk::fillrect(rightend,0,1,h());
 
@@ -178,10 +248,10 @@ void EventEdit::draw(){
             break;
         }
       }
-      int T1 = ui->piano_roll->xpix2tick(line_orig_x+scroll);
-      int T2 = ui->piano_roll->xpix2tick(line_x+scroll);
-      int M1 = ypix2mag(line_orig_y);
-      int M2 = ypix2mag(line_y);
+      int T1 = line_t1;
+      int T2 = line_t2;
+      int M1 = line_M1;
+      int M2 = line_M2;
       if(T1>T2){
         int tmp = T2;
         T2 = T1;
@@ -224,8 +294,39 @@ void EventEdit::draw(){
 
   if(line_flag){
     fltk::setcolor(fltk::BLUE);
-    fltk::drawline(line_orig_x,line_orig_y,line_x,line_y);
+    fltk::drawline(line_x1,line_y1,line_x2,line_y2);
   }
+
+  if(box_flag){
+    fltk::setcolor(fltk::GREEN);
+    int X1,X2,Y1,Y2;
+    if(box_x1>box_x2){
+      X1=box_x2;
+      X2=box_x1;
+    }
+    else{
+      X1=box_x1;
+      X2=box_x2;
+    }
+    if(box_y1>box_y2){
+      Y1=box_y2;
+      Y2=box_y1;
+    }
+    else{
+      Y1=box_y1;
+      Y2=box_y2;
+    }
+    fltk::fillrect(X1,Y1,X2-X1,1);
+    fltk::fillrect(X1,Y1,1,Y2-Y1);
+    fltk::fillrect(X2,Y1,1,Y2-Y1);
+    fltk::fillrect(X1,Y2,X2-X1,1);
+  }
+
+  if(insert_flag){
+    fltk::setcolor(fltk::BLUE);
+    fltk::fillrect(insert_x,insert_y,2,h()-insert_y);
+  }
+
 
   fltk::pop_clip();
 
@@ -345,23 +446,34 @@ int EventEdit::val2mag(int val){
   return val*MAG_MAX/127;
 }
 
-void EventEdit::apply_line(int t1, int t2, int M1, int M2){
+void EventEdit::apply_line(){
   mevent* e = cur_seqpat->p->events;
   Command* c;
   int N = 0;
-  while(e->tick < t1){
+  int T1, T2;
+  int M1 = line_M1;
+  int M2 = line_M2;
+  if(line_t1>line_t2){
+    T1=line_t2;
+    T2=line_t1;
+  }
+  else{
+    T1=line_t1;
+    T2=line_t2;
+  }
+  while(e->tick < T1){
     e = e->next;
     if(!e){
       return;
     }
   }
   while(e){
-    if(e->tick > t2){
+    if(e->tick > T2){
       break;
     }
     if(match_event_type(e)){
-      float m = (float)(M2-M1)/(t2-t1);
-      float b = M1 - m*t1;
+      float m = (float)(M2-M1)/(T2-T1);
+      float b = M1 - m*T1;
       int M = (int)(m*e->tick + b);
       int V1, V2;
       if(M<0){M=0;}
@@ -392,6 +504,22 @@ void EventEdit::apply_line(int t1, int t2, int M1, int M2){
   undo_push(N);
 }
 
+void EventEdit::apply_box(){
+printf("apply box\n");
+}
+
+void EventEdit::apply_insert(){
+printf("apply insert\n");
+}
+
+void EventEdit::apply_delete(){
+printf("apply delete\n");
+}
+
+void EventEdit::apply_paste(){
+printf("apply paste\n");
+}
+
 int EventEdit::match_event_type(mevent* e){
   if(e->type == event_type){
     if(e->type == MIDI_CONTROLLER_CHANGE){
@@ -404,5 +532,16 @@ int EventEdit::match_event_type(mevent* e){
     }
   }
   return 0;
- }
+}
 
+int EventEdit::xpix2tick(int xpix){
+  ui->piano_roll->xpix2tick(xpix+scroll);
+}
+
+void EventEdit::clear_events(){
+printf("clear\n");
+}
+
+void EventEdit::clear_all_events(){
+printf("clear all\n");
+}

@@ -158,17 +158,21 @@ o->resize(960,900);}
               {fltk::Button} {} {
                 label L
                 callback {ui->event_edit->label_flag = o->state();
-ui->event_edit->redraw();} selected
+ui->event_edit->redraw();}
                 tooltip {toggle event value labels}
                 xywh {580 30 15 15}
                 extra_code {o->type(fltk::Button::TOGGLE);}
               }
               {fltk::Button} {} {
-                label {?}
+                label C
+                callback {ui->event_edit->clear_events();}
+                tooltip {clear these events}
                 xywh {580 45 15 15}
               }
               {fltk::Button} {} {
-                label {?}
+                label X
+                callback {ui->event_edit->clear_all_events();} selected
+                tooltip {clear all events in pattern}
                 xywh {580 60 15 15}
               }
             }

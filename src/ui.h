@@ -56,6 +56,10 @@ public:
 private:
             inline void cb_L_i(fltk::Button*, void*);
             static void cb_L(fltk::Button*, void*);
+            inline void cb_C_i(fltk::Button*, void*);
+            static void cb_C(fltk::Button*, void*);
+            inline void cb_X_i(fltk::Button*, void*);
+            static void cb_X(fltk::Button*, void*);
 public:
             TrackSelect *track_select;
             SampleView *sample_view;
