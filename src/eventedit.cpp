@@ -37,6 +37,8 @@
 
 #define MAG_MAX 16383
 
+#define SWAP(X,Y) tmp=X; X=Y; Y=tmp;
+
 extern struct conf config;
 
 extern UI* ui;
@@ -129,6 +131,7 @@ int EventEdit::handle(int event){
       if(box_flag){
         box_x2 = X;
         box_y2 = Y;
+        box_t2 = xpix2tick(X);
       }
       if(insert_flag){
         insert_x = X;
@@ -270,15 +273,21 @@ void EventEdit::draw(){
       int X = tick2xpix(e->tick) - scroll;
       int Y = mag2ypix(M);
       int H = h()-Y;
-      fltk::setcolor(fltk::color(169,75,229));
+
+      fltk::Color c1,c2,c3;
+      get_event_color(e,&c1,&c2,&c3);
+//169 75 229
+//95 58 119
+//198 109 225
+      fltk::setcolor(c1);
       fltk::fillrect(X,Y+1,1,H);
       fltk::fillrect(X+1,Y,1,1);
-      fltk::setcolor(fltk::color(95,58,119));
+      fltk::setcolor(c2);
       fltk::fillrect(X+1,Y+1,1,H);
-      fltk::setcolor(fltk::color(198,109,225));
+      fltk::setcolor(c3);
       fltk::fillrect(X,Y,1,1);
       if(label_flag){
-        fltk::setcolor(fltk::color(169,75,229));
+        fltk::setcolor(c1);
         char buf[16];
         if(e->type == MIDI_PITCH_WHEEL){
           snprintf(buf,16,"%d",M);
@@ -534,6 +543,53 @@ int EventEdit::match_event_type(mevent* e){
   return 0;
 }
 
+void EventEdit::get_event_color(mevent* e, fltk::Color* c1, fltk::Color* c2, fltk::Color* c3){
+//169 75 229
+//95 58 119
+//198 109 225
+  int T1,T2;
+  int tmp;
+  if(delete_flag){
+    T1=delete_t1;
+    T2=delete_t2;
+    if(T1>T2){SWAP(T1,T2);}
+    if(e->tick > T1 && e->tick < T2){
+      *c1 = fltk::color(229,79,75);
+      *c2 = fltk::color(120,60,58);
+      *c3 = fltk::color(225,131,109);
+      return;
+    }
+  }
+
+  if(box_flag){
+    T1=box_t1;
+    T2=box_t2;
+    if(T1>T2){SWAP(T1,T2);}
+    if(e->tick > T1 && e->tick < T2){
+      *c1 = fltk::color(108,229,75);
+      *c2 = fltk::color(71,120,59);
+      *c3 = fltk::color(108,229,75);
+      return;
+    }
+  }
+
+  if(line_flag){
+    T1=line_t1;
+    T2=line_t2;
+    if(T1>T2){SWAP(T1,T2);}
+    if(e->tick > T1 && e->tick < T2){
+      *c1 = fltk::color(75,119,229);
+      *c2 = fltk::color(58,76,120);
+      *c3 = fltk::color(109,123,225);
+      return;
+    }
+  }
+
+  *c1 = fltk::color(169,75,229);
+  *c2 = fltk::color(95,58,119);
+  *c3 = fltk::color(198,109,225);
+}
+
 int EventEdit::xpix2tick(int xpix){
   ui->piano_roll->xpix2tick(xpix+scroll);
 }
@@ -545,3 +601,5 @@ printf("clear\n");
 void EventEdit::clear_all_events(){
 printf("clear all\n");
 }
+
+

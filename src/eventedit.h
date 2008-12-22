@@ -87,6 +87,7 @@ class EventEdit : public fltk::Widget {
     void apply_delete();
     void apply_paste();
     int match_event_type(mevent* e);
+    void get_event_color(mevent* e,fltk::Color*,fltk::Color*,fltk::Color*);
 
   public:
 
