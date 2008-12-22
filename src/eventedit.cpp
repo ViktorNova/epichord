@@ -58,11 +58,17 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   label_flag = 0;
   select_flag = 0;
+
+  for(int i=0; i<134; i++){
+    has[i] = 0;
+  }
 }
 
 int EventEdit::handle(int event){
   int X,Y;
   switch(event){
+    case FOCUS:
+      return 1;
     case MOUSEWHEEL:
       if(event_dy() < 0){
         event_type_next();
@@ -184,6 +190,7 @@ int EventEdit::handle(int event){
 }
 
 void EventEdit::draw(){
+  fltk::setfont(fltk::HELVETICA,12);
   fltk::setcolor(fltk::GRAY05);
   fltk::fillrect(0,0,w(),h());
 
@@ -367,6 +374,7 @@ void EventEdit::draw(){
 void EventEdit::load(seqpat* s){
   cur_seqpat = s;
   cur_track = tracks[s->track];
+  recount_has();
 }
 
 int EventEdit::tick2xpix(int tick){
@@ -563,6 +571,16 @@ void EventEdit::apply_insert(){
   set_undo(c);
   undo_push(1);
 
+  switch(event_type){
+    case MIDI_NOTE_ON: has[0]=1; break;
+    case MIDI_NOTE_OFF: has[1]=1; break;
+    case MIDI_AFTERTOUCH: has[2]=1; break;
+    case MIDI_PROGRAM_CHANGE: has[3]=1; break;
+    case MIDI_CHANNEL_PRESSURE: has[4]=1; break;
+    case MIDI_PITCH_WHEEL: has[5]=1; break;
+    default: has[controller_type+6]=1; break;
+  }
+
   if(event_type==MIDI_NOTE_ON){
     ui->piano_roll->redraw();
   }
@@ -746,20 +764,38 @@ int EventEdit::delete_all_pred(mevent* e){
 
 void EventEdit::clear_events(){
   delete_events(&EventEdit::delete_type_all_pred);
+  switch(event_type){
+    case MIDI_NOTE_ON: has[0]=0; break;
+    case MIDI_NOTE_OFF: has[1]=0; break;
+    case MIDI_AFTERTOUCH: has[2]=0; break;
+    case MIDI_PROGRAM_CHANGE: has[3]=0; break;
+    case MIDI_CHANNEL_PRESSURE: has[4]=0; break;
+    case MIDI_PITCH_WHEEL: has[5]=0; break;
+    default: has[controller_type+6]=0; break;
+  }
   redraw();
   ui->piano_roll->redraw();
+  ui->event_menu->redraw();
 }
 
 void EventEdit::clear_non_note_events(){
   delete_events(&EventEdit::delete_all_non_note_pred);
   redraw();
   ui->piano_roll->redraw();
+  for(int i=2;i<134;i++){
+    has[i]=0;
+  }
+  ui->event_menu->redraw();
 }
 
 void EventEdit::clear_all_events(){
   delete_events(&EventEdit::delete_all_pred);
   redraw();
   ui->piano_roll->redraw();
+  for(int i=0;i<134;i++){
+    has[i]=0;
+  }
+  ui->event_menu->redraw();
 }
 
 void EventEdit::clear_selected_events(){
@@ -779,4 +815,21 @@ void EventEdit::clear_selection(){
 
 int EventEdit::quantize(int tick){
   return ui->piano_roll->quantize(tick);
+}
+
+void EventEdit::recount_has(){
+  for(int i=0; i<134; i++){has[i]=0;}
+  mevent* e = cur_seqpat->p->events->next;
+  while(e){
+    switch(e->type){
+      case MIDI_NOTE_ON: has[0]=1; break;
+      case MIDI_NOTE_OFF: has[1]=1; break;
+      case MIDI_AFTERTOUCH: has[2]=1; break;
+      case MIDI_PROGRAM_CHANGE: has[3]=1; break;
+      case MIDI_CHANNEL_PRESSURE: has[4]=1; break;
+      case MIDI_PITCH_WHEEL: has[5]=1; break;
+      default: has[e->value1+6]=1; break;
+    }
+    e = e->next;
+  }
 }

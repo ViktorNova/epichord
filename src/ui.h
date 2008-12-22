@@ -15,6 +15,7 @@
 #include "timeline.h"
 #include "pianoroll.h"
 #include "eventedit.h"
+#include "eventmenu.h"
 #include "trackselect.h"
 #include "sampleview.h"
 #include "keyboard.h"
@@ -53,7 +54,11 @@ public:
           fltk::ScrollGroup *pattern_scroll;
             PianoRoll *piano_roll;
             EventEdit *event_edit;
+            EventMenu *event_menu;
+            fltk::Button *event_menu_button;
 private:
+            inline void cb_event_menu_button_i(fltk::Button*, void*);
+            static void cb_event_menu_button(fltk::Button*, void*);
             inline void cb_L_i(fltk::Button*, void*);
             static void cb_L(fltk::Button*, void*);
             inline void cb_C_i(fltk::Button*, void*);

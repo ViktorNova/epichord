@@ -52,6 +52,8 @@ Timeline::Timeline(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   zoom = 30;
   ticks_offset = 0;
   edit_flag = 0;
+
+  px_last = 0;
 }
 
 int Timeline::handle(int event){

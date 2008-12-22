@@ -52,6 +52,9 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   zoom_n = 3;
 
   q_tick = 32;
+
+  xp_last = 0;
+  yp_last = 0;
 }
 
 int PianoRoll::handle(int event){
@@ -185,7 +188,10 @@ int PianoRoll::handle(int event){
           undo_push(1);
           ui->keyboard->release_note(new_note,0);
           ui->keyboard->redraw();
+          ui->event_edit->has[0]=1;
+          ui->event_edit->has[1]=1;
           ui->event_edit->redraw();
+          ui->event_menu->redraw();
         }
         else if(move_flag && move_note < 128 && move_note >= 0){
           int play_pos = get_play_position();

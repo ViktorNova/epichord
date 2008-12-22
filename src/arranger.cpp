@@ -52,6 +52,9 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   zoom_n = 4;
 
   q_tick = 128*4;
+
+  xp_last = 0;
+  yp_last = 0;
 }
 
 int Arranger::handle(int event){

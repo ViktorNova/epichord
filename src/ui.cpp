@@ -48,6 +48,21 @@ void UI::cb_(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
 }
 
+inline void UI::cb_event_menu_button_i(fltk::Button* o, void*) {
+  if(o->state()==0){
+    ui->event_menu->hide();
+    ui->event_edit->show();
+  }
+  else{
+    ui->event_edit->hide();
+    ui->event_edit->recount_has();
+    ui->event_menu->show();
+  }
+;}
+void UI::cb_event_menu_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_event_menu_button_i(o,v);
+}
+
 inline void UI::cb_L_i(fltk::Button* o, void*) {
   ui->event_edit->label_flag = o->state();
   ui->event_edit->redraw();
@@ -448,10 +463,15 @@ UI::UI() {
             o->begin();
              {EventEdit* o = event_edit = new EventEdit(0, 0, 580, 75, "event editor");
               o->box(fltk::FLAT_BOX);
-              fltk::Group::current()->resizable(o);
             }
-             {fltk::Button* o = new fltk::Button(580, 0, 15, 15, "E");
+             {EventMenu* o = event_menu = new EventMenu(0, 0, 580, 75);
+              o->box(fltk::FLAT_BOX);
+              o->hide();
+            }
+             {fltk::Button* o = event_menu_button = new fltk::Button(580, 0, 15, 15, "E");
+              o->callback((fltk::Callback*)cb_event_menu_button);
               o->tooltip("pick event type");
+              o->type(fltk::Button::TOGGLE);
             }
              {fltk::Button* o = new fltk::Button(580, 15, 15, 15, "L");
               o->callback((fltk::Callback*)cb_L);

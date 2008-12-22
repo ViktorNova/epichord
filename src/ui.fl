@@ -65,7 +65,7 @@ o->resize(640,455);} visible
       {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -125,7 +125,7 @@ o->edit_flag = 1;}
                 class Timeline
               }
             }
-            {fltk::ScrollGroup} pattern_scroll {
+            {fltk::ScrollGroup} pattern_scroll {open
               xywh {0 15 595 355} when CHANGED resizable box FLAT_BOX shortcut 0xff1b
               extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
             } {
@@ -142,14 +142,29 @@ o->resize(960,900);}
             } {
               {fltk::Widget} event_edit {
                 label {event editor}
-                xywh {0 0 580 75} resizable box FLAT_BOX
+                xywh {0 0 580 75} box FLAT_BOX
                 extra_code {\#include "eventedit.h"}
                 class EventEdit
               }
-              {fltk::Button} {} {
+              {fltk::Widget} event_menu {
+                xywh {0 0 580 75} hide box FLAT_BOX
+                extra_code {\#include "eventmenu.h"}
+                class EventMenu
+              }
+              {fltk::Button} event_menu_button {
                 label E
+                callback {if(o->state()==0){
+  ui->event_menu->hide();
+  ui->event_edit->show();
+}
+else{
+  ui->event_edit->hide();
+  ui->event_edit->recount_has();
+  ui->event_menu->show();
+}} selected
                 tooltip {pick event type}
                 xywh {580 0 15 15}
+                extra_code {o->type(fltk::Button::TOGGLE);}
               }
               {fltk::Button} {} {
                 label L
@@ -167,7 +182,7 @@ ui->event_edit->redraw();}
               }
               {fltk::Button} {} {
                 label X
-                callback {ui->event_edit->clear_non_note_events();} selected
+                callback {ui->event_edit->clear_non_note_events();}
                 tooltip {clear all non note events in pattern}
                 xywh {580 45 15 15}
               }

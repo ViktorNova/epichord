@@ -117,6 +117,8 @@ void playing_timeout_cb(void* v){
           if(ui->piano_roll->visible()){
             ui->piano_roll->redraw();
             ui->event_edit->redraw();
+            if(ui->event_edit->cur_seqpat == s){ui->event_edit->has[1]=1;}
+            ui->event_menu->redraw();
           }
           if(ui->arranger->visible())
             ui->arranger->redraw();
@@ -140,6 +142,8 @@ void playing_timeout_cb(void* v){
           if(ui->piano_roll->visible()){
             ui->piano_roll->redraw();
             ui->event_edit->redraw();
+            if(ui->event_edit->cur_seqpat == s){ui->event_edit->has[0]=1;}
+            ui->event_menu->redraw();
           }
           if(ui->arranger->visible())
             ui->arranger->redraw();
@@ -150,21 +154,34 @@ void playing_timeout_cb(void* v){
         case 0xd0://channel pressure
         case 0xe0://pitch wheel
 
+          s = tfind<seqpat>(t->head,tick);
+          if(s->tick+s->dur < tick){
+            //scope_print("record head outside block\n");
+            continue;
+          }
+
           switch(type){
             case 0xa0:
               snprintf(report,256,"%02x %02x %02x : aftertouch - ch %d note %d %d\n",type|chan,val1,val2,chan,val1,val2);
+              if(ui->event_edit->cur_seqpat == s){ui->event_edit->has[2]=1;}
               break;
             case 0xb0:
               snprintf(report,256,"%02x %02x %02x : controller change - ch %d cntr %d val %d\n",type|chan,val1,val2,chan,val1,val2);
+              if(ui->event_edit->cur_seqpat == s){
+                ui->event_edit->has[val1+6]=1;
+              }
               break;
             case 0xc0:
               snprintf(report,256,"%02x %02x    : program change - ch %d pgrm %d \n",type|chan,val1,chan,val1);
+              if(ui->event_edit->cur_seqpat == s){ui->event_edit->has[3]=1;}
               break;
             case 0xd0:
               snprintf(report,256,"%02x %02x    : channel pressure - ch %d val %d \n",type|chan,val1,chan,val1);
+              if(ui->event_edit->cur_seqpat == s){ui->event_edit->has[4]=1;}
               break;
             case 0xe0:
               snprintf(report,256,"%02x %02x %02x : pitch wheel - ch %d val %d \n",type|chan,val1,val2,chan,(val2<<7)|val1);
+              if(ui->event_edit->cur_seqpat == s){ui->event_edit->has[5]=1;}
               break;
           }
           scope_print(report);
@@ -172,11 +189,7 @@ void playing_timeout_cb(void* v){
           if(!is_backend_recording())
             break;
 
-          s = tfind<seqpat>(t->head,tick);
-          if(s->tick+s->dur < tick){
-            //scope_print("record head outside block\n");
-            continue;
-          }
+          
           p = s->p;
           c=new CreateEvent(p,type,tick,val1,val2);
           set_undo(c);
@@ -184,6 +197,7 @@ void playing_timeout_cb(void* v){
           if(ui->piano_roll->visible()){
             ui->piano_roll->redraw();
             ui->event_edit->redraw();
+            ui->event_menu->redraw();
           }
           if(ui->arranger->visible())
             ui->arranger->redraw();

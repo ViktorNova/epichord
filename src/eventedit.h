@@ -35,11 +35,9 @@ class EventEdit : public fltk::Widget {
     char* event_type_name();
     void event_type_next();
     void event_type_prev();
-    void set_event_type(int type, int controller);
+
 
     int q_tick;
-
-    std::vector<mevent*> selection;
 
     int select_flag;
 
@@ -99,11 +97,12 @@ class EventEdit : public fltk::Widget {
 
     void delete_events(int (EventEdit::*pred)(mevent* e));
 
-
     int delete_type_in_range_pred(mevent* e);
     int delete_type_all_pred(mevent* e);
     int delete_all_non_note_pred(mevent* e);
     int delete_all_pred(mevent* e);
+
+
 
   public:
 
@@ -129,6 +128,10 @@ class EventEdit : public fltk::Widget {
 
     void clear_selected_events();
     void clear_selection();
+    void set_event_type(int type, int controller);
+
+    void recount_has();
+    int has[134];
 
 };
 
