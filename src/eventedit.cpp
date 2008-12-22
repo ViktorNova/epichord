@@ -90,7 +90,9 @@ int EventEdit::handle(int event){
           box_y1=Y;
           box_y2=Y;
           box_t1=xpix2tick(X);
-          box_t2=xpix2tick(X);
+          box_t2=box_t1;
+          box_m1=ypix2mag(Y);
+          box_m2=box_m1;
         }
         else{//line
           line_flag=1;
@@ -132,6 +134,7 @@ int EventEdit::handle(int event){
         box_x2 = X;
         box_y2 = Y;
         box_t2 = xpix2tick(X);
+        box_m2 = ypix2mag(Y);
       }
       if(insert_flag){
         insert_x = X;
@@ -602,8 +605,12 @@ void EventEdit::get_event_color(mevent* e, fltk::Color* c1, fltk::Color* c2, flt
   if(box_flag){
     T1=box_t1;
     T2=box_t2;
+    int M1 = box_m1;
+    int M2 = box_m2;
+    int M = get_event_mag(e);
     if(T1>T2){SWAP(T1,T2);}
-    if(e->tick > T1 && e->tick < T2){
+    if(M1<M2){SWAP(M1,M2);}
+    if(e->tick > T1 && e->tick < T2 && M > M2){
       *c1 = fltk::color(108,229,75);
       *c2 = fltk::color(71,120,59);
       *c3 = fltk::color(108,229,75);
@@ -656,6 +663,22 @@ void EventEdit::get_event_value(int* v1, int* v2){
 
 int EventEdit::xpix2tick(int xpix){
   ui->piano_roll->xpix2tick(xpix+scroll);
+}
+
+int EventEdit::get_event_mag(mevent* e){
+  switch(e->type){
+    case MIDI_NOTE_OFF:
+    case MIDI_NOTE_ON:
+    case MIDI_AFTERTOUCH:
+    case MIDI_CONTROLLER_CHANGE:
+      return val2mag(e->value2);
+    case MIDI_PROGRAM_CHANGE:
+    case MIDI_CHANNEL_PRESSURE:
+      return val2mag(e->value1);
+    case MIDI_PITCH_WHEEL:
+      return e->value1 | (e->value2<<7);
+  }
+  return 0;
 }
 
 

@@ -58,6 +58,8 @@ class EventEdit : public fltk::Widget {
     int box_y2;
     int box_t1;
     int box_t2;
+    int box_m1;
+    int box_m2;
 
     int insert_flag;
     int insert_x;
@@ -89,6 +91,7 @@ class EventEdit : public fltk::Widget {
     int match_event_type(mevent* e);
     void get_event_color(mevent* e,fltk::Color*,fltk::Color*,fltk::Color*);
     void get_event_value(int* v1, int* v2);
+    int get_event_mag(mevent* e);
 
     void delete_events(int (EventEdit::*pred)(mevent* e));
 
