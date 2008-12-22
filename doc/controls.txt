@@ -53,5 +53,10 @@ song view special controls
 double left click (song view) - edit pattern
 
 
-pattern edit special controls
-
+Event Edit special controls
+left click drag - change event values with line
+shift left click drag - box select
+ctrl left click drag - insert new event
+right click drag - delete events in range
+right click - clear selection
+!delete key - delete all selected events

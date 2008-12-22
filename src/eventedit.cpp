@@ -57,6 +57,7 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
 
 
   label_flag = 0;
+  select_flag = 0;
 }
 
 int EventEdit::handle(int event){
@@ -80,7 +81,7 @@ int EventEdit::handle(int event){
           insert_flag = 1;
           insert_x = X;
           insert_y = Y;
-          insert_t = xpix2tick(X);
+          insert_t = quantize(xpix2tick(X));
           insert_M = ypix2mag(Y);
         }
         else if(event_state()&fltk::SHIFT){//box select
@@ -139,7 +140,7 @@ int EventEdit::handle(int event){
       if(insert_flag){
         insert_x = X;
         insert_y = Y;
-        insert_t = xpix2tick(X);
+        insert_t = quantize(xpix2tick(X));
         insert_M = ypix2mag(Y);
       }
       if(delete_flag){
@@ -174,6 +175,7 @@ int EventEdit::handle(int event){
       else if(event_button()==3){//delete
         apply_delete();
         delete_flag = 0;
+        clear_selection();
       }
       redraw();
       break;
@@ -267,11 +269,13 @@ void EventEdit::draw(){
         M1 = tmp;
       }
       if(line_flag && e->tick > T1 && e->tick < T2){
-        float m = (float)(M2-M1)/(T2-T1);
-        float b = M1 - T1*m;
-        M = (int)(m*e->tick + b);
-        if(M<0){M=0;}
-        if(M>MAG_MAX){M=MAG_MAX;}
+        if(!select_flag || e->selected){
+          float m = (float)(M2-M1)/(T2-T1);
+          float b = M1 - T1*m;
+          M = (int)(m*e->tick + b);
+          if(M<0){M=0;}
+          if(M>MAG_MAX){M=MAG_MAX;}
+        }
       }
       int X = tick2xpix(e->tick) - scroll;
       int Y = mag2ypix(M);
@@ -279,9 +283,7 @@ void EventEdit::draw(){
 
       fltk::Color c1,c2,c3;
       get_event_color(e,&c1,&c2,&c3);
-//169 75 229
-//95 58 119
-//198 109 225
+
       fltk::setcolor(c1);
       fltk::fillrect(X,Y+1,1,H);
       fltk::fillrect(X+1,Y,1,1);
@@ -298,7 +300,7 @@ void EventEdit::draw(){
         else{
           snprintf(buf,16,"%d",mag2val(M));
         }
-        fltk::drawtext(buf,X+2,Y+12<h()-3?Y+12:h()-3);
+        fltk::drawtext(buf,X-fltk::getwidth(buf),Y+12<h()-3?Y+12:h()-3);
       }
     }
     e = e->next;
@@ -335,8 +337,25 @@ void EventEdit::draw(){
   }
 
   if(insert_flag){
-    fltk::setcolor(fltk::BLUE);
-    fltk::fillrect(insert_x,insert_y,2,h()-insert_y);
+    fltk::setcolor(fltk::CYAN);
+    int X = tick2xpix(insert_t)-scroll;
+    int Y = insert_y;
+    if(Y<0){Y=0;}
+    if(Y>h()-3){Y=h()-3;}
+    int M = insert_M;
+    if(M<0){M=0;}
+    if(M>MAG_MAX){M=MAG_MAX;}
+    fltk::fillrect(X,Y,2,h()-Y);
+    if(label_flag){
+      char buf[16];
+      if(event_type == MIDI_PITCH_WHEEL){
+        snprintf(buf,16,"%d",M);
+      }
+      else{
+        snprintf(buf,16,"%d",mag2val(M));
+      }
+      fltk::drawtext(buf,X-fltk::getwidth(buf),Y+12<h()-3?Y+12:h()-3);
+    }
   }
 
 
@@ -483,7 +502,7 @@ void EventEdit::apply_line(){
     if(e->tick > T2){
       break;
     }
-    if(match_event_type(e)){
+    if(match_event_type(e) && (e->selected || !select_flag)){
       float m = (float)(M2-M1)/(T2-T1);
       float b = M1 - m*T1;
       int M = (int)(m*e->tick + b);
@@ -517,7 +536,23 @@ void EventEdit::apply_line(){
 }
 
 void EventEdit::apply_box(){
-printf("apply box\n");
+  select_flag=1;
+  mevent* e = cur_seqpat->p->events->next;
+  int T1=box_t1;
+  int T2=box_t2;
+  int M1 = box_m1;
+  int M2 = box_m2;
+  int tmp;
+  while(e){
+    if(e->tick > T2){break;}
+    int M = get_event_mag(e);
+      if(T1>T2){SWAP(T1,T2);}
+      if(M1<M2){SWAP(M1,M2);}
+      if(e->tick > T1 && e->tick < T2 && M > M2){
+        e->selected = 1;
+      }
+    e=e->next;
+  }
 }
 
 void EventEdit::apply_insert(){
@@ -623,11 +658,20 @@ void EventEdit::get_event_color(mevent* e, fltk::Color* c1, fltk::Color* c2, flt
     T2=line_t2;
     if(T1>T2){SWAP(T1,T2);}
     if(e->tick > T1 && e->tick < T2){
-      *c1 = fltk::color(75,119,229);
-      *c2 = fltk::color(58,76,120);
-      *c3 = fltk::color(109,123,225);
-      return;
+      if(!select_flag || e->selected){
+        *c1 = fltk::color(75,119,229);
+        *c2 = fltk::color(58,76,120);
+        *c3 = fltk::color(109,123,225);
+        return;
+      }
     }
+  }
+
+  if(e->selected){
+    *c1 = fltk::color(255,248,47);
+    *c2 = fltk::color(140,137,46);
+    *c3 = fltk::color(232,255,37);
+    return;
   }
 
   *c1 = fltk::color(169,75,229);
@@ -718,4 +762,21 @@ void EventEdit::clear_all_events(){
   ui->piano_roll->redraw();
 }
 
+void EventEdit::clear_selected_events(){
 
+}
+
+void EventEdit::clear_selection(){
+  select_flag = 0;
+  mevent* e = cur_seqpat->p->events->next;
+  while(e){
+    e->selected=0;
+    e = e->next;
+  }
+  redraw();
+  ui->piano_roll->redraw();
+}
+
+int EventEdit::quantize(int tick){
+  return ui->piano_roll->quantize(tick);
+}

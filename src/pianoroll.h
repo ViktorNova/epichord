@@ -51,7 +51,7 @@ class PianoRoll : public fltk::Widget {
 
   int note2ypix(int note);
 
-  int quantize(int tick);
+
 
   int delete_flag;
 
@@ -62,6 +62,7 @@ class PianoRoll : public fltk::Widget {
 
     int tick2xpix(int time);
     int xpix2tick(int xpix);
+    int quantize(int tick);
 
     seqpat* cur_seqpat;
     track* cur_track;

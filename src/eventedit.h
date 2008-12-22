@@ -41,6 +41,8 @@ class EventEdit : public fltk::Widget {
 
     std::vector<mevent*> selection;
 
+    int select_flag;
+
     int line_flag;
     int line_t1;
     int line_M1;
@@ -83,6 +85,8 @@ class EventEdit : public fltk::Widget {
     int mag2val(int mag);
     int val2mag(int val);
 
+    int quantize(int tick);
+
     void apply_line();
     void apply_box();
     void apply_insert();
@@ -122,6 +126,9 @@ class EventEdit : public fltk::Widget {
     void clear_events();
     void clear_non_note_events();
     void clear_all_events();
+
+    void clear_selected_events();
+    void clear_selection();
 
 };
 

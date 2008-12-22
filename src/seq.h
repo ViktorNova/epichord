@@ -50,12 +50,15 @@ struct mevent {
   struct mevent* prev;
   struct mevent* next;
 
+  int selected;
+
   mevent(){
     type = -1;
     //off = NULL;
     prev = NULL;
     next = NULL;
     dur = 32;
+    selected = 0;
   }
 
   mevent(int ztype, int ztick, int zv1){
@@ -67,6 +70,7 @@ struct mevent {
     tick=ztick;
     value1=zv1;
     value2=0x7f;
+    selected = 0;
   }
 
   mevent(mevent* e){
@@ -78,6 +82,7 @@ struct mevent {
     //off = e->off;
     prev = e->prev;
     next = e->next;
+    selected = e->selected;
   }
 
 };
