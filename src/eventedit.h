@@ -88,6 +88,15 @@ class EventEdit : public fltk::Widget {
     void apply_paste();
     int match_event_type(mevent* e);
     void get_event_color(mevent* e,fltk::Color*,fltk::Color*,fltk::Color*);
+    void get_event_value(int* v1, int* v2);
+
+    void delete_events(int (EventEdit::*pred)(mevent* e));
+
+
+    int delete_type_in_range_pred(mevent* e);
+    int delete_type_all_pred(mevent* e);
+    int delete_all_non_note_pred(mevent* e);
+    int delete_all_pred(mevent* e);
 
   public:
 
@@ -108,6 +117,7 @@ class EventEdit : public fltk::Widget {
     void set_qtick(int q){q_tick=q;}
 
     void clear_events();
+    void clear_non_note_events();
     void clear_all_events();
 
 };

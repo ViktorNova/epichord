@@ -152,28 +152,30 @@ o->resize(960,900);}
                 xywh {580 0 15 15}
               }
               {fltk::Button} {} {
-                label {?}
-                xywh {580 15 15 15}
-              }
-              {fltk::Button} {} {
                 label L
                 callback {ui->event_edit->label_flag = o->state();
 ui->event_edit->redraw();}
                 tooltip {toggle event value labels}
-                xywh {580 30 15 15}
+                xywh {580 15 15 15}
                 extra_code {o->type(fltk::Button::TOGGLE);}
               }
               {fltk::Button} {} {
                 label C
                 callback {ui->event_edit->clear_events();}
                 tooltip {clear these events}
-                xywh {580 45 15 15}
+                xywh {580 30 15 15}
               }
               {fltk::Button} {} {
                 label X
-                callback {ui->event_edit->clear_all_events();} selected
-                tooltip {clear all events in pattern}
-                xywh {580 60 15 15}
+                callback {ui->event_edit->clear_non_note_events();} selected
+                tooltip {clear all non note events in pattern}
+                xywh {580 45 15 15}
+              }
+              {fltk::Button} {} {
+                label Z
+                callback {ui->event_edit->clear_all_events();}
+                tooltip {clear everything}
+                xywh {580 60 15 15} labelcolor 0xff000000
               }
             }
           }

@@ -60,6 +60,8 @@ private:
             static void cb_C(fltk::Button*, void*);
             inline void cb_X_i(fltk::Button*, void*);
             static void cb_X(fltk::Button*, void*);
+            inline void cb_Z_i(fltk::Button*, void*);
+            static void cb_Z(fltk::Button*, void*);
 public:
             TrackSelect *track_select;
             SampleView *sample_view;

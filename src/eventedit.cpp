@@ -518,12 +518,52 @@ printf("apply box\n");
 }
 
 void EventEdit::apply_insert(){
-printf("apply insert\n");
+  int V1,V2;
+  Command* c;
+  get_event_value(&V1,&V2);
+  c = new CreateEvent(cur_seqpat->p,event_type,insert_t,V1,V2);
+  set_undo(c);
+  undo_push(1);
+
+  if(event_type==MIDI_NOTE_ON){
+    ui->piano_roll->redraw();
+  }
+}
+
+void EventEdit::delete_events(int (EventEdit::*pred)(mevent* e)){
+  mevent* e = cur_seqpat->p->events->next;
+  mevent* next;
+  Command* c;
+  int N=0;
+  while(e){
+    if(((this)->*(pred))(e)){
+      next = e->next;
+      c = new DeleteEvent(e);
+      set_undo(c);
+      N++;
+      e = next;
+    }
+    else{
+      e = e->next;
+    }
+  }
+  undo_push(N);
+}
+
+
+int EventEdit::delete_type_in_range_pred(mevent* e){
+  if(e->tick > delete_t1 && e->tick < delete_t2 && match_event_type(e))
+    return 1;
+  else
+    return 0;
 }
 
 void EventEdit::apply_delete(){
-printf("apply delete\n");
+  delete_events(&EventEdit::delete_type_in_range_pred);
+  ui->piano_roll->redraw();
 }
+
+
 
 void EventEdit::apply_paste(){
 printf("apply paste\n");
@@ -544,9 +584,7 @@ int EventEdit::match_event_type(mevent* e){
 }
 
 void EventEdit::get_event_color(mevent* e, fltk::Color* c1, fltk::Color* c2, fltk::Color* c3){
-//169 75 229
-//95 58 119
-//198 109 225
+
   int T1,T2;
   int tmp;
   if(delete_flag){
@@ -590,16 +628,71 @@ void EventEdit::get_event_color(mevent* e, fltk::Color* c1, fltk::Color* c2, flt
   *c3 = fltk::color(198,109,225);
 }
 
+void EventEdit::get_event_value(int* v1, int* v2){
+  int M = insert_M;
+  if(M<0){M=0;}
+  if(M>MAG_MAX){M=MAG_MAX;}
+  switch(event_type){
+    case MIDI_NOTE_OFF:
+    case MIDI_NOTE_ON:
+    case MIDI_AFTERTOUCH:
+      *v1 = 60;
+      *v2 = mag2val(M);
+      break;
+    case MIDI_CONTROLLER_CHANGE:
+      *v1 = controller_type;
+      *v2 = mag2val(M);
+      break;
+    case MIDI_PROGRAM_CHANGE:
+    case MIDI_CHANNEL_PRESSURE:
+      *v1 = mag2val(M);
+      break;
+    case MIDI_PITCH_WHEEL:
+      *v1 = M&0x7f;
+      *v2 = (M&0x3f80) >> 7;
+      break;
+   }
+}
+
 int EventEdit::xpix2tick(int xpix){
   ui->piano_roll->xpix2tick(xpix+scroll);
 }
 
+
+int EventEdit::delete_type_all_pred(mevent* e){
+  if(match_event_type(e))
+    return 1;
+  else
+    return 0;
+}
+
+int EventEdit::delete_all_non_note_pred(mevent* e){
+  if(e->type != MIDI_NOTE_ON && e->type != MIDI_NOTE_OFF)
+    return 1;
+  else
+    return 0;
+}
+
+int EventEdit::delete_all_pred(mevent* e){
+  return 1;
+}
+
 void EventEdit::clear_events(){
-printf("clear\n");
+  delete_events(&EventEdit::delete_type_all_pred);
+  redraw();
+  ui->piano_roll->redraw();
+}
+
+void EventEdit::clear_non_note_events(){
+  delete_events(&EventEdit::delete_all_non_note_pred);
+  redraw();
+  ui->piano_roll->redraw();
 }
 
 void EventEdit::clear_all_events(){
-printf("clear all\n");
+  delete_events(&EventEdit::delete_all_pred);
+  redraw();
+  ui->piano_roll->redraw();
 }
 
 

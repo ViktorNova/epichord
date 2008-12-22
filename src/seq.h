@@ -55,14 +55,14 @@ struct mevent {
     //off = NULL;
     prev = NULL;
     next = NULL;
-    dur = 0;
+    dur = 32;
   }
 
   mevent(int ztype, int ztick, int zv1){
     //off=NULL;
     prev=NULL;
     next=NULL;
-    dur = 0;
+    dur = 32;
     type=ztype;
     tick=ztick;
     value1=zv1;

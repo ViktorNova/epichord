@@ -64,10 +64,17 @@ void UI::cb_C(fltk::Button* o, void* v) {
 }
 
 inline void UI::cb_X_i(fltk::Button*, void*) {
-  ui->event_edit->clear_all_events();
+  ui->event_edit->clear_non_note_events();
 }
 void UI::cb_X(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_X_i(o,v);
+}
+
+inline void UI::cb_Z_i(fltk::Button*, void*) {
+  ui->event_edit->clear_all_events();
+}
+void UI::cb_Z(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_Z_i(o,v);
 }
 
 inline void UI::cb_1_i(fltk::Button*, void*) {
@@ -446,19 +453,23 @@ UI::UI() {
              {fltk::Button* o = new fltk::Button(580, 0, 15, 15, "E");
               o->tooltip("pick event type");
             }
-            new fltk::Button(580, 15, 15, 15, "?");
-             {fltk::Button* o = new fltk::Button(580, 30, 15, 15, "L");
+             {fltk::Button* o = new fltk::Button(580, 15, 15, 15, "L");
               o->callback((fltk::Callback*)cb_L);
               o->tooltip("toggle event value labels");
               o->type(fltk::Button::TOGGLE);
             }
-             {fltk::Button* o = new fltk::Button(580, 45, 15, 15, "C");
+             {fltk::Button* o = new fltk::Button(580, 30, 15, 15, "C");
               o->callback((fltk::Callback*)cb_C);
               o->tooltip("clear these events");
             }
-             {fltk::Button* o = new fltk::Button(580, 60, 15, 15, "X");
+             {fltk::Button* o = new fltk::Button(580, 45, 15, 15, "X");
               o->callback((fltk::Callback*)cb_X);
-              o->tooltip("clear all events in pattern");
+              o->tooltip("clear all non note events in pattern");
+            }
+             {fltk::Button* o = new fltk::Button(580, 60, 15, 15, "Z");
+              o->labelcolor((fltk::Color)0xff000000);
+              o->callback((fltk::Callback*)cb_Z);
+              o->tooltip("clear everything");
             }
             o->end();
           }
