@@ -53,6 +53,10 @@ public:
           fltk::ScrollGroup *pattern_scroll;
             PianoRoll *piano_roll;
             EventEdit *event_edit;
+private:
+            inline void cb_L_i(fltk::Button*, void*);
+            static void cb_L(fltk::Button*, void*);
+public:
             TrackSelect *track_select;
             SampleView *sample_view;
             Keyboard *keyboard;

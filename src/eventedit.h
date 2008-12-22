@@ -53,6 +53,8 @@ class EventEdit : public fltk::Widget {
 
   public:
 
+    int label_flag;
+
     seqpat* cur_seqpat;
     track* cur_track;
 

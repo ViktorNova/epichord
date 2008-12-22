@@ -53,6 +53,8 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
   event_type = MIDI_NOTE_ON;
   controller_type = 0;
 
+
+  label_flag = 0;
 }
 
 int EventEdit::handle(int event){
@@ -205,6 +207,17 @@ void EventEdit::draw(){
       fltk::fillrect(X+1,Y+1,1,H);
       fltk::setcolor(fltk::color(198,109,225));
       fltk::fillrect(X,Y,1,1);
+      if(label_flag){
+        fltk::setcolor(fltk::color(169,75,229));
+        char buf[16];
+        if(e->type == MIDI_PITCH_WHEEL){
+          snprintf(buf,16,"%d",M);
+        }
+        else{
+          snprintf(buf,16,"%d",mag2val(M));
+        }
+        fltk::drawtext(buf,X+2,Y+12<h()-3?Y+12:h()-3);
+      }
     }
     e = e->next;
   }
@@ -366,7 +379,6 @@ void EventEdit::apply_line(int t1, int t2, int M1, int M2){
           V1 = mag2val(M);
           break;
         case MIDI_PITCH_WHEEL:
-printf("%d\n",M);
           V1 = M&0x7f;
           V2 = (M&0x3f80) >> 7;
           break;

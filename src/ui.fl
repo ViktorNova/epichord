@@ -62,10 +62,10 @@ o->hide();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -108,7 +108,7 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {
+        {fltk::Group} pattern_edit {open
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -156,8 +156,12 @@ o->resize(960,900);}
                 xywh {580 15 15 15}
               }
               {fltk::Button} {} {
-                label {?}
+                label L
+                callback {ui->event_edit->label_flag = o->state();
+ui->event_edit->redraw();} selected
+                tooltip {toggle event value labels}
                 xywh {580 30 15 15}
+                extra_code {o->type(fltk::Button::TOGGLE);}
               }
               {fltk::Button} {} {
                 label {?}
@@ -236,7 +240,7 @@ ui->song_buttons->show();}
           extra_code {\#include <metronome.h>}
           class Metronome
         }
-        {fltk::Group} {} {selected
+        {fltk::Group} {} {
           xywh {200 0 20 35} resizable
         } {}
         {fltk::Group} pattern_buttons {

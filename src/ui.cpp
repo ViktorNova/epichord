@@ -48,6 +48,14 @@ void UI::cb_(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
 }
 
+inline void UI::cb_L_i(fltk::Button* o, void*) {
+  ui->event_edit->label_flag = o->state();
+  ui->event_edit->redraw();
+}
+void UI::cb_L(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_L_i(o,v);
+}
+
 inline void UI::cb_1_i(fltk::Button*, void*) {
   ui->pattern_edit->hide();
   ui->pattern_buttons->hide();
@@ -425,7 +433,11 @@ UI::UI() {
               o->tooltip("pick event type");
             }
             new fltk::Button(580, 15, 15, 15, "?");
-            new fltk::Button(580, 30, 15, 15, "?");
+             {fltk::Button* o = new fltk::Button(580, 30, 15, 15, "L");
+              o->callback((fltk::Callback*)cb_L);
+              o->tooltip("toggle event value labels");
+              o->type(fltk::Button::TOGGLE);
+            }
             new fltk::Button(580, 45, 15, 15, "?");
             new fltk::Button(580, 60, 15, 15, "?");
             o->end();
