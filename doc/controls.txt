@@ -17,7 +17,7 @@ middle click - paste clone pattern
 !control y - redo
 !control a - select none / select all
 
-= - zoom in
+shift+= - zoom in
 - - zoom out
 
 !control s - save
@@ -31,20 +31,19 @@ middle click - paste clone pattern
 
 
 You can play notes with the keyboard.
-This is the layout for qwerty. (customize doesnt work yet)
+This is the layout for qwerty.
 
  # #   # # #   # #
 C D E F G A B C D E
 
- 2 3   5 6 7   9 0
-q w e r t y u i o p
+ 2 3   5 6 7   9 0   = \
+q w e r t y u i o p [ ] 
 
  s d   g h j   k l
 z x c v b n m , . /
 
-[ - octave down one
-] - octave up one
-
+shift+[ - octave down one
+shift+] - octave up one
 
 
 song view special controls

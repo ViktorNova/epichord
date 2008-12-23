@@ -233,6 +233,216 @@ private:
           inline void cb_extend_i(fltk::Item*, void*);
           static void cb_extend(fltk::Item*, void*);
 public:
+        KeyGrabber *kg_l0;
+private:
+        inline void cb_kg_l0_i(KeyGrabber*, void*);
+        static void cb_kg_l0(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l1;
+private:
+        inline void cb_kg_l1_i(KeyGrabber*, void*);
+        static void cb_kg_l1(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l2;
+private:
+        inline void cb_kg_l2_i(KeyGrabber*, void*);
+        static void cb_kg_l2(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l3;
+private:
+        inline void cb_kg_l3_i(KeyGrabber*, void*);
+        static void cb_kg_l3(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l4;
+private:
+        inline void cb_kg_l4_i(KeyGrabber*, void*);
+        static void cb_kg_l4(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l5;
+private:
+        inline void cb_kg_l5_i(KeyGrabber*, void*);
+        static void cb_kg_l5(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l6;
+private:
+        inline void cb_kg_l6_i(KeyGrabber*, void*);
+        static void cb_kg_l6(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l7;
+private:
+        inline void cb_kg_l7_i(KeyGrabber*, void*);
+        static void cb_kg_l7(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l8;
+private:
+        inline void cb_kg_l8_i(KeyGrabber*, void*);
+        static void cb_kg_l8(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l9;
+private:
+        inline void cb_kg_l9_i(KeyGrabber*, void*);
+        static void cb_kg_l9(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l10;
+private:
+        inline void cb_kg_l10_i(KeyGrabber*, void*);
+        static void cb_kg_l10(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l11;
+private:
+        inline void cb_kg_l11_i(KeyGrabber*, void*);
+        static void cb_kg_l11(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l12;
+private:
+        inline void cb_kg_l12_i(KeyGrabber*, void*);
+        static void cb_kg_l12(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l13;
+private:
+        inline void cb_kg_l13_i(KeyGrabber*, void*);
+        static void cb_kg_l13(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l14;
+private:
+        inline void cb_kg_l14_i(KeyGrabber*, void*);
+        static void cb_kg_l14(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l15;
+private:
+        inline void cb_kg_l15_i(KeyGrabber*, void*);
+        static void cb_kg_l15(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_l16;
+private:
+        inline void cb_kg_l16_i(KeyGrabber*, void*);
+        static void cb_kg_l16(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u0;
+private:
+        inline void cb_kg_u0_i(KeyGrabber*, void*);
+        static void cb_kg_u0(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u1;
+private:
+        inline void cb_kg_u1_i(KeyGrabber*, void*);
+        static void cb_kg_u1(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u2;
+private:
+        inline void cb_kg_u2_i(KeyGrabber*, void*);
+        static void cb_kg_u2(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u3;
+private:
+        inline void cb_kg_u3_i(KeyGrabber*, void*);
+        static void cb_kg_u3(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u4;
+private:
+        inline void cb_kg_u4_i(KeyGrabber*, void*);
+        static void cb_kg_u4(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u5;
+private:
+        inline void cb_kg_u5_i(KeyGrabber*, void*);
+        static void cb_kg_u5(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u6;
+private:
+        inline void cb_kg_u6_i(KeyGrabber*, void*);
+        static void cb_kg_u6(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u7;
+private:
+        inline void cb_kg_u7_i(KeyGrabber*, void*);
+        static void cb_kg_u7(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u8;
+private:
+        inline void cb_kg_u8_i(KeyGrabber*, void*);
+        static void cb_kg_u8(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u9;
+private:
+        inline void cb_kg_u9_i(KeyGrabber*, void*);
+        static void cb_kg_u9(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u10;
+private:
+        inline void cb_kg_u10_i(KeyGrabber*, void*);
+        static void cb_kg_u10(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u11;
+private:
+        inline void cb_kg_u11_i(KeyGrabber*, void*);
+        static void cb_kg_u11(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u12;
+private:
+        inline void cb_kg_u12_i(KeyGrabber*, void*);
+        static void cb_kg_u12(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u13;
+private:
+        inline void cb_kg_u13_i(KeyGrabber*, void*);
+        static void cb_kg_u13(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u14;
+private:
+        inline void cb_kg_u14_i(KeyGrabber*, void*);
+        static void cb_kg_u14(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u15;
+private:
+        inline void cb_kg_u15_i(KeyGrabber*, void*);
+        static void cb_kg_u15(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u16;
+private:
+        inline void cb_kg_u16_i(KeyGrabber*, void*);
+        static void cb_kg_u16(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u17;
+private:
+        inline void cb_kg_u17_i(KeyGrabber*, void*);
+        static void cb_kg_u17(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u18;
+private:
+        inline void cb_kg_u18_i(KeyGrabber*, void*);
+        static void cb_kg_u18(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u19;
+private:
+        inline void cb_kg_u19_i(KeyGrabber*, void*);
+        static void cb_kg_u19(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_u20;
+private:
+        inline void cb_kg_u20_i(KeyGrabber*, void*);
+        static void cb_kg_u20(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_zi;
+private:
+        inline void cb_kg_zi_i(KeyGrabber*, void*);
+        static void cb_kg_zi(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_zo;
+private:
+        inline void cb_kg_zo_i(KeyGrabber*, void*);
+        static void cb_kg_zo(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_ou;
+private:
+        inline void cb_kg_ou_i(KeyGrabber*, void*);
+        static void cb_kg_ou(KeyGrabber*, void*);
+public:
+        KeyGrabber *kg_od;
+private:
+        inline void cb_kg_od_i(KeyGrabber*, void*);
+        static void cb_kg_od(KeyGrabber*, void*);
+public:
   fltk::Window *help_window;
         fltk::Input *title_text;
         fltk::Input *author_text;

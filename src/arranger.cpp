@@ -89,7 +89,7 @@ int Arranger::handle(int event){
         //printf("arranger undo\n");
         return 1;
       }
-      if(event_key() == '-'){
+      if(zoom_out_key(event_key(),event_state())){
         //printf("arranger zoom out\n");
         if(zoom_n > 1){
           zoom_n--;
@@ -101,7 +101,7 @@ int Arranger::handle(int event){
         redraw();
         return 1;
       }
-      if(event_key() == '='){
+      if(zoom_in_key(event_key(),event_state())){
         //printf("arranger zoom in\n");
         if(zoom_n < 8){
           zoom_n++;

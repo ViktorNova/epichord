@@ -62,16 +62,27 @@ int keyboard_handler(int e, fltk::Window* w);
 
 class KeyGrabber : public fltk::Widget {
 
-    unsigned key;
+    char str[32];
+    int in_flag;
 
   public:
 
+    unsigned key;
+    unsigned mod;
     KeyGrabber(int x, int y, int w, int h, const char* label);
 
     int handle(int event);
     void draw();
 
+    int set_key(int key, int mod);
 };
 
+void set_keymap(int which, int index, int key, int mod);
+char* get_keystring(int key, int mod);
+
+void load_keymap();
+
+int zoom_out_key(unsigned,unsigned);
+int zoom_in_key(unsigned,unsigned);
 
 #endif

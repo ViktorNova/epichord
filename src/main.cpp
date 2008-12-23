@@ -32,7 +32,7 @@
 
 #include "ui.h"
 #include "backend.h"
-
+#include "uihelper.h"
 
 UI* ui;
 
@@ -40,6 +40,8 @@ int main(){
 
   ui = new UI();
   ui->arranger->take_focus();
+
+  load_keymap();
 
   init_seq();
   if(init_backend() < 0){

@@ -69,7 +69,7 @@ int PianoRoll::handle(int event){
         //printf("roll copy\n");
         return 1;
       }
-      if(event_key() == '-'){
+      if(zoom_out_key(event_key(),event_state())){
         if(zoom_n > 1){
           zoom_n--;
           set_zoom(30*(1<<zoom_n)/16);
@@ -82,7 +82,7 @@ int PianoRoll::handle(int event){
         redraw();
         return 1;
       }
-      if(event_key() == '='){
+      if(zoom_in_key(event_key(),event_state())){
         if(zoom_n < 8){
           zoom_n++;
           set_zoom(30*(1<<zoom_n)/16);
