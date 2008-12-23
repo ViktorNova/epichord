@@ -262,7 +262,7 @@ void playing_timeout_cb(void* v){
   }
 
   if(is_backend_playing()){
-    fltk::repeat_timeout(0.01, playing_timeout_cb, NULL);
+    fltk::repeat_timeout(0.005, playing_timeout_cb, NULL);
   }
   else{
     fltk::repeat_timeout(0.1, playing_timeout_cb, NULL);
