@@ -41,7 +41,7 @@ int main(){
   ui = new UI();
   ui->arranger->take_focus();
 
-  load_keymap();
+  load_config();
 
   init_seq();
   if(init_backend() < 0){

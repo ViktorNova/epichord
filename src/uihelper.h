@@ -34,12 +34,12 @@ struct conf{
   int recordonchan;
   int playmove;
   int follow;
-  int quantizedur;
   int recordmode;
   int robmode;
 };
 
-void config_init();
+void load_config();
+void save_config();
 void start_monitor();
 
 void press_stop();
@@ -50,10 +50,11 @@ void set_quant(int q);
 
 void scope_print(char* text);
 
+void update_config_gui();
 
 void set_beats_per_measure(int n);
 void set_measures_per_phrase(int n);
-void set_mur(int n);
+void set_measures_until_record(int n);
 
 void set_alwayscopy(int v);
 void set_autotrackname(int v);
@@ -62,7 +63,6 @@ void set_playinsert(int v);
 void set_recordonchan(int v);
 void set_playmove(int v);
 void set_follow(int v);
-void set_quantizedur(int v);
 void set_recordmode(int n);
 void set_robmode(int n);
 

@@ -552,7 +552,7 @@ int savesmf(const char* filename){
     vbuf.push_back('k');
 
     //chunk size (yet unknown)
-    
+
     vbuf.push_back(0x00);
     vbuf.push_back(0x00);
     vbuf.push_back(0x00);

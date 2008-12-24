@@ -53,8 +53,10 @@ class UI {open
 help_window->hide();
 action_window->hide();
 scope_window->hide();
-o->hide();}
-      xywh {507 27 640 480} resizable
+o->hide();
+
+save_config();}
+      xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
 \#include "seq.h"
@@ -236,7 +238,7 @@ ui->song_buttons->show();}
           }
         }
       }
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -257,15 +259,15 @@ ui->song_buttons->show();}
         }
         {fltk::Widget} metronome {
           label 0
-          xywh {95 5 100 25} color 56 labelcolor 0xffffff00
+          xywh {95 5 25 25} color 56 labelcolor 0xffffff00
           extra_code {\#include <metronome.h>}
           class Metronome
         }
         {fltk::Group} {} {
           xywh {200 0 20 35} resizable
         } {}
-        {fltk::Group} pattern_buttons {
-          xywh {250 5 205 25} hide
+        {fltk::Group} pattern_buttons {open
+          xywh {220 5 235 25} hide
         } {
           {fltk::Button} qbutton4 {
             callback {set_quant(4);}
@@ -303,10 +305,15 @@ o->state(1);}
             xywh {150 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
-          {fltk::Button} quant_button {
+          {fltk::Button} quant1_button {
             label qua
             tooltip {quantize selected notes}
             xywh {180 0 25 25}
+          }
+          {fltk::Button} quant0_button {
+            label qua
+            tooltip {quantize selected notes}
+            xywh {210 0 25 25}
           }
         }
         {fltk::Group} song_buttons {
@@ -367,13 +374,13 @@ ui->action_window->show();}
     }
     {fltk::Window} config_window {
       label controls open
-      xywh {589 130 320 285} hide resizable
+      xywh {589 130 320 285} resizable visible
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
       } {
         {fltk::Group} {} {
-          label options selected
+          label options
           xywh {145 15 170 265} horizontal
         } {
           {fltk::ValueInput} beats_per_measure {
@@ -381,7 +388,7 @@ ui->action_window->show();}
             callback {set_beats_per_measure((int)o->value());}
             xywh {5 5 45 20} minimum 2 maximum 31 step 1 value 4
           }
-          {fltk::ValueInput} {} {
+          {fltk::ValueInput} measures_per_phrase {
             label {measures per phrase}
             callback {set_measures_per_phrase((int)o->value());}
             xywh {5 30 45 20} maximum 128 step 1 value 4
@@ -395,9 +402,9 @@ ui->action_window->show();}
 ui->bpm_output->value(o->value());}
             xywh {55 55 105 20} align 4 minimum 1 maximum 1000 step 1 value 120
           }
-          {fltk::ValueInput} mur {
+          {fltk::ValueInput} measures_until_record {
             label {measures until record}
-            callback {set_mur((int)o->value());}
+            callback {set_measures_until_record((int)o->value());}
             xywh {5 80 45 20} maximum 128 step 1 value 1
           }
           {fltk::CheckButton} check_alwayscopy {
@@ -442,12 +449,6 @@ ui->bpm_output->value(o->value());}
             tooltip {Auto scroll horizontally when play head leaves viewing area.}
             xywh {5 179 25 26} horizontal align 4 value 1
           }
-          {fltk::CheckButton} check_quantizedur {
-            label {quantize note off}
-            callback {set_quantizedur(o->value());}
-            tooltip {Quantize the length of notes when using the quantizer.}
-            xywh {145 180 25 25} align 4 value 1
-          }
           {fltk::Choice} {} {
             label {record mode} open
             xywh {5 210 160 25}
@@ -489,253 +490,212 @@ ui->bpm_output->value(o->value());}
         } {
           {fltk::Widget} kg_l0 {
             label C0
-            callback {set_keymap(0,0,o->key,o->mod);}
             xywh {35 5 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l1 {
             label {C\#0}
-            callback {set_keymap(0,1,o->key,o->mod);}
             xywh {35 20 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l2 {
             label D0
-            callback {set_keymap(0,2,o->key,o->mod);}
             xywh {35 35 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l3 {
             label {D\#0}
-            callback {set_keymap(0,3,o->key,o->mod);}
             xywh {35 50 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l4 {
             label E0
-            callback {set_keymap(0,4,o->key,o->mod);}
             xywh {35 65 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l5 {
             label F0
-            callback {set_keymap(0,5,o->key,o->mod);}
             xywh {35 80 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l6 {
             label {F\#0}
-            callback {set_keymap(0,6,o->key,o->mod);}
             xywh {35 95 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l7 {
             label G0
-            callback {set_keymap(0,7,o->key,o->mod);}
             xywh {35 110 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l8 {
             label {G\#0}
-            callback {set_keymap(0,8,o->key,o->mod);}
             xywh {35 125 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l9 {
             label A0
-            callback {set_keymap(0,9,o->key,o->mod);}
             xywh {35 140 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l10 {
             label {A\#0}
-            callback {set_keymap(0,10,o->key,o->mod);}
+            callback {;}
             xywh {35 155 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l11 {
             label B0
-            callback {set_keymap(0,11,o->key,o->mod);}
             xywh {35 170 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l12 {
             label C1
-            callback {set_keymap(0,12,o->key,o->mod);}
             xywh {35 185 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l13 {
             label {C\#1}
-            callback {set_keymap(0,13,o->key,o->mod);}
             xywh {35 200 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l14 {
             label D1
-            callback {set_keymap(0,14,o->key,o->mod);}
             xywh {35 215 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l15 {
             label {D\#1}
-            callback {set_keymap(0,15,o->key,o->mod);}
             xywh {35 230 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_l16 {
             label E1
-            callback {set_keymap(0,16,o->key,o->mod);}
             xywh {35 245 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u0 {
             label C1
-            callback {set_keymap(1,0,o->key,o->mod);}
             xywh {130 5 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u1 {
             label {C\#1}
-            callback {set_keymap(1,1,o->key,o->mod);}
             xywh {130 20 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u2 {
             label D1
-            callback {set_keymap(1,2,o->key,o->mod);}
             xywh {130 35 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u3 {
             label {D\#1}
-            callback {set_keymap(1,3,o->key,o->mod);}
             xywh {130 50 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u4 {
             label E1
-            callback {set_keymap(1,4,o->key,o->mod);}
             xywh {130 65 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u5 {
             label F1
-            callback {set_keymap(1,5,o->key,o->mod);}
             xywh {130 80 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u6 {
             label {F\#1}
-            callback {set_keymap(1,6,o->key,o->mod);}
             xywh {130 95 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u7 {
             label G1
-            callback {set_keymap(1,7,o->key,o->mod);}
             xywh {130 110 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u8 {
             label {G\#1}
-            callback {set_keymap(1,8,o->key,o->mod);}
             xywh {130 125 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u9 {
             label A1
-            callback {set_keymap(1,9,o->key,o->mod);}
             xywh {130 140 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u10 {
             label {A\#1}
-            callback {set_keymap(1,10,o->key,o->mod);}
             xywh {130 155 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u11 {
             label B1
-            callback {set_keymap(1,11,o->key,o->mod);}
             xywh {130 170 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u12 {
             label C2
-            callback {set_keymap(1,12,o->key,o->mod);}
             xywh {130 185 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u13 {
             label {C\#2}
-            callback {set_keymap(1,13,o->key,o->mod);}
             xywh {130 200 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u14 {
             label D2
-            callback {set_keymap(1,14,o->key,o->mod);}
             xywh {130 215 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u15 {
             label {D\#2}
-            callback {set_keymap(1,15,o->key,o->mod);}
             xywh {130 230 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u16 {
             label E2
-            callback {set_keymap(1,16,o->key,o->mod);}
             xywh {130 245 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u17 {
             label F2
-            callback {set_keymap(1,17,o->key,o->mod);}
             xywh {265 5 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u18 {
             label {F\#2}
-            callback {set_keymap(1,18,o->key,o->mod);}
             xywh {265 20 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u19 {
             label G2
-            callback {set_keymap(1,19,o->key,o->mod);}
             xywh {265 35 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_u20 {
             label {G\#2}
-            callback {set_keymap(1,20,o->key,o->mod);}
             xywh {265 50 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_zi {
             label {zoom in}
-            callback {set_keymap(2,0,o->key,o->mod);}
             xywh {265 65 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_zo {
             label {zoom out}
-            callback {set_keymap(3,0,o->key,o->mod);}
             xywh {265 80 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_ou {
             label {octave up}
-            callback {set_keymap(4,0,o->key,o->mod);}
             xywh {265 95 45 15} align 4
             class KeyGrabber
           }
           {fltk::Widget} kg_od {
-            label {octave down}
-            callback {set_keymap(5,0,o->key,o->mod);}
+            label {octave down} selected
             xywh {265 110 45 15} align 4
             class KeyGrabber
           }
@@ -873,7 +833,6 @@ qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
 qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {track_info->set_rec(0);} {}
-    code {config_init();} {}
     code {start_monitor();} {}
     code {main_window->show();} {}
   }

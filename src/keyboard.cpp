@@ -23,6 +23,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#include <iostream>
+#include <fstream>
+
 #include <fltk/Group.h>
 #include <fltk/Widget.h>
 #include <fltk/events.h>
@@ -35,18 +38,11 @@
 
 extern UI* ui;
 
+using namespace std;
 using namespace fltk;
 
-struct combo {
-  unsigned int key;
-  unsigned int mod;
-  combo(unsigned zkey, unsigned zmod){key=zkey; mod=zmod;}
-  combo(){key=' '; mod=0;}
-  int operator==(combo c){
-    return (c.key==key && c.mod==mod) ? 1 : 0;
-  }
-};
 
+/*
 namespace keymap{
 
   combo lower[18];
@@ -56,7 +52,7 @@ namespace keymap{
   combo zoomin;
   combo zoomout;
 
-};
+};*/
 
 Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   sustain = 0;
@@ -73,53 +69,6 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   octave = 4;
 
-  keymap::lower[0] = combo('z',0);
-  keymap::lower[1] = combo('s',0);
-  keymap::lower[2] = combo('x',0);
-  keymap::lower[3] = combo('d',0);
-  keymap::lower[4] = combo('c',0);
-  keymap::lower[5] = combo('v',0);
-  keymap::lower[6] = combo('g',0);
-  keymap::lower[7] = combo('b',0);
-  keymap::lower[8] = combo('h',0);
-  keymap::lower[9] = combo('n',0);
-  keymap::lower[10] = combo('j',0);
-  keymap::lower[11] = combo('m',0);
-  keymap::lower[12] = combo(',',0);
-  keymap::lower[13] = combo('l',0);
-  keymap::lower[14] = combo('.',0);
-  keymap::lower[15] = combo(';',0);
-  keymap::lower[16] = combo('/',0);
-  keymap::lower[17] = combo('\'',0);
-  keymap::lower[18] = combo(' ',0);
-
-  keymap::upper[0] = combo('q',0);
-  keymap::upper[1] = combo('2',0);
-  keymap::upper[2] = combo('w',0);
-  keymap::upper[3] = combo('3',0);
-  keymap::upper[4] = combo('e',0);
-  keymap::upper[5] = combo('r',0);
-  keymap::upper[6] = combo('5',0);
-  keymap::upper[7] = combo('t',0);
-  keymap::upper[8] = combo('6',0);
-  keymap::upper[9] = combo('y',0);
-  keymap::upper[10] = combo('7',0);
-  keymap::upper[11] = combo('u',0);
-  keymap::upper[12] = combo('i',0);
-  keymap::upper[13] = combo(' ',0);
-  keymap::upper[14] = combo('o',0);
-  keymap::upper[15] = combo('0',0);
-  keymap::upper[16] = combo('p',0);
-  keymap::upper[17] = combo('[',0);
-  keymap::upper[18] = combo('=',0);
-  keymap::upper[19] = combo(']',0);
-  keymap::upper[20] = combo('\\',0);
-
-  keymap::octaveup = combo(']',fltk::SHIFT);
-  keymap::octavedown = combo('[',fltk::SHIFT);
-  keymap::zoomin = combo('=',fltk::SHIFT);
-  keymap::zoomout = combo('-',0);
-
 }
 
 
@@ -134,89 +83,87 @@ int keyboard_handler(int e, fltk::Window* w){
       if(E==combo(fltk::SpaceKey,0)){
         ui->keyboard->set_sustain(1);
       }
-      else if(E==keymap::octavedown){
+      else if(ui->kg_od->cmp(E)){
         ui->keyboard->octave_down();
       }
-      else if(E==keymap::octaveup){
+      else if(ui->kg_ou->cmp(E)){
         ui->keyboard->octave_up();
       }
-      else if(E==keymap::lower[0])
+      else if(ui->kg_l0->cmp(E))
         ui->keyboard->kb_play_note(0);
-      else if(E==keymap::lower[1])
+      else if(ui->kg_l1->cmp(E))
         ui->keyboard->kb_play_note(1);
-      else if(E==keymap::lower[2])
+      else if(ui->kg_l2->cmp(E))
         ui->keyboard->kb_play_note(2);
-      else if(E==keymap::lower[3])
+      else if(ui->kg_l3->cmp(E))
         ui->keyboard->kb_play_note(3);
-      else if(E==keymap::lower[4])
+      else if(ui->kg_l4->cmp(E))
         ui->keyboard->kb_play_note(4);
-      else if(E==keymap::lower[5])
+      else if(ui->kg_l5->cmp(E))
         ui->keyboard->kb_play_note(5);
-      else if(E==keymap::lower[6])
+      else if(ui->kg_l6->cmp(E))
         ui->keyboard->kb_play_note(6);
-      else if(E==keymap::lower[7])
+      else if(ui->kg_l7->cmp(E))
         ui->keyboard->kb_play_note(7);
-      else if(E==keymap::lower[8])
+      else if(ui->kg_l8->cmp(E))
         ui->keyboard->kb_play_note(8);
-      else if(E==keymap::lower[9])
+      else if(ui->kg_l9->cmp(E))
         ui->keyboard->kb_play_note(9);
-      else if(E==keymap::lower[10])
+      else if(ui->kg_l10->cmp(E))
         ui->keyboard->kb_play_note(10);
-      else if(E==keymap::lower[11])
+      else if(ui->kg_l11->cmp(E))
         ui->keyboard->kb_play_note(11);
-      else if(E==keymap::lower[12])
+      else if(ui->kg_l12->cmp(E))
         ui->keyboard->kb_play_note(12);
-      else if(E==keymap::lower[13])
+      else if(ui->kg_l13->cmp(E))
         ui->keyboard->kb_play_note(13);
-      else if(E==keymap::lower[14])
+      else if(ui->kg_l14->cmp(E))
         ui->keyboard->kb_play_note(14);
-      else if(E==keymap::lower[15])
+      else if(ui->kg_l15->cmp(E))
         ui->keyboard->kb_play_note(15);
-      else if(E==keymap::lower[16])
+      else if(ui->kg_l16->cmp(E))
         ui->keyboard->kb_play_note(16);
-      else if(E==keymap::lower[17])
-        ui->keyboard->kb_play_note(17);
-      else if(E==keymap::upper[0])
+      else if(ui->kg_u0->cmp(E))
         ui->keyboard->kb_play_note(12);
-      else if(E==keymap::upper[1])
+      else if(ui->kg_u1->cmp(E))
         ui->keyboard->kb_play_note(13);
-      else if(E==keymap::upper[2])
+      else if(ui->kg_u2->cmp(E))
         ui->keyboard->kb_play_note(14);
-      else if(E==keymap::upper[3])
+      else if(ui->kg_u3->cmp(E))
         ui->keyboard->kb_play_note(15);
-      else if(E==keymap::upper[4])
+      else if(ui->kg_u4->cmp(E))
         ui->keyboard->kb_play_note(16);
-      else if(E==keymap::upper[5])
+      else if(ui->kg_u5->cmp(E))
         ui->keyboard->kb_play_note(17);
-      else if(E==keymap::upper[6])
+      else if(ui->kg_u6->cmp(E))
         ui->keyboard->kb_play_note(18);
-      else if(E==keymap::upper[7])
+      else if(ui->kg_u7->cmp(E))
         ui->keyboard->kb_play_note(19);
-      else if(E==keymap::upper[8])
+      else if(ui->kg_u8->cmp(E))
         ui->keyboard->kb_play_note(20);
-      else if(E==keymap::upper[9])
+      else if(ui->kg_u9->cmp(E))
         ui->keyboard->kb_play_note(21);
-      else if(E==keymap::upper[10])
+      else if(ui->kg_u10->cmp(E))
         ui->keyboard->kb_play_note(22);
-      else if(E==keymap::upper[11])
+      else if(ui->kg_u11->cmp(E))
         ui->keyboard->kb_play_note(23);
-      else if(E==keymap::upper[12])
+      else if(ui->kg_u12->cmp(E))
         ui->keyboard->kb_play_note(24);
-      else if(E==keymap::upper[13])
+      else if(ui->kg_u13->cmp(E))
         ui->keyboard->kb_play_note(25);
-      else if(E==keymap::upper[14])
+      else if(ui->kg_u14->cmp(E))
         ui->keyboard->kb_play_note(26);
-      else if(E==keymap::upper[15])
+      else if(ui->kg_u15->cmp(E))
         ui->keyboard->kb_play_note(27);
-      else if(E==keymap::upper[16])
+      else if(ui->kg_u16->cmp(E))
         ui->keyboard->kb_play_note(28);
-      else if(E==keymap::upper[17])
+      else if(ui->kg_u17->cmp(E))
         ui->keyboard->kb_play_note(29);
-      else if(E==keymap::upper[18])
+      else if(ui->kg_u18->cmp(E))
         ui->keyboard->kb_play_note(30);
-      else if(E==keymap::upper[19])
+      else if(ui->kg_u19->cmp(E))
         ui->keyboard->kb_play_note(31);
-      else if(E==keymap::upper[20])
+      else if(ui->kg_u20->cmp(E))
         ui->keyboard->kb_play_note(32);
 
 
@@ -225,86 +172,82 @@ int keyboard_handler(int e, fltk::Window* w){
       if(E==combo(fltk::SpaceKey,0)){
         ui->keyboard->set_sustain(0);
       }
-      else if(E==keymap::lower[0])
+      else if(ui->kg_l0->cmp(E))
         ui->keyboard->kb_release_note(0);
-      else if(E==keymap::lower[1])
+      else if(ui->kg_l1->cmp(E))
         ui->keyboard->kb_release_note(1);
-      else if(E==keymap::lower[2])
+      else if(ui->kg_l2->cmp(E))
         ui->keyboard->kb_release_note(2);
-      else if(E==keymap::lower[3])
+      else if(ui->kg_l3->cmp(E))
         ui->keyboard->kb_release_note(3);
-      else if(E==keymap::lower[4])
+      else if(ui->kg_l4->cmp(E))
         ui->keyboard->kb_release_note(4);
-      else if(E==keymap::lower[5])
+      else if(ui->kg_l5->cmp(E))
         ui->keyboard->kb_release_note(5);
-      else if(E==keymap::lower[6])
+      else if(ui->kg_l6->cmp(E))
         ui->keyboard->kb_release_note(6);
-      else if(E==keymap::lower[7])
+      else if(ui->kg_l7->cmp(E))
         ui->keyboard->kb_release_note(7);
-      else if(E==keymap::lower[8])
+      else if(ui->kg_l8->cmp(E))
         ui->keyboard->kb_release_note(8);
-      else if(E==keymap::lower[9])
+      else if(ui->kg_l9->cmp(E))
         ui->keyboard->kb_release_note(9);
-      else if(E==keymap::lower[10])
+      else if(ui->kg_l10->cmp(E))
         ui->keyboard->kb_release_note(10);
-      else if(E==keymap::lower[11])
+      else if(ui->kg_l11->cmp(E))
         ui->keyboard->kb_release_note(11);
-      else if(E==keymap::lower[12])
+      else if(ui->kg_l12->cmp(E))
         ui->keyboard->kb_release_note(12);
-      else if(E==keymap::lower[13])
+      else if(ui->kg_l13->cmp(E))
         ui->keyboard->kb_release_note(13);
-      else if(E==keymap::lower[14])
+      else if(ui->kg_l14->cmp(E))
         ui->keyboard->kb_release_note(14);
-      else if(E==keymap::lower[15])
+      else if(ui->kg_l15->cmp(E))
         ui->keyboard->kb_release_note(15);
-      else if(E==keymap::lower[16])
+      else if(ui->kg_l16->cmp(E))
         ui->keyboard->kb_release_note(16);
-      else if(E==keymap::lower[17])
-        ui->keyboard->kb_release_note(17);
-      else if(E==keymap::upper[0])
+      else if(ui->kg_u0->cmp(E))
         ui->keyboard->kb_release_note(12);
-      else if(E==keymap::upper[1])
+      else if(ui->kg_u1->cmp(E))
         ui->keyboard->kb_release_note(13);
-      else if(E==keymap::upper[2])
+      else if(ui->kg_u2->cmp(E))
         ui->keyboard->kb_release_note(14);
-      else if(E==keymap::upper[3])
+      else if(ui->kg_u3->cmp(E))
         ui->keyboard->kb_release_note(15);
-      else if(E==keymap::upper[4])
+      else if(ui->kg_u4->cmp(E))
         ui->keyboard->kb_release_note(16);
-      else if(E==keymap::upper[5])
+      else if(ui->kg_u5->cmp(E))
         ui->keyboard->kb_release_note(17);
-      else if(E==keymap::upper[6])
+      else if(ui->kg_u6->cmp(E))
         ui->keyboard->kb_release_note(18);
-      else if(E==keymap::upper[7])
+      else if(ui->kg_u7->cmp(E))
         ui->keyboard->kb_release_note(19);
-      else if(E==keymap::upper[8])
+      else if(ui->kg_u8->cmp(E))
         ui->keyboard->kb_release_note(20);
-      else if(E==keymap::upper[9])
+      else if(ui->kg_u9->cmp(E))
         ui->keyboard->kb_release_note(21);
-      else if(E==keymap::upper[10])
+      else if(ui->kg_u10->cmp(E))
         ui->keyboard->kb_release_note(22);
-      else if(E==keymap::upper[11])
+      else if(ui->kg_u11->cmp(E))
         ui->keyboard->kb_release_note(23);
-      else if(E==keymap::upper[12])
+      else if(ui->kg_u12->cmp(E))
         ui->keyboard->kb_release_note(24);
-      else if(E==keymap::upper[13])
+      else if(ui->kg_u13->cmp(E))
         ui->keyboard->kb_release_note(25);
-      else if(E==keymap::upper[14])
+      else if(ui->kg_u14->cmp(E))
         ui->keyboard->kb_release_note(26);
-      else if(E==keymap::upper[15])
+      else if(ui->kg_u15->cmp(E))
         ui->keyboard->kb_release_note(27);
-      else if(E==keymap::upper[16])
+      else if(ui->kg_u16->cmp(E))
         ui->keyboard->kb_release_note(28);
-      else if(E==keymap::upper[17])
+      else if(ui->kg_u17->cmp(E))
         ui->keyboard->kb_release_note(29);
-      else if(E==keymap::upper[18])
+      else if(ui->kg_u18->cmp(E))
         ui->keyboard->kb_release_note(30);
-      else if(E==keymap::upper[19])
+      else if(ui->kg_u19->cmp(E))
         ui->keyboard->kb_release_note(31);
-      else if(E==keymap::upper[20])
+      else if(ui->kg_u20->cmp(E))
         ui->keyboard->kb_release_note(32);
-      else if(E==keymap::upper[21])
-        ui->keyboard->kb_release_note(33);
       return 1;
   }
   return 0;
@@ -549,7 +492,7 @@ int specialok=0;
         }
         if(specialok || event_key()<0x80){
           set_key(event_key(),event_state());
-          do_callback();
+          //do_callback();
           in_flag = 0;
           redraw();
           return 1;
@@ -587,30 +530,27 @@ int KeyGrabber::set_key(int zkey, int zmod){
   redraw();
 }
 
-
-void set_keymap(int which, int index, int key, int mod){
-  switch(which){
-    case 0://lower
-      keymap::lower[index] = combo(key,mod);
-      break;
-    case 1://upper
-      keymap::upper[index] = combo(key,mod);
-      break;
-    case 2://zoomin
-      keymap::zoomin = combo(key,mod);
-      break;
-    case 3://zoomout
-      keymap::zoomout = combo(key,mod);
-      break;
-    case 4://octave
-      keymap::octaveup = combo(key,mod);
-      break;
-    case 5://octdown
-      keymap::octavedown = combo(key,mod);
-      break;
-
-  }
+int KeyGrabber::set_key(combo c){
+  key = c.key;
+  mod = c.mod;
+  strncpy(str,get_keystring(key,mod),32);
+  redraw();
 }
+
+int KeyGrabber::cmp(combo c){
+  return (key==c.key && mod==c.mod) ? 1 : 0;
+}
+
+void KeyGrabber::save(fstream& f){
+  f << key << " " << mod << endl;
+}
+
+void KeyGrabber::load(fstream& f){
+  int k,m;
+  f >> k >> m;
+  set_key(k,m);
+}
+
 
 char keystring[32] = "";
 char* get_keystring(int key, int mod){
@@ -660,6 +600,7 @@ char* get_keystring(int key, int mod){
   switch(key){
     //case fltk::SpaceKey: strcpy(keystring+N,"spc"); break;
     //case fltk::BackSpaceKey: strcpy(keystring+N,"bksp"); break;
+    case fltk::Keypad: strcpy(keystring+N,"keypad"); break;
     case fltk::KeypadEnter: strcpy(keystring+N,"enter"); break;
     case fltk::MultiplyKey: strcpy(keystring+N,"mult"); break;
     case fltk::AddKey: strcpy(keystring+N,"plus"); break;
@@ -683,9 +624,108 @@ char* get_keystring(int key, int mod){
 }
 
 
-void load_keymap(){
+void load_keymap(std::fstream& f){
 
-  //TODO load from file instead
+  unsigned key, mod;
+
+  ui->kg_l0->load(f);
+  ui->kg_l1->load(f);
+  ui->kg_l2->load(f);
+  ui->kg_l3->load(f);
+  ui->kg_l4->load(f);
+  ui->kg_l5->load(f);
+  ui->kg_l6->load(f);
+  ui->kg_l7->load(f);
+  ui->kg_l8->load(f);
+  ui->kg_l9->load(f);
+  ui->kg_l10->load(f);
+  ui->kg_l11->load(f);
+  ui->kg_l12->load(f);
+  ui->kg_l13->load(f);
+  ui->kg_l14->load(f);
+  ui->kg_l15->load(f);
+  ui->kg_l16->load(f);
+
+  ui->kg_u0->load(f);
+  ui->kg_u1->load(f);
+  ui->kg_u2->load(f);
+  ui->kg_u3->load(f);
+  ui->kg_u4->load(f);
+  ui->kg_u5->load(f);
+  ui->kg_u6->load(f);
+  ui->kg_u7->load(f);
+  ui->kg_u8->load(f);
+  ui->kg_u9->load(f);
+  ui->kg_u10->load(f);
+  ui->kg_u11->load(f);
+  ui->kg_u12->load(f);
+  ui->kg_u13->load(f);
+  ui->kg_u14->load(f);
+  ui->kg_u15->load(f);
+  ui->kg_u16->load(f);
+  ui->kg_u17->load(f);
+  ui->kg_u18->load(f);
+  ui->kg_u19->load(f);
+  ui->kg_u20->load(f);
+
+  ui->kg_zi->load(f);
+  ui->kg_zo->load(f);
+  ui->kg_ou->load(f);
+  ui->kg_od->load(f);
+
+}
+
+void save_keymap(fstream& f){
+  f << "keymap" << endl;
+  ui->kg_l0->save(f);
+  ui->kg_l1->save(f);
+  ui->kg_l2->save(f);
+  ui->kg_l3->save(f);
+  ui->kg_l4->save(f);
+  ui->kg_l5->save(f);
+  ui->kg_l6->save(f);
+  ui->kg_l7->save(f);
+  ui->kg_l8->save(f);
+  ui->kg_l9->save(f);
+  ui->kg_l10->save(f);
+  ui->kg_l11->save(f);
+  ui->kg_l12->save(f);
+  ui->kg_l13->save(f);
+  ui->kg_l14->save(f);
+  ui->kg_l15->save(f);
+  ui->kg_l16->save(f);
+
+  ui->kg_u0->save(f);
+  ui->kg_u1->save(f);
+  ui->kg_u2->save(f);
+  ui->kg_u3->save(f);
+  ui->kg_u4->save(f);
+  ui->kg_u5->save(f);
+  ui->kg_u6->save(f);
+  ui->kg_u7->save(f);
+  ui->kg_u8->save(f);
+  ui->kg_u9->save(f);
+  ui->kg_u10->save(f);
+  ui->kg_u11->save(f);
+  ui->kg_u12->save(f);
+  ui->kg_u13->save(f);
+  ui->kg_u14->save(f);
+  ui->kg_u15->save(f);
+  ui->kg_u16->save(f);
+  ui->kg_u17->save(f);
+  ui->kg_u18->save(f);
+  ui->kg_u19->save(f);
+  ui->kg_u20->save(f);
+
+  ui->kg_zi->save(f);
+  ui->kg_zo->save(f);
+  ui->kg_ou->save(f);
+  ui->kg_od->save(f);
+
+  f << endl;
+}
+
+void load_default_keymap(){
   ui->kg_l0->set_key('z',0);
   ui->kg_l1->set_key('s',0);
   ui->kg_l2->set_key('x',0);
@@ -726,19 +766,23 @@ void load_keymap(){
   ui->kg_u19->set_key(']',0);
   ui->kg_u20->set_key('\\',0);
 
-  ui->kg_zi->set_key('=',fltk::SHIFT);
-  ui->kg_zo->set_key('-',0);
   ui->kg_ou->set_key(']',fltk::SHIFT);
   ui->kg_od->set_key('[',fltk::SHIFT);
+  ui->kg_zi->set_key('=',fltk::SHIFT);
+  ui->kg_zo->set_key('-',0);
+
 }
 
 
+
 int zoom_out_key(unsigned key,unsigned mod){
-  if(combo(key,mod)==keymap::zoomout){return 1;}
+  if(ui->kg_zo->cmp(combo(key,mod))){return 1;}
   return 0;
 }
 
 int zoom_in_key(unsigned key,unsigned mod){
-  if(combo(key,mod)==keymap::zoomin){return 1;}
+  if(ui->kg_zi->cmp(combo(key,mod))){return 1;}
   return 0;
 }
+
+

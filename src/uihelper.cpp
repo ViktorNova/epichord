@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <vector>
+#include <fstream>
 
 #include <math.h>
 
@@ -33,30 +34,113 @@
 
 #include "uihelper.h"
 
+
+#define CONFIG_FILENAME "~/.epichordrc"
+
 extern UI* ui;
 extern std::vector<track*> tracks;
 
 struct conf config;
 
+using namespace std;
 
-void config_init(){
-  //todo: load a config file instead
+char config_filename[1024] = "";
+
+
+void load_config(){
+
+  //linux dependent
+  char* homepath = getenv("HOME");
+  snprintf(config_filename,1024,"%s/.epichordrc",homepath);
+
+  fstream f;
+  f.open(config_filename,fstream::in);
+  if(!f.is_open()){
+    printf("unable to open config file for reading\n");
+    config.beats_per_measure = 4;
+    config.measures_per_phrase = 4;
+    config.measures_until_record = 1;
+    config.alwayscopy = 0;
+    config.autotrackname = 0;
+    config.passthru = 1;
+    config.playinsert = 1;
+    config.recordonchan = 0;
+    config.playmove = 1;
+    config.follow = 1;
+    config.recordmode = 0;
+    config.robmode = 0;
+
+    load_default_keymap();
+    update_config_gui();
+    return;
+  }
+
   config.beats_per_measure = 4;
   config.measures_per_phrase = 4;
-  config.measures_until_record = 1;
-  config.alwayscopy = 0;
-  config.autotrackname = 0;
-  config.passthru = 1;
-  config.playinsert = 1;
-  config.recordonchan = 0;
-  config.playmove = 1;
-  config.follow = 1;
-  config.quantizedur = 1;
-  config.recordmode = 0;
-  config.robmode = 0;
+
+  std::string word;
+
+  while(!f.eof()){
+    word = "";
+    f >> word;
+    if(word == "leadin"){f>>config.measures_until_record;}
+    else if(word == "alwayscopy"){f>>config.alwayscopy;}
+    else if(word == "autotrackname"){f>>config.autotrackname;}
+    else if(word == "passthru"){f>>config.passthru;}
+    else if(word == "playinsert"){f>>config.playinsert;}
+    else if(word == "recordonchan"){f>>config.recordonchan;}
+    else if(word == "playmove"){f>>config.playmove;}
+    else if(word == "follow"){f>>config.follow;}
+    else if(word == "recordmode"){f>>config.recordmode;}
+    else if(word == "robmode"){f>>config.robmode;}
+    else if(word == "keymap"){load_keymap(f);}
+    else{
+//read line
+    }
+  }
+  update_config_gui();
 }
 
+void save_config(){
+  fstream f;
+  f.open(config_filename,fstream::out);
+  if(!f.is_open()){
+    printf("unable to open config file for saving\n");
+    return;
+  }
 
+  f << "leadin " << config.measures_until_record << endl;
+  f << "alwayscopy " << config.alwayscopy << endl;
+  f << "autotrackname " << config.autotrackname << endl;
+  f << "passthru " << config.passthru << endl;
+  f << "playinsert " << config.playinsert << endl;
+  f << "recordonchan " << config.recordonchan << endl;
+  f << "playmove " << config.playmove << endl;
+  f << "follow " << config.follow << endl;
+  //f << "quantizedur " << config.quantizedur << endl;
+  f << "recordmode " << config.recordmode << endl;
+  f << "robmode " << config.robmode << endl;
+  f << endl;
+  save_keymap(f);
+}
+
+void update_config_gui(){
+  ui->beats_per_measure->value(config.beats_per_measure);
+  ui->measures_per_phrase->value(config.measures_per_phrase);
+  //ui->bpm_wheel.value(config.bpm);
+  //ui->bpm_output.value(config.bpm);
+  ui->measures_until_record->value(config.measures_until_record);
+
+  ui->check_alwayscopy->state(config.alwayscopy);
+  ui->check_autotrackname->state(config.autotrackname);
+  ui->check_passthru->state(config.passthru);
+  ui->check_playinsert->state(config.playinsert);
+  ui->check_recordonchan->state(config.recordonchan);
+  ui->check_playmove->state(config.playmove);
+  ui->check_follow->state(config.follow);
+
+  ui->config_window->redraw();
+}
 
 
 void playing_timeout_cb(void* v){
@@ -407,7 +491,7 @@ void set_measures_per_phrase(int n){
   ui->pattern_timeline->redraw();
 }
 
-void set_mur(int n){
+void set_measures_until_record(int n){
   config.measures_until_record = n;
 }
 
@@ -440,10 +524,6 @@ void set_follow(int v){
   config.follow = v;
 }
 
-void set_quantizedur(int v){
-  config.quantizedur = v;
-}
-
 void set_recordmode(int n){
   config.recordmode = n;
 }
@@ -458,4 +538,5 @@ void scope_print(char* text){
   int N = ui->scope->buffer()->length();
   ui->scope->scroll(N,0);
 }
+
 

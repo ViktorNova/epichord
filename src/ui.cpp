@@ -36,6 +36,8 @@ inline void UI::cb_main_window_i(fltk::Window* o, void*) {
   action_window->hide();
   scope_window->hide();
   o->hide();
+  
+  save_config();
 }
 void UI::cb_main_window(fltk::Window* o, void* v) {
   ((UI*)(o->user_data()))->cb_main_window_i(o,v);
@@ -224,11 +226,11 @@ void UI::cb_beats_per_measure(fltk::ValueInput* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_beats_per_measure_i(o,v);
 }
 
-inline void UI::cb_measures_i(fltk::ValueInput* o, void*) {
+inline void UI::cb_measures_per_phrase_i(fltk::ValueInput* o, void*) {
   set_measures_per_phrase((int)o->value());
 }
-void UI::cb_measures(fltk::ValueInput* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_measures_i(o,v);
+void UI::cb_measures_per_phrase(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_measures_per_phrase_i(o,v);
 }
 
 inline void UI::cb_bpm_wheel_i(fltk::ThumbWheel* o, void*) {
@@ -239,11 +241,11 @@ void UI::cb_bpm_wheel(fltk::ThumbWheel* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_bpm_wheel_i(o,v);
 }
 
-inline void UI::cb_mur_i(fltk::ValueInput* o, void*) {
-  set_mur((int)o->value());
+inline void UI::cb_measures_until_record_i(fltk::ValueInput* o, void*) {
+  set_measures_until_record((int)o->value());
 }
-void UI::cb_mur(fltk::ValueInput* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_mur_i(o,v);
+void UI::cb_measures_until_record(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_measures_until_record_i(o,v);
 }
 
 inline void UI::cb_check_alwayscopy_i(fltk::CheckButton* o, void*) {
@@ -295,13 +297,6 @@ void UI::cb_check_follow(fltk::CheckButton* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_check_follow_i(o,v);
 }
 
-inline void UI::cb_check_quantizedur_i(fltk::CheckButton* o, void*) {
-  set_quantizedur(o->value());
-}
-void UI::cb_check_quantizedur(fltk::CheckButton* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_check_quantizedur_i(o,v);
-}
-
 inline void UI::cb_merge_i(fltk::Item*, void*) {
   set_recordmode(0);
 }
@@ -344,298 +339,11 @@ void UI::cb_extend(fltk::Item* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_extend_i(o,v);
 }
 
-inline void UI::cb_kg_l0_i(KeyGrabber* o, void*) {
-  set_keymap(0,0,o->key,o->mod);
-}
-void UI::cb_kg_l0(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l0_i(o,v);
-}
-
-inline void UI::cb_kg_l1_i(KeyGrabber* o, void*) {
-  set_keymap(0,1,o->key,o->mod);
-}
-void UI::cb_kg_l1(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l1_i(o,v);
-}
-
-inline void UI::cb_kg_l2_i(KeyGrabber* o, void*) {
-  set_keymap(0,2,o->key,o->mod);
-}
-void UI::cb_kg_l2(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l2_i(o,v);
-}
-
-inline void UI::cb_kg_l3_i(KeyGrabber* o, void*) {
-  set_keymap(0,3,o->key,o->mod);
-}
-void UI::cb_kg_l3(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l3_i(o,v);
-}
-
-inline void UI::cb_kg_l4_i(KeyGrabber* o, void*) {
-  set_keymap(0,4,o->key,o->mod);
-}
-void UI::cb_kg_l4(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l4_i(o,v);
-}
-
-inline void UI::cb_kg_l5_i(KeyGrabber* o, void*) {
-  set_keymap(0,5,o->key,o->mod);
-}
-void UI::cb_kg_l5(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l5_i(o,v);
-}
-
-inline void UI::cb_kg_l6_i(KeyGrabber* o, void*) {
-  set_keymap(0,6,o->key,o->mod);
-}
-void UI::cb_kg_l6(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l6_i(o,v);
-}
-
-inline void UI::cb_kg_l7_i(KeyGrabber* o, void*) {
-  set_keymap(0,7,o->key,o->mod);
-}
-void UI::cb_kg_l7(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l7_i(o,v);
-}
-
-inline void UI::cb_kg_l8_i(KeyGrabber* o, void*) {
-  set_keymap(0,8,o->key,o->mod);
-}
-void UI::cb_kg_l8(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l8_i(o,v);
-}
-
-inline void UI::cb_kg_l9_i(KeyGrabber* o, void*) {
-  set_keymap(0,9,o->key,o->mod);
-}
-void UI::cb_kg_l9(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l9_i(o,v);
-}
-
-inline void UI::cb_kg_l10_i(KeyGrabber* o, void*) {
-  set_keymap(0,10,o->key,o->mod);
+inline void UI::cb_kg_l10_i(KeyGrabber*, void*) {
+  ;
 }
 void UI::cb_kg_l10(KeyGrabber* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l10_i(o,v);
-}
-
-inline void UI::cb_kg_l11_i(KeyGrabber* o, void*) {
-  set_keymap(0,11,o->key,o->mod);
-}
-void UI::cb_kg_l11(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l11_i(o,v);
-}
-
-inline void UI::cb_kg_l12_i(KeyGrabber* o, void*) {
-  set_keymap(0,12,o->key,o->mod);
-}
-void UI::cb_kg_l12(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l12_i(o,v);
-}
-
-inline void UI::cb_kg_l13_i(KeyGrabber* o, void*) {
-  set_keymap(0,13,o->key,o->mod);
-}
-void UI::cb_kg_l13(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l13_i(o,v);
-}
-
-inline void UI::cb_kg_l14_i(KeyGrabber* o, void*) {
-  set_keymap(0,14,o->key,o->mod);
-}
-void UI::cb_kg_l14(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l14_i(o,v);
-}
-
-inline void UI::cb_kg_l15_i(KeyGrabber* o, void*) {
-  set_keymap(0,15,o->key,o->mod);
-}
-void UI::cb_kg_l15(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l15_i(o,v);
-}
-
-inline void UI::cb_kg_l16_i(KeyGrabber* o, void*) {
-  set_keymap(0,16,o->key,o->mod);
-}
-void UI::cb_kg_l16(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l16_i(o,v);
-}
-
-inline void UI::cb_kg_u0_i(KeyGrabber* o, void*) {
-  set_keymap(1,0,o->key,o->mod);
-}
-void UI::cb_kg_u0(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u0_i(o,v);
-}
-
-inline void UI::cb_kg_u1_i(KeyGrabber* o, void*) {
-  set_keymap(1,1,o->key,o->mod);
-}
-void UI::cb_kg_u1(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u1_i(o,v);
-}
-
-inline void UI::cb_kg_u2_i(KeyGrabber* o, void*) {
-  set_keymap(1,2,o->key,o->mod);
-}
-void UI::cb_kg_u2(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u2_i(o,v);
-}
-
-inline void UI::cb_kg_u3_i(KeyGrabber* o, void*) {
-  set_keymap(1,3,o->key,o->mod);
-}
-void UI::cb_kg_u3(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u3_i(o,v);
-}
-
-inline void UI::cb_kg_u4_i(KeyGrabber* o, void*) {
-  set_keymap(1,4,o->key,o->mod);
-}
-void UI::cb_kg_u4(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u4_i(o,v);
-}
-
-inline void UI::cb_kg_u5_i(KeyGrabber* o, void*) {
-  set_keymap(1,5,o->key,o->mod);
-}
-void UI::cb_kg_u5(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u5_i(o,v);
-}
-
-inline void UI::cb_kg_u6_i(KeyGrabber* o, void*) {
-  set_keymap(1,6,o->key,o->mod);
-}
-void UI::cb_kg_u6(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u6_i(o,v);
-}
-
-inline void UI::cb_kg_u7_i(KeyGrabber* o, void*) {
-  set_keymap(1,7,o->key,o->mod);
-}
-void UI::cb_kg_u7(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u7_i(o,v);
-}
-
-inline void UI::cb_kg_u8_i(KeyGrabber* o, void*) {
-  set_keymap(1,8,o->key,o->mod);
-}
-void UI::cb_kg_u8(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u8_i(o,v);
-}
-
-inline void UI::cb_kg_u9_i(KeyGrabber* o, void*) {
-  set_keymap(1,9,o->key,o->mod);
-}
-void UI::cb_kg_u9(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u9_i(o,v);
-}
-
-inline void UI::cb_kg_u10_i(KeyGrabber* o, void*) {
-  set_keymap(1,10,o->key,o->mod);
-}
-void UI::cb_kg_u10(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u10_i(o,v);
-}
-
-inline void UI::cb_kg_u11_i(KeyGrabber* o, void*) {
-  set_keymap(1,11,o->key,o->mod);
-}
-void UI::cb_kg_u11(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u11_i(o,v);
-}
-
-inline void UI::cb_kg_u12_i(KeyGrabber* o, void*) {
-  set_keymap(1,12,o->key,o->mod);
-}
-void UI::cb_kg_u12(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u12_i(o,v);
-}
-
-inline void UI::cb_kg_u13_i(KeyGrabber* o, void*) {
-  set_keymap(1,13,o->key,o->mod);
-}
-void UI::cb_kg_u13(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u13_i(o,v);
-}
-
-inline void UI::cb_kg_u14_i(KeyGrabber* o, void*) {
-  set_keymap(1,14,o->key,o->mod);
-}
-void UI::cb_kg_u14(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u14_i(o,v);
-}
-
-inline void UI::cb_kg_u15_i(KeyGrabber* o, void*) {
-  set_keymap(1,15,o->key,o->mod);
-}
-void UI::cb_kg_u15(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u15_i(o,v);
-}
-
-inline void UI::cb_kg_u16_i(KeyGrabber* o, void*) {
-  set_keymap(1,16,o->key,o->mod);
-}
-void UI::cb_kg_u16(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u16_i(o,v);
-}
-
-inline void UI::cb_kg_u17_i(KeyGrabber* o, void*) {
-  set_keymap(1,17,o->key,o->mod);
-}
-void UI::cb_kg_u17(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u17_i(o,v);
-}
-
-inline void UI::cb_kg_u18_i(KeyGrabber* o, void*) {
-  set_keymap(1,18,o->key,o->mod);
-}
-void UI::cb_kg_u18(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u18_i(o,v);
-}
-
-inline void UI::cb_kg_u19_i(KeyGrabber* o, void*) {
-  set_keymap(1,19,o->key,o->mod);
-}
-void UI::cb_kg_u19(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u19_i(o,v);
-}
-
-inline void UI::cb_kg_u20_i(KeyGrabber* o, void*) {
-  set_keymap(1,20,o->key,o->mod);
-}
-void UI::cb_kg_u20(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_u20_i(o,v);
-}
-
-inline void UI::cb_kg_zi_i(KeyGrabber* o, void*) {
-  set_keymap(2,0,o->key,o->mod);
-}
-void UI::cb_kg_zi(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_zi_i(o,v);
-}
-
-inline void UI::cb_kg_zo_i(KeyGrabber* o, void*) {
-  set_keymap(3,0,o->key,o->mod);
-}
-void UI::cb_kg_zo(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_zo_i(o,v);
-}
-
-inline void UI::cb_kg_ou_i(KeyGrabber* o, void*) {
-  set_keymap(4,0,o->key,o->mod);
-}
-void UI::cb_kg_ou(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_ou_i(o,v);
-}
-
-inline void UI::cb_kg_od_i(KeyGrabber* o, void*) {
-  set_keymap(5,0,o->key,o->mod);
-}
-void UI::cb_kg_od(KeyGrabber* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_od_i(o,v);
 }
 
 inline void UI::cb_new1_i(fltk::Button*, void*) {
@@ -835,7 +543,7 @@ UI::UI() {
         o->callback((fltk::Callback*)cb_record_button);
         o->type(fltk::Button::TOGGLE);
       }
-       {Metronome* o = metronome = new Metronome(95, 5, 100, 25, "0");
+       {Metronome* o = metronome = new Metronome(95, 5, 25, 25, "0");
         o->color((fltk::Color)56);
         o->labelcolor((fltk::Color)0xffffff00);
       }
@@ -843,7 +551,7 @@ UI::UI() {
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }
-       {fltk::Group* o = pattern_buttons = new fltk::Group(250, 5, 205, 25);
+       {fltk::Group* o = pattern_buttons = new fltk::Group(220, 5, 235, 25);
         o->hide();
         o->begin();
          {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25);
@@ -875,7 +583,10 @@ UI::UI() {
           o->callback((fltk::Callback*)cb_qbutton0);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = quant_button = new fltk::Button(180, 0, 25, 25, "qua");
+         {fltk::Button* o = quant1_button = new fltk::Button(180, 0, 25, 25, "qua");
+          o->tooltip("quantize selected notes");
+        }
+         {fltk::Button* o = quant0_button = new fltk::Button(210, 0, 25, 25, "qua");
           o->tooltip("quantize selected notes");
         }
         o->end();
@@ -940,11 +651,11 @@ UI::UI() {
           o->value(4);
           o->callback((fltk::Callback*)cb_beats_per_measure);
         }
-         {fltk::ValueInput* o = new fltk::ValueInput(5, 30, 45, 20, "measures per phrase");
+         {fltk::ValueInput* o = measures_per_phrase = new fltk::ValueInput(5, 30, 45, 20, "measures per phrase");
           o->maximum(128);
           o->step(1);
           o->value(4);
-          o->callback((fltk::Callback*)cb_measures);
+          o->callback((fltk::Callback*)cb_measures_per_phrase);
         }
          {fltk::ValueOutput* o = bpm_output = new fltk::ValueOutput(5, 55, 45, 20, "bpm");
           o->minimum(1);
@@ -960,11 +671,11 @@ UI::UI() {
           o->callback((fltk::Callback*)cb_bpm_wheel);
           o->align(fltk::ALIGN_LEFT);
         }
-         {fltk::ValueInput* o = mur = new fltk::ValueInput(5, 80, 45, 20, "measures until record");
+         {fltk::ValueInput* o = measures_until_record = new fltk::ValueInput(5, 80, 45, 20, "measures until record");
           o->maximum(128);
           o->step(1);
           o->value(1);
-          o->callback((fltk::Callback*)cb_mur);
+          o->callback((fltk::Callback*)cb_measures_until_record);
         }
          {fltk::CheckButton* o = check_alwayscopy = new fltk::CheckButton(5, 105, 25, 25, "always hard copy");
           o->callback((fltk::Callback*)cb_check_alwayscopy);
@@ -1006,12 +717,6 @@ track.");
           o->align(fltk::ALIGN_LEFT);
           o->tooltip("Auto scroll horizontally when play head leaves viewing area.");
         }
-         {fltk::CheckButton* o = check_quantizedur = new fltk::CheckButton(145, 180, 25, 25, "quantize note off");
-          o->set_flag(fltk::STATE);
-          o->callback((fltk::Callback*)cb_check_quantizedur);
-          o->align(fltk::ALIGN_LEFT);
-          o->tooltip("Quantize the length of notes when using the quantizer.");
-        }
          {fltk::Choice* o = new fltk::Choice(5, 210, 160, 25, "record mode");
           o->begin();
            {fltk::Item* o = new fltk::Item("merge");
@@ -1044,43 +749,33 @@ track.");
         o->hide();
         o->begin();
          {KeyGrabber* o = kg_l0 = new KeyGrabber(35, 5, 45, 15, "C0");
-          o->callback((fltk::Callback*)cb_kg_l0);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l1 = new KeyGrabber(35, 20, 45, 15, "C#0");
-          o->callback((fltk::Callback*)cb_kg_l1);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l2 = new KeyGrabber(35, 35, 45, 15, "D0");
-          o->callback((fltk::Callback*)cb_kg_l2);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l3 = new KeyGrabber(35, 50, 45, 15, "D#0");
-          o->callback((fltk::Callback*)cb_kg_l3);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l4 = new KeyGrabber(35, 65, 45, 15, "E0");
-          o->callback((fltk::Callback*)cb_kg_l4);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l5 = new KeyGrabber(35, 80, 45, 15, "F0");
-          o->callback((fltk::Callback*)cb_kg_l5);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l6 = new KeyGrabber(35, 95, 45, 15, "F#0");
-          o->callback((fltk::Callback*)cb_kg_l6);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l7 = new KeyGrabber(35, 110, 45, 15, "G0");
-          o->callback((fltk::Callback*)cb_kg_l7);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l8 = new KeyGrabber(35, 125, 45, 15, "G#0");
-          o->callback((fltk::Callback*)cb_kg_l8);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l9 = new KeyGrabber(35, 140, 45, 15, "A0");
-          o->callback((fltk::Callback*)cb_kg_l9);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l10 = new KeyGrabber(35, 155, 45, 15, "A#0");
@@ -1088,127 +783,96 @@ track.");
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l11 = new KeyGrabber(35, 170, 45, 15, "B0");
-          o->callback((fltk::Callback*)cb_kg_l11);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l12 = new KeyGrabber(35, 185, 45, 15, "C1");
-          o->callback((fltk::Callback*)cb_kg_l12);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l13 = new KeyGrabber(35, 200, 45, 15, "C#1");
-          o->callback((fltk::Callback*)cb_kg_l13);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l14 = new KeyGrabber(35, 215, 45, 15, "D1");
-          o->callback((fltk::Callback*)cb_kg_l14);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l15 = new KeyGrabber(35, 230, 45, 15, "D#1");
-          o->callback((fltk::Callback*)cb_kg_l15);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_l16 = new KeyGrabber(35, 245, 45, 15, "E1");
-          o->callback((fltk::Callback*)cb_kg_l16);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u0 = new KeyGrabber(130, 5, 45, 15, "C1");
-          o->callback((fltk::Callback*)cb_kg_u0);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u1 = new KeyGrabber(130, 20, 45, 15, "C#1");
-          o->callback((fltk::Callback*)cb_kg_u1);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u2 = new KeyGrabber(130, 35, 45, 15, "D1");
-          o->callback((fltk::Callback*)cb_kg_u2);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u3 = new KeyGrabber(130, 50, 45, 15, "D#1");
-          o->callback((fltk::Callback*)cb_kg_u3);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u4 = new KeyGrabber(130, 65, 45, 15, "E1");
-          o->callback((fltk::Callback*)cb_kg_u4);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u5 = new KeyGrabber(130, 80, 45, 15, "F1");
-          o->callback((fltk::Callback*)cb_kg_u5);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u6 = new KeyGrabber(130, 95, 45, 15, "F#1");
-          o->callback((fltk::Callback*)cb_kg_u6);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u7 = new KeyGrabber(130, 110, 45, 15, "G1");
-          o->callback((fltk::Callback*)cb_kg_u7);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u8 = new KeyGrabber(130, 125, 45, 15, "G#1");
-          o->callback((fltk::Callback*)cb_kg_u8);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u9 = new KeyGrabber(130, 140, 45, 15, "A1");
-          o->callback((fltk::Callback*)cb_kg_u9);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u10 = new KeyGrabber(130, 155, 45, 15, "A#1");
-          o->callback((fltk::Callback*)cb_kg_u10);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u11 = new KeyGrabber(130, 170, 45, 15, "B1");
-          o->callback((fltk::Callback*)cb_kg_u11);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u12 = new KeyGrabber(130, 185, 45, 15, "C2");
-          o->callback((fltk::Callback*)cb_kg_u12);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u13 = new KeyGrabber(130, 200, 45, 15, "C#2");
-          o->callback((fltk::Callback*)cb_kg_u13);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u14 = new KeyGrabber(130, 215, 45, 15, "D2");
-          o->callback((fltk::Callback*)cb_kg_u14);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u15 = new KeyGrabber(130, 230, 45, 15, "D#2");
-          o->callback((fltk::Callback*)cb_kg_u15);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u16 = new KeyGrabber(130, 245, 45, 15, "E2");
-          o->callback((fltk::Callback*)cb_kg_u16);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u17 = new KeyGrabber(265, 5, 45, 15, "F2");
-          o->callback((fltk::Callback*)cb_kg_u17);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u18 = new KeyGrabber(265, 20, 45, 15, "F#2");
-          o->callback((fltk::Callback*)cb_kg_u18);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u19 = new KeyGrabber(265, 35, 45, 15, "G2");
-          o->callback((fltk::Callback*)cb_kg_u19);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_u20 = new KeyGrabber(265, 50, 45, 15, "G#2");
-          o->callback((fltk::Callback*)cb_kg_u20);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_zi = new KeyGrabber(265, 65, 45, 15, "zoom in");
-          o->callback((fltk::Callback*)cb_kg_zi);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_zo = new KeyGrabber(265, 80, 45, 15, "zoom out");
-          o->callback((fltk::Callback*)cb_kg_zo);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_ou = new KeyGrabber(265, 95, 45, 15, "octave up");
-          o->callback((fltk::Callback*)cb_kg_ou);
           o->align(fltk::ALIGN_LEFT);
         }
          {KeyGrabber* o = kg_od = new KeyGrabber(265, 110, 45, 15, "octave down");
-          o->callback((fltk::Callback*)cb_kg_od);
           o->align(fltk::ALIGN_LEFT);
         }
         o->end();
@@ -1334,7 +998,6 @@ track.");
   qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
   qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));
   track_info->set_rec(0);
-  config_init();
   start_monitor();
   main_window->show();
 }

@@ -23,6 +23,7 @@
 #ifndef keyboard_h
 #define keyboard_h
 
+#include <fstream>
 
 class Keyboard : public fltk::Widget {
 
@@ -60,6 +61,16 @@ class Keyboard : public fltk::Widget {
 int keyboard_handler(int e, fltk::Window* w);
 
 
+struct combo {
+  unsigned int key;
+  unsigned int mod;
+  combo(unsigned zkey, unsigned zmod){key=zkey; mod=zmod;}
+  combo(){key=' '; mod=0;}
+  int operator==(combo c){
+    return (c.key==key && c.mod==mod) ? 1 : 0;
+  }
+};
+
 class KeyGrabber : public fltk::Widget {
 
     char str[32];
@@ -75,12 +86,19 @@ class KeyGrabber : public fltk::Widget {
     void draw();
 
     int set_key(int key, int mod);
+    int set_key(combo c);
+    int cmp(combo c);
+
+    void save(std::fstream& f);
+    void load(std::fstream& f);
 };
 
 void set_keymap(int which, int index, int key, int mod);
 char* get_keystring(int key, int mod);
 
-void load_keymap();
+void load_keymap(std::fstream& f);
+void save_keymap(std::fstream& f);
+void load_default_keymap();
 
 int zoom_out_key(unsigned,unsigned);
 int zoom_in_key(unsigned,unsigned);
