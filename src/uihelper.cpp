@@ -99,13 +99,14 @@ void load_config(){
     }
   }
   update_config_gui();
+  f.close();
 }
 
 void save_config(){
   fstream f;
   f.open(config_filename,fstream::out);
   if(!f.is_open()){
-    printf("unable to open config file for saving\n");
+    printf("unable to open config file %s for saving\n",config_filename);
     return;
   }
 
@@ -122,6 +123,7 @@ void save_config(){
   f << "robmode " << config.robmode << endl;
   f << endl;
   save_keymap(f);
+  f.close();
 }
 
 void update_config_gui(){

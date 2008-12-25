@@ -431,6 +431,7 @@ int load(const char* filename){
           while(n++ < pattern_number){
             if(p == NULL){
               printf("load: error opening file, bad pattern reference\n");
+              file.close();
               return -1;
             }
             p = p->next;
@@ -445,6 +446,7 @@ int load(const char* filename){
     }
     else{
       printf("load: unrecognized line (fixme, ignore these lines)\n");
+      file.close();
       return -1;
     }
   }
@@ -456,6 +458,8 @@ int load(const char* filename){
   ui->arranger->redraw();
 
   reset_backend(0);
+
+  file.close();
 
   return 0;
 
@@ -657,6 +661,8 @@ int savesmf(const char* filename){
       file.write((const char*)buf,1);
     }
   }
+
+  file.close();
 
 }
 
