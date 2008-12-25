@@ -70,5 +70,10 @@ void midi_note_off(int note, int chan, int port);
 void midi_channel_off(int chan, int port);
 void midi_track_off(int track);
 
+
+
+void backend_session_process();
+
+
 #endif
 
