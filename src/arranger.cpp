@@ -147,14 +147,7 @@ int Arranger::handle(int event){
             ui->keyboard->cur_chan = tracks[main_sel->track]->chan;
             ui->track_info->set_rec(main_sel->track);
             set_rec_track(main_sel->track);
-            ui->song_edit->hide();
-            ui->song_edit->deactivate();
-            ui->song_buttons->hide();
-            //ui->song_buttons->deactivate();
-            ui->pattern_edit->take_focus();
-            ui->pattern_edit->show();
-            ui->pattern_buttons->show();
-            //ui->pattern_buttons->activate();
+            show_pattern_edit();
             return 1;
           }
           if(over_handle(main_sel)){//begin resize or resize move

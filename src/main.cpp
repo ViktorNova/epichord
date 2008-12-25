@@ -36,7 +36,7 @@
 
 UI* ui;
 
-int main(){
+int main(int argc, char* argv[]){
 
   ui = new UI();
   ui->arranger->take_focus();
@@ -44,7 +44,7 @@ int main(){
   load_config();
 
   init_seq();
-  if(init_backend() < 0){
+  if(init_backend(&argc, &argv) < 0){
     return 1;
   }
 

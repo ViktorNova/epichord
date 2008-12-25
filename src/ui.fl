@@ -55,7 +55,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();}
+save_config();} open
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -227,12 +227,7 @@ ui->event_edit->redraw();}
             }
             {fltk::Button} {} {
               label {@<-}
-              callback {ui->pattern_edit->hide();
-ui->pattern_buttons->hide();
-ui->song_edit->activate();
-ui->song_edit->show();
-ui->song_edit->take_focus();
-ui->song_buttons->show();}
+              callback {show_song_edit();} selected
               xywh {0 370 45 75}
             }
           }
@@ -373,8 +368,8 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label controls open
-      xywh {589 130 320 285} resizable visible
+      label controls
+      xywh {589 130 320 285} hide resizable
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
@@ -485,7 +480,7 @@ ui->bpm_output->value(o->value());}
           }
         }
         {fltk::Group} {} {
-          label keyboard open
+          label keyboard
           xywh {0 15 320 270} hide
         } {
           {fltk::Widget} kg_l0 {
@@ -695,7 +690,7 @@ ui->bpm_output->value(o->value());}
             class KeyGrabber
           }
           {fltk::Widget} kg_od {
-            label {octave down} selected
+            label {octave down}
             xywh {265 110 45 15} align 4
             class KeyGrabber
           }

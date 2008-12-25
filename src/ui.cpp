@@ -95,12 +95,7 @@ void UI::cb_Z(fltk::Button* o, void* v) {
 }
 
 inline void UI::cb_1_i(fltk::Button*, void*) {
-  ui->pattern_edit->hide();
-  ui->pattern_buttons->hide();
-  ui->song_edit->activate();
-  ui->song_edit->show();
-  ui->song_edit->take_focus();
-  ui->song_buttons->show();
+  show_song_edit();
 }
 void UI::cb_1(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_1_i(o,v);

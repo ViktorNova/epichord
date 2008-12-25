@@ -1,6 +1,7 @@
+INCLUDES = -I/usr/include/lash-1.0
 AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\""
 CFLAGS = -g -O2 -Wall
-AM_LDFLAGS = `fltk2-config --ldflags` -ljack
+AM_LDFLAGS = `fltk2-config --ldflags` -ljack -llash
 
 bin_PROGRAMS = epichord
 epichord_SOURCES = main.cpp seq.cpp jack.cpp ui.cpp \

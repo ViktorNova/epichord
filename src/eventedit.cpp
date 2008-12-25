@@ -381,7 +381,7 @@ int EventEdit::tick2xpix(int tick){
   return tick*zoom*4 / 128;
 }
 
-char* EventEdit::event_type_name(){
+const char* EventEdit::event_type_name(){
   switch(event_type){
     case MIDI_NOTE_OFF:
       return "note off velocity";

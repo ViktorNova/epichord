@@ -32,7 +32,7 @@ class EventEdit : public fltk::Widget {
 
     int tick2xpix(int tick);
 
-    char* event_type_name();
+    const char* event_type_name();
     void event_type_next();
     void event_type_prev();
 

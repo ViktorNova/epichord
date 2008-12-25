@@ -33,6 +33,13 @@
 #include <jack/midiport.h>
 #include <jack/transport.h>
 
+//#define HAVE_LASH
+
+#ifdef HAVE_LASH
+#include <lash/lash.h>
+lash_client_t* lash_client;
+#endif
+
 #include "seq.h"
 #include "backend.h"
 
@@ -40,6 +47,8 @@
 #include "ui.h"
 
 #define PORT_COUNT 8
+
+//#define HAVE_LASH
 
 extern std::vector<track*> tracks;
 
@@ -76,6 +85,8 @@ static int frame_count = 0;
 
 #define t2f(X) ((uint64_t)X*60*sample_rate/(bpm*tpb))
 #define f2t(X) ((uint64_t)X*bpm*tpb/(sample_rate*60))
+
+
 
 //void (*update_display)() = NULL;
 
@@ -139,8 +150,6 @@ static int H = 1;
 static int process(jack_nframes_t nframes, void* arg){
 
   frame_count = nframes;
-
-  
 
   //handle incoming midi events
   for(int i=0; i<PORT_COUNT; i++){
@@ -297,7 +306,7 @@ static int process(jack_nframes_t nframes, void* arg){
 
 /* backend api wrapper */
 
-int init_backend(){
+int init_backend(int* argc, char*** argv){
 
   client = jack_client_open("Epichord",(jack_options_t)0,NULL);
   if(client == NULL){
@@ -321,6 +330,26 @@ int init_backend(){
   sample_rate = jack_get_sample_rate(client);
 
   jack_activate(client);
+
+#ifdef HAVE_LASH
+
+  lash_client_t* last_client;
+  lash_client = lash_init(lash_extract_args(argc, argv), "Epichord",
+                          LASH_Config_File, LASH_PROTOCOL( 2, 0 ));
+  if(!lash_client){
+    printf("lash failed to initialize\n");
+  }
+  else{
+    /* register name */
+    lash_jack_client_name( lash_client, "Epichord" );
+
+    lash_event_t *e = lash_event_new_with_type(LASH_Client_Name);
+    lash_event_set_string(e, "Epichord");
+    lash_send_event(lash_client, e);
+    //lash_event_destroy(e);
+  }
+
+#endif
 
   return 0;
 }
@@ -572,6 +601,48 @@ void set_bpm(int n){
 }
 
 
-void backend_session_process(){
-  
+char* session_string;
+int backend_session_process(){
+  int ret = SESSION_NOMORE;
+#ifdef HAVE_LASH
+  lash_event_t *e;
+
+  char *name;
+
+  e = lash_get_event(lash_client);
+  if(!e){
+    return SESSION_NOMORE;
+  }
+
+  asprintf(&session_string,"%s",lash_event_get_string(e));
+  const int t = lash_event_get_type (e);
+
+  switch(t)
+  {
+    case LASH_Save_File:
+      printf("session_process: LASH save\n");
+      lash_send_event(lash_client, lash_event_new_with_type(LASH_Save_File));
+      ret = SESSION_SAVE;
+      break;
+    case LASH_Restore_File:
+      printf("session_process: LASH load\n");
+      lash_send_event(lash_client, lash_event_new_with_type(LASH_Restore_File));
+      ret = SESSION_LOAD;
+      break;
+    case LASH_Quit:
+      printf("session_process: LASH quit\n");
+      ret = SESSION_QUIT;
+      break;
+    default:
+      printf("session_process: unhandled LASH event (%d)\n", t);
+      ret = SESSION_UNHANDLED;
+      break;
+  }
+  //lash_event_destroy(e);
+#endif
+  return ret;
+}
+
+char* get_session_string(){
+  return session_string;
 }

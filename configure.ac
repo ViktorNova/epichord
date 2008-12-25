@@ -51,4 +51,12 @@ if test "$fltk2found" == "no"; then
   ])
 fi
 
+#AC_CHECK_HEADER([lash/lash.h],[],[
+#  AC_MSG_ERROR([
+#    Cannot find LASH header file.
+#    Please install LASH.
+#  ])
+#],[])
+
+
 AC_OUTPUT(Makefile src/Makefile doc/Makefile gfx/Makefile)

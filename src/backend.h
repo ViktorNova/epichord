@@ -27,7 +27,7 @@
 
 #define TICKS_PER_BEAT 128
 
-int init_backend();
+int init_backend(int* argc, char*** argv);
 int shutdown_backend();
 int start_backend();
 int pause_backend();
@@ -72,8 +72,9 @@ void midi_track_off(int track);
 
 
 
-void backend_session_process();
-
+enum {SESSION_NOMORE,SESSION_LOAD,SESSION_SAVE,SESSION_QUIT,SESSION_UNHANDLED};
+int backend_session_process();
+char* get_session_string();
 
 #endif
 

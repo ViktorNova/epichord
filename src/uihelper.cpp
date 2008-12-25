@@ -44,14 +44,14 @@ struct conf config;
 
 using namespace std;
 
-char config_filename[1024] = "";
+char* config_filename;
 
 
 void load_config(){
 
   //linux dependent
   char* homepath = getenv("HOME");
-  snprintf(config_filename,1024,"%s/.epichordrc",homepath);
+  asprintf(&config_filename,"%s/.epichordrc",homepath);
 
   fstream f;
   f.open(config_filename,fstream::in);
@@ -347,6 +347,28 @@ void playing_timeout_cb(void* v){
 
   }
 
+
+  //handle session events (LASH)
+  int ret;
+  char* session_string;
+  char* filename_string;
+  ret=backend_session_process();
+  while(ret != SESSION_NOMORE){
+    session_string=get_session_string();
+    filename_string = (char*)malloc(strlen(session_string)+16);
+    strcpy(filename_string,session_string);
+    strcat(filename_string,"/song.epi");
+    switch(ret){
+      case SESSION_SAVE: save(filename_string); break;
+      case SESSION_LOAD: load(filename_string); break;
+      case SESSION_QUIT: ui->main_window->hide(); break;
+      case SESSION_UNHANDLED: break;
+    }
+    free(session_string);
+    ret=backend_session_process();
+  }
+
+
   if(is_backend_playing()){
     fltk::repeat_timeout(0.005, playing_timeout_cb, NULL);
   }
@@ -542,3 +564,21 @@ void scope_print(char* text){
 }
 
 
+
+void show_song_edit(){
+  ui->pattern_edit->hide();
+  ui->pattern_buttons->hide();
+  ui->song_edit->activate();
+  ui->song_edit->show();
+  ui->song_edit->take_focus();
+  ui->song_buttons->show();
+}
+
+void show_pattern_edit(){
+  ui->song_edit->hide();
+  ui->song_edit->deactivate();
+  ui->song_buttons->hide();
+  ui->pattern_edit->take_focus();
+  ui->pattern_edit->show();
+  ui->pattern_buttons->show();
+}

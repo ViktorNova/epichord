@@ -281,6 +281,8 @@ int load(const char* filename){
     return -1;
   }
 
+  show_song_edit();
+
   clear();
   last_filename = filename;
   set_last_dir(filename);
