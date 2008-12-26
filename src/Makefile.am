@@ -1,5 +1,4 @@
-INCLUDES = -I/usr/include/lash-1.0
-AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\""
+AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\"" @LASH_CFLAGS@
 CFLAGS = -g -O2 -Wall
 AM_LDFLAGS = `fltk2-config --ldflags` -ljack -llash
 

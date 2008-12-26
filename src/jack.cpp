@@ -33,7 +33,7 @@
 #include <jack/midiport.h>
 #include <jack/transport.h>
 
-//#define HAVE_LASH
+#define HAVE_LASH
 
 #ifdef HAVE_LASH
 #include <lash/lash.h>
@@ -333,7 +333,6 @@ int init_backend(int* argc, char*** argv){
 
 #ifdef HAVE_LASH
 
-  lash_client_t* last_client;
   lash_client = lash_init(lash_extract_args(argc, argv), "Epichord",
                           LASH_Config_File, LASH_PROTOCOL( 2, 0 ));
   if(!lash_client){
@@ -341,12 +340,11 @@ int init_backend(int* argc, char*** argv){
   }
   else{
     /* register name */
-    lash_jack_client_name( lash_client, "Epichord" );
+    lash_jack_client_name(lash_client, "Epichord");
 
-    lash_event_t *e = lash_event_new_with_type(LASH_Client_Name);
+    lash_event_t* e = lash_event_new_with_type(LASH_Client_Name);
     lash_event_set_string(e, "Epichord");
     lash_send_event(lash_client, e);
-    //lash_event_destroy(e);
   }
 
 #endif
@@ -635,6 +633,15 @@ int backend_session_process(){
       break;
     default:
       printf("session_process: unhandled LASH event (%d)\n", t);
+      switch(t){
+        case LASH_Client_Name: printf("LASH_Client_Name\n"); break;
+        case LASH_Jack_Client_Name: printf("LASH_Jack_Client_Name\n"); break;
+        case LASH_Alsa_Client_ID: printf("LASH_Alsa_Client_ID\n"); break;
+        case LASH_Save_File: printf("LASH_Save_File\n"); break;
+        case LASH_Save_Data_Set: printf("LASH_Save_Data_Set\n"); break;
+        case LASH_Restore_Data_Set: printf("LASH_Restore_Data_Set\n"); break;
+        case LASH_Save: printf("LASH_Save\n"); break;
+      }
       ret = SESSION_UNHANDLED;
       break;
   }

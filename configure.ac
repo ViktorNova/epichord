@@ -2,10 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(epichord, 0.0.0, unknown@somewhere.org)
+AC_INIT(epichord, 0.0.0, evanrinehart@gmail.com)
 AM_INIT_AUTOMAKE(epichord, 0.0.0)
 AC_CONFIG_SRCDIR([src/ui.h])
 AC_CONFIG_HEADER([config.h])
+
+
 
 # Checks for programs.
 AC_PROG_CXX
@@ -51,12 +53,8 @@ if test "$fltk2found" == "no"; then
   ])
 fi
 
-#AC_CHECK_HEADER([lash/lash.h],[],[
-#  AC_MSG_ERROR([
-#    Cannot find LASH header file.
-#    Please install LASH.
-#  ])
-#],[])
+
+PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0);
 
 
 AC_OUTPUT(Makefile src/Makefile doc/Makefile gfx/Makefile)
