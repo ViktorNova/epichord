@@ -33,22 +33,23 @@
 <h3>Features</h3>
 
 <ul>
-<li>Mouse-driven editting. left click inserts, right click deletes. Move, resize, select, insert, delete, and copy/paste with the mouse and no switching tools.</li>
+<li>Mouse-driven editting. left click inserts, right click deletes. Move, resize, select, insert, delete, and copy/paste with the mouse and without switching tools.</li>
 <li>Keyboard input. Standard tracker layout for qwerty or you can customize it. Space bar is like a sustain pedal.</li>
-<li>Horizontal zoom. By pressing + and -.</li>
+<li>Piano roll. Black key notes sit on the horizontal rules rather than in between, giving visual cue to their key signature and more easily treating notes as piano music.</li>
+<li>Event editor. See midi events and insert/delete/change them. Use a line to envelope controller values, pitch bends, note on/off velocity, etc.</li>
+<li>Enhanced recording. Re-record the same block many times by automatically clearing it each time the song loops or pushing a new 'take' that you can review later. Create or extend blocks automatically when you begin recording outside a block.
 <li>Block x-ray. See miniature patterns while you arrange them.</li>
 <li>Clone blocks. Blocks may share patterns, change one block and you change them all.</li>
+<li>Horizontal zoom. By pressing + and -.</li>
 <li>Mute blocks. CTRL click on a block to mute/unmute it. May facilitate seq24 style loop performance.</li>
 <li>N 4 time signature. You can set the number of beats per measure to break out of 4 4 time. Changing time signature during the song is not planned, but I am accepting implementations or ideas.</li>
-<li>Event editor. See non-note (and note) events and insert/delete/change them. Use a line to envelope controller values, pitch bends, note on/off, etc.</li>
-<li>Piano roll. Black key notes sit on the horizontal rules rather than in between, giving visual cue to their key signature and more easily treating notes as piano music.</li>
 <li>Virtual keyboard. It is fairly simplistic, but is functionally equivalent to using the keyboard for input and recording. Hold space bar for sustain pedal.</li>
-<li>Record on channel. If you so desire, midi input can be automatically routed to tracks by midi channel rather than the currently selected one.</li>
-<li>Midi pass-through. If you so desire, recorded midi can be directly dumped to the output as soon as it arrives, for minimal latency.</li>
+<li>Record on channel. If you so desire, midi input can be automatically routed to tracks by midi channel rather than the to currently selected one.</li>
+<li>Midi pass-through. If you so desire, recorded midi can be directly dumped to the output as soon as it arrives for minimal latency.</li>
 <li>Midi scope. A widget that shows raw midi as it arrives with semi helpful annotations. This might have a use.</li>
 <li>Midi files. Import and export type 1 standard midi files.</li>
-<li>JACK transport(planned)</li>
-<li>LASH (planned)</li>
+<li>LASH. Save and restore entire sessions of linux audio apps, including their state and JACK connections.</li>
+<li>JACK transport(planned).</li>
 
 </ul>
 
@@ -57,7 +58,9 @@
 
 <p>Epichord currently changes too fast to release, and lacks many of the planned features. So download the latest git snapshot instead <a href="http://repo.or.cz/w/epichord.git">from here</a>.</p>
 
-<p>If you would like to help fix bugs or add features, then you will want to clone the repo. Also, you can contribute your changes without my permission by using the "mob" branch. For information on how to clone, merge, commit, and push with git see <a href="http://git.or.cz/course/index.html">this guide</a>.</p>
+<p>If you would like to help fix bugs or add features, then you will want to clone the repo. Also, you can contribute your changes without my permission by using the "mob" branch. For information on how to clone, merge, commit, and push with git see <a href="http://git.or.cz/course/index.html">this guide</a>. The following command will provide you with a fully functional copy of the latest git repo.</p>
+
+<code>git clone git://repo.or.cz/epichord.git</code>
 
 <h3>Setup Guide</h3>
 
