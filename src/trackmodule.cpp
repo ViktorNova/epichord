@@ -482,7 +482,7 @@ int HGauge::handle(int e){
     label_flag = 0;
     redraw();
   }
-  return 0;
+  return fltk::Widget::handle(e);
 }
 
 void VGauge::draw(){
@@ -573,7 +573,7 @@ int Toggle::handle(int e){
     do_callback();
     return 1;
   }
-  return 0;
+  return fltk::Button::handle(e);
 }
 
 void Toggle::draw(){
