@@ -170,33 +170,6 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   prog.hide();
   bank.hide();
 
-  //port.label("port");
-  //chan.label("chan");
-  //prog.label("prog");
-
-  //port.maximum(7);
-  //port.minimum(0);
-  //port.step(1);
-  //port.value(1);//make it do value_damage()
-  //port.value(0);
- // chan.maximum(15);
- // chan.minimum(0);
-  //chan.step(1);
-  //chan.value(1);
-  //chan.value(0);
-  //prog.maximum(127);
-  //prog.minimum(0);
-  //prog.step(1);
-  //prog.value(1);
-  //prog.value(0);
-
-
-  //prog 
-  //bank
-  //chan
-  //port
-
-  //prog.c[0] = 'P';
   prog.r = 0x3b;
   prog.g = 0x5a;
   prog.b = 0x88;
@@ -258,6 +231,12 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   pan.callback(pancb, i);
   solo.callback(solocb, i);
   mute.callback(mutecb, i);
+
+  rec.tooltip("record on this track");
+  volume.tooltip("volume");
+  pan.tooltip("pan");
+  solo.tooltip("solo");
+  mute.tooltip("mute");
 
   rec.key_flag = 1;
   solo.c[0] = '1';

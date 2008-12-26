@@ -339,12 +339,7 @@ int init_backend(int* argc, char*** argv){
     printf("lash failed to initialize\n");
   }
   else{
-    /* register name */
     lash_jack_client_name(lash_client, "Epichord");
-
-    lash_event_t* e = lash_event_new_with_type(LASH_Client_Name);
-    lash_event_set_string(e, "Epichord");
-    lash_send_event(lash_client, e);
   }
 
 #endif
