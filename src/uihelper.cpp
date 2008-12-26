@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <fstream>
-
+#include <string.h>
 #include <math.h>
 
 #include <fltk/run.h>
