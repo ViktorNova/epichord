@@ -167,6 +167,7 @@ int EventEdit::handle(int event){
         }
         if(box_flag){
           apply_box();
+          ui->piano_roll->redraw();
           box_flag=0;
         }
         if(insert_flag){

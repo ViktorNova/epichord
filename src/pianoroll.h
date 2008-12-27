@@ -34,16 +34,27 @@ class PianoRoll : public fltk::Widget {
 
   int last_note;
 
+  int insert_flag;
   int new_left_t;
   int new_right_t;
   int new_orig_t;
-  int new_drag;
+  //int new_drag;
   int new_note;
 
   int move_t;
   int move_offset;
   int move_note;
   int move_flag;
+
+  int box_flag;
+  int box_x1;
+  int box_y1;
+  int box_x2;
+  int box_y2;
+  int box_t1;
+  int box_t2;
+  int box_n1;
+  int box_n2;
 
   mevent* main_sel;
 
@@ -57,6 +68,12 @@ class PianoRoll : public fltk::Widget {
 
   int zoom_n;
   int zoom;
+
+  void get_event_color(mevent* e, fltk::Color* c1, fltk::Color* c2, fltk::Color* c3);
+
+  void unselect_all();
+
+  void apply_box();
 
   public:
 
@@ -82,7 +99,6 @@ class PianoRoll : public fltk::Widget {
     void set_qtick(int q){q_tick=q;}
 
     void update(int pos);
-
 };
 
 #endif
