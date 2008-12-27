@@ -455,7 +455,7 @@ void PianoRoll::update(int pos){
   int wp = ui->pattern_scroll->w();
   int xp = ui->pattern_scroll->xposition();
   int yp = ui->pattern_scroll->yposition();
-  int X1 = tick2xpix(pos);
+  int X1 = tick2xpix(pos-cur_seqpat->tick);
   int X2 = X1 - xp;
   if(X1 > w()-40){
     return;

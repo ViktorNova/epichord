@@ -35,7 +35,7 @@
 #include "uihelper.h"
 
 
-#define CONFIG_FILENAME "~/.epichordrc"
+#define CONFIG_FILENAME ".epichordrc"
 
 extern UI* ui;
 extern std::vector<track*> tracks;
@@ -47,11 +47,12 @@ using namespace std;
 char* config_filename;
 
 
+
 void load_config(){
 
   //linux dependent
   char* homepath = getenv("HOME");
-  asprintf(&config_filename,"%s/.epichordrc",homepath);
+  asprintf(&config_filename,"%s/"CONFIG_FILENAME,homepath);
 
   fstream f;
   f.open(config_filename,fstream::in);
@@ -151,13 +152,13 @@ void playing_timeout_cb(void* v){
   //}
 
   int pos = get_play_position();
-  ui->song_timeline->update(pos);
-  ui->pattern_timeline->update(pos);
-  ui->metronome->update(pos);
   if(config.follow){
     ui->arranger->update(pos);
     ui->piano_roll->update(pos);
   }
+  ui->song_timeline->update(pos);
+  ui->pattern_timeline->update(pos);
+  ui->metronome->update(pos);
 
   //check for midi input
   int tick;
