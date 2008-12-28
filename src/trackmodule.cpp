@@ -566,6 +566,7 @@ Toggle::Toggle(int x, int y, int w, int h, const char* label) :
   G = 0;
   B = 0;
   state = 0;
+  key_flag = 0;
 }
 
 int Toggle::handle(int e){

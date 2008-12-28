@@ -504,7 +504,7 @@ int PianoRoll::over_handle(mevent* e){
 
 
 void PianoRoll::update(int pos){
-  if(!is_backend_playing()){
+  if(!is_backend_playing() || !cur_seqpat){
     return;
   }
   int wp = ui->pattern_scroll->w();

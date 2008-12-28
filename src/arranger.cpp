@@ -57,6 +57,9 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   xp_last = 0;
   yp_last = 0;
+
+  insert_flag = 0;
+  box_flag = 0;
 }
 
 int Arranger::handle(int event){
@@ -82,6 +85,12 @@ int Arranger::handle(int event){
       }
       if(event_state(CTRL) && event_key()=='z'){
         //printf("arranger undo\n");
+        return 1;
+      }
+      if(event_key()==fltk::DeleteKey){
+        apply_delete();
+        delete_flag = 0;
+        redraw();
         return 1;
       }
       if(zoom_out_key(event_key(),event_state())){
@@ -207,9 +216,6 @@ int Arranger::handle(int event){
         else{//begin delete
           delete_flag = 1;
           delete_sel = s;//this line needs to be removed
-          if(!(event_state()&fltk::SHIFT)){
-            unselect_all();
-          }
           s->selected = 1;
         }
       }
@@ -293,13 +299,14 @@ int Arranger::handle(int event){
         paste_flag=0;
       }
       else if(event_button()==3){
-        if(delete_flag && over_seqpat() == delete_sel){
-          //here we need more branches for deleting the entire selection
-          c=new DeleteSeqpat(delete_sel);
-          set_undo(c);
-          undo_push(1);
+        seqpat* over_s = over_seqpat();
+        if(delete_flag && over_s){
+          if(over_s->selected){
+            apply_delete();
+          }
         }
-        delete_flag = 0;
+        delete_flag=0;
+        unselect_all();
       }
 
       redraw();
@@ -607,4 +614,37 @@ void Arranger::apply_box(){
       s = s->next;
     }
   }
+}
+
+
+void Arranger::apply_delete(){
+  Command* c;
+  seqpat* s;
+  seqpat* next;
+  int N=0;
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      next = s->next;
+      if(s->selected){
+        c=new DeleteSeqpat(s);
+        set_undo(c);
+        N++;
+      }
+      s = next;
+    }
+  }
+  undo_push(N);
+}
+
+void Arranger::apply_move(){
+
+}
+
+void Arranger::apply_paste(){
+
+}
+
+void Arranger::apply_resize(){
+
 }
