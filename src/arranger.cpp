@@ -40,6 +40,8 @@ extern struct conf config;
 
 using namespace fltk;
 
+#define SWAP(X,Y) tmp=X; X=Y; Y=tmp;
+
 Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   new_default_w = 128*4;
   delete_flag = 0;
@@ -60,15 +62,8 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 int Arranger::handle(int event){
   Command* c;
 
-  /* if recording, and we restrict manual changes, then we can
-     easily set up an single undo for the entire recording
-
-     if we allow manual changes during recording, then undo becomes
-     granular.
-
-     provide the user with the choice.
-
-  */
+  int X = event_x();
+  int Y = event_y();
 
   switch(event){
     case fltk::FOCUS:
@@ -118,15 +113,32 @@ int Arranger::handle(int event){
       take_focus();
       if(event_button()==1){//left mouse
         seqpat* s = over_seqpat();
-        if(s==NULL){//begin pattern creation
-          new_drag = 1;
-          new_left_t = quantize(xpix2tick(event_x()));
-          new_orig_t = new_left_t;
-          new_track = event_y() / 30;
-          new_right_t = new_left_t + quantize(q_tick);
+        if(s==NULL){
+          if(event_state()&fltk::SHIFT){//begin box
+            box_flag = 1;
+            box_x1=X;
+            box_x2=X;
+            box_y1=Y;
+            box_y2=Y;
+            box_t1=xpix2tick(X);
+            box_t2=box_t1;
+            box_k1=Y/30;
+            box_k2=box_k1;
+          }
+          else{//begin insert
+            insert_flag = 1;
+            new_left_t = quantize(xpix2tick(event_x()));
+            new_orig_t = new_left_t;
+            new_track = event_y() / 30;
+            new_right_t = new_left_t + quantize(q_tick);
+          }
         }
         else{
-          //if shift, add to selection
+          if(!(event_state()&fltk::SHIFT)){
+            unselect_all();
+          }
+          s->selected = 1;
+          main_sel = s;
           if(color_flag){
             color_sel = s->p;
             color_orig_x = event_x();
@@ -137,20 +149,19 @@ int Arranger::handle(int event){
             color_v = color_orig_v;
             return 1;
           }
-          main_sel = s;
           if(fltk::event_clicks() > 0){//'double click'
-            ui->piano_roll->load(main_sel);
-            ui->event_edit->load(main_sel);
-            ui->pattern_scroll->scrollTo(main_sel->scrollx,main_sel->scrolly);
+            ui->piano_roll->load(s);
+            ui->event_edit->load(s);
+            ui->pattern_scroll->scrollTo(s->scrollx,s->scrolly);
             ui->pattern_timeline->update(get_play_position());
-            ui->keyboard->cur_port = tracks[main_sel->track]->port;
-            ui->keyboard->cur_chan = tracks[main_sel->track]->chan;
-            ui->track_info->set_rec(main_sel->track);
-            set_rec_track(main_sel->track);
+            ui->keyboard->cur_port = tracks[s->track]->port;
+            ui->keyboard->cur_chan = tracks[s->track]->chan;
+            ui->track_info->set_rec(s->track);
+            set_rec_track(s->track);
             show_pattern_edit();
             return 1;
           }
-          if(over_handle(main_sel)){//begin resize or resize move
+          if(over_handle(main_sel)){//begin resize
           }
           else{//begin move
             move_start = 1;
@@ -187,19 +198,27 @@ int Arranger::handle(int event){
           redraw();
           return 1;
         }
-        if(s==NULL){//begin box
+        if(s==NULL){
+          unselect_all();
           delete_sel = NULL;
           main_sel = NULL;
           color_sel = NULL;
         }
-        else{//set up for deletion
+        else{//begin delete
           delete_flag = 1;
-          delete_sel = s;
+          delete_sel = s;//this line needs to be removed
+          s->selected = 1;
         }
       }
       redraw();
       return 1;
     case fltk::DRAG:
+      if(box_flag){
+        box_x2 = X;
+        box_y2 = Y;
+        box_t2 = xpix2tick(X);
+        box_k2 = Y/30;
+      }
       if(color_flag && color_sel){
         color_sel->h = color_orig_h + (color_orig_x - event_x())/1.0;
         color_sel->v = color_orig_v + (color_orig_y - event_y())/100.0;
@@ -207,12 +226,11 @@ int Arranger::handle(int event){
         color_h = color_sel->h;
         color_v = color_sel->v;
         set_default_hsv_value(color_v);
-        redraw();
       }
       if(move_start){
         move_flag = 1;
       }
-      if(new_drag){
+      if(insert_flag){
         //new_right_t = quantize(xpix2tick(event_x())) + quantize(q_tick);
         new_right_t = quantize(xpix2tick(event_x()+tick2xpix(q_tick)));
         if(new_right_t <= new_orig_t){
@@ -222,29 +240,27 @@ int Arranger::handle(int event){
         else{
           new_left_t = new_orig_t;
         }
-        new_track = event_y() / 30;
-
-        redraw();
-        return 1;
+        new_track = Y / 30;
       }
       else if(move_flag){
         //printf("moving something\n");
         move_t = quantize(xpix2tick(event_x())) - move_offset;
         move_track = event_y() / 30;
-        redraw();
-        return 1;
       }
       else if(paste_flag){
         paste_t = quantize(xpix2tick(event_x()));
         paste_track = event_y() / 30;
-        redraw();
-        return 1;
       }
-      break;
+      redraw();
+      return 1;
     case fltk::RELEASE:
       if(event_button()==1){
-        if(new_drag && new_track < tracks.size()){
-          if(tracks[new_track]->alive){ //if track is active
+        if(box_flag){
+          apply_box();
+          box_flag = 0;
+        }
+        if(insert_flag && new_track < tracks.size()){
+          if(tracks[new_track]->alive){
            c=new CreateSeqpatBlank(new_track,new_left_t,new_right_t-new_left_t);
             set_undo(c);
             undo_push(1);
@@ -257,7 +273,7 @@ int Arranger::handle(int event){
         }
         move_start=0;
         move_flag=0;
-        new_drag=0;
+        insert_flag=0;
         color_sel = NULL;
       }
       else if(event_button()==2){
@@ -311,7 +327,7 @@ void Arranger::draw(){
     }
   }
 
-  if(new_drag){
+  if(insert_flag){
     fltk::setcolor(fltk::RED);
     int X = tick2xpix(new_left_t)+1;
     int Y = new_track*30;
@@ -341,13 +357,27 @@ void Arranger::draw(){
     fltk::fillrect(X+W-2,Y,1,28);
   }
 
+  int tmp;
+  if(box_flag){
+    fltk::setcolor(fltk::GREEN);
+    int X1,X2,Y1,Y2;
+    X1 = box_x1;
+    X2 = box_x2;
+    Y1 = box_y1; 
+    Y2 = box_y2;
+    if(X1>X2){SWAP(X1,X2);}
+    if(Y1>Y2){SWAP(Y1,Y2);}
+    fltk::fillrect(X1,Y1,X2-X1,1);
+    fltk::fillrect(X1,Y1,1,Y2-Y1);
+    fltk::fillrect(X2,Y1,1,Y2-Y1);
+    fltk::fillrect(X1,Y2,X2-X1,1);
+  }
+
   //draw all seqpat
   seqpat* s;
   fltk::Color c;
 
-  int c11,c12,c13;
-  int c21,c22,c23;
-  int c31,c32,c33;
+  fltk::Color c1,c2,c3,cx;
 
   for(int i=0; i<tracks.size(); i++){
 
@@ -355,28 +385,10 @@ void Arranger::draw(){
     while(s){
 
       pattern* p = s->p;
-      c11 = p->r1;
-      c12 = p->g1;
-      c13 = p->b1;
-      if(s!=main_sel){
-        c21 = p->r2;
-        c22 = p->g2;
-        c23 = p->b2;
-        c31 = p->r3;
-        c32 = p->g3;
-        c33 = p->b3;
-      }
-      else{
-        c21 = 128;
-        c22 = 255;
-        c23 = 128;
-        c31 = 128;
-        c32 = 255;
-        c33 = 128;
-      }
 
+      get_outline_color(s,&c1,&c2,&c3,&cx);
 
-      fltk::setcolor(fltk::color(c11,c12,c13));
+      fltk::setcolor(c1);
       int X = tick2xpix(s->tick)+1;
       int Y = s->track * 30;
       int W = tick2xpix(s->tick+s->dur) - X;
@@ -385,18 +397,17 @@ void Arranger::draw(){
       float a = 1.5f;
 
 
-      fltk::setcolor(fltk::color(c21,c22,c23));
+      fltk::setcolor(c2);
       fillrect(X+W-1,Y,1,29);
       fillrect(X,Y+28,W-1,1);
 
-
-      fltk::setcolor(fltk::color(c31,c32,c33));
+      fltk::setcolor(c3);
       fillrect(X,Y,1,28);
       fillrect(X,Y,W,1);
 
       fltk::push_clip(tick2xpix(s->tick),s->track*30,tick2xpix(s->dur),30);
 
-      fltk::setcolor(fltk::color(p->rx,p->gx,p->bx));
+      fltk::setcolor(cx);
 
       mevent* e = s->p->events;
       while(e){
@@ -510,5 +521,85 @@ void Arranger::update(int pos){
   }
   if(X2 > wp-30){
     ui->song_scroll->scrollTo(X1-50,yp);
+  }
+}
+
+
+
+void Arranger::unselect_all(){
+  seqpat* s;
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      if(s->selected==1){
+        s->selected = 0;
+      }
+      s = s->next;
+    }
+  }
+}
+
+void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fltk::Color* c3, fltk::Color* cx){
+
+  pattern* p = s->p;
+  *c1 = fltk::color(p->r1, p->g1, p->b1);
+  *cx = fltk::color(p->rx, p->gx, p->bx);
+
+  int T1,T2;
+  int tmp;
+  if(delete_flag){
+    if(s->selected){
+      *c2 = fltk::color(120,60,58);
+      *c3 = fltk::color(225,131,109);
+      return;
+    }
+  }
+
+  if(box_flag){
+    T1=box_t1;
+    T2=box_t2;
+    int K1 = box_k1;
+    int K2 = box_k2;
+    int K = s->track;
+    if(T1>T2){SWAP(T1,T2);}
+    if(K1<K2){SWAP(K1,K2);}
+    if(s->tick+s->dur > T1 && s->tick < T2 && K >= K2 && K <= K1){
+      *c2 = fltk::color(71,120,59);
+      *c3 = fltk::color(108,229,75);
+      return;
+    }
+  }
+
+  if(s->selected){
+    *c1 = fltk::color(255,255,0);
+    *c2 = fltk::color(140,137,46);
+    *c3 = fltk::color(232,255,37);
+    *cx = fltk::color(128,128,0);
+    return;
+  }
+
+
+  *c2 = fltk::color(p->r2,p->g2,p->b2);
+  *c3 = fltk::color(p->r3,p->g3,p->b3);
+
+}
+
+void Arranger::apply_box(){
+  seqpat* s;
+  int tmp;
+  int T1=box_t1;
+  int T2=box_t2;
+  int K1 = box_k1;
+  int K2 = box_k2;
+  if(T1>T2){SWAP(T1,T2);}
+  if(K1>K2){SWAP(K1,K2);}
+  for(int i=K1; i<=K2; i++){
+    s = tracks[i]->head->next;
+    while(s){
+      if(s->tick+s->dur > T1 && s->tick < T2){
+        s->selected = 1;
+      }
+      s = s->next;
+    }
   }
 }

@@ -31,9 +31,19 @@ class Arranger : public fltk::Widget {
     int new_orig_t;
     int new_left_t;
     int new_right_t;
-    int new_drag;
+    int insert_flag;
     int new_track;
     int new_default_w;
+
+    int box_flag;
+    int box_x1;
+    int box_y1;
+    int box_x2;
+    int box_y2;
+    int box_t1;
+    int box_t2;
+    int box_k1;
+    int box_k2;
 
     int move_offset;
     int move_t;
@@ -65,6 +75,12 @@ class Arranger : public fltk::Widget {
     int color_orig_y;
     float color_orig_h;
     float color_orig_v;
+
+    void get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fltk::Color* c3, fltk::Color* cx);
+
+    void unselect_all();
+
+    void apply_box();
 
   public:
 
