@@ -207,6 +207,9 @@ int Arranger::handle(int event){
         else{//begin delete
           delete_flag = 1;
           delete_sel = s;//this line needs to be removed
+          if(!(event_state()&fltk::SHIFT)){
+            unselect_all();
+          }
           s->selected = 1;
         }
       }
@@ -547,12 +550,14 @@ void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fl
 
   int T1,T2;
   int tmp;
-  if(delete_flag){
-    if(s->selected){
-      *c2 = fltk::color(120,60,58);
-      *c3 = fltk::color(225,131,109);
+  seqpat* over_s = over_seqpat();
+  if(delete_flag && s->selected){
+    //if(over_s->selected){
+      *c1 = fltk::color(255,0,0);
+      *c2 = fltk::color(255,0,0);
+      *c3 = fltk::color(255,0,0);
       return;
-    }
+    //}
   }
 
   if(box_flag){
