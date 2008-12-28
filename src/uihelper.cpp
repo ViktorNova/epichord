@@ -338,7 +338,7 @@ void playing_timeout_cb(void* v){
           if(chan==0){
             snprintf(report,256,"%02x %02x    : system exclusive - id %d ; data follows\n",type|chan,val1,val1);
             scope_print(report);
-            scope_print((char*)getsysexbuf());
+            scope_print(getsysexbuf());
             scope_print("\nf7       : end of sysex\n");
           }
           else{
@@ -558,7 +558,7 @@ void set_robmode(int n){
 }
 
 
-void scope_print(char* text){
+void scope_print(const char* text){
   ui->scope->append(text);
   int N = ui->scope->buffer()->length();
   ui->scope->scroll(N,0);
