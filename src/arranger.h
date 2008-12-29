@@ -54,6 +54,15 @@ class Arranger : public fltk::Widget {
     int move_y;
     int move_w;
 
+    seqpat* last_handle;
+    int rresize_flag;
+    int rresize_torig;
+    int rresize_toffset;
+
+    int lresize_flag;
+    int lresize_torig;
+    int lresize_toffset;
+
     int paste_t;
     int paste_track;
     int paste_flag;
@@ -63,7 +72,8 @@ class Arranger : public fltk::Widget {
     int sel_timer;
 
     seqpat* over_seqpat();
-    int over_handle(seqpat* s);
+    int over_rhandle(seqpat* s, int X, int Y);
+    int over_lhandle(seqpat* s, int X, int Y);
 
     int tick2xpix(int tick);
     int xpix2tick(int xpix);

@@ -61,6 +61,8 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   insert_flag = 0;
   box_flag = 0;
+
+  last_handle == NULL;
 }
 
 int Arranger::handle(int event){
@@ -71,6 +73,8 @@ int Arranger::handle(int event){
 
   switch(event){
     case fltk::FOCUS:
+      return 1;
+    case fltk::ENTER:
       return 1;
     case fltk::KEYUP:
       //might want to consume release control c, etc
@@ -173,8 +177,12 @@ int Arranger::handle(int event){
             show_pattern_edit();
             return 1;
           }
-          if(over_handle(main_sel)){//begin resize
+
+          if(over_lhandle(s,X,Y)){//begin resize
           }
+          else if(over_rhandle(s,X,Y)){//begin resizemove
+          }
+
           else{//begin move
             move_flag = 1;
             move_torig = s->tick;
@@ -313,6 +321,31 @@ int Arranger::handle(int event){
 
       redraw();
       return 1;
+    case fltk::MOVE:
+      if(color_flag){break;}
+      seqpat* s = over_seqpat();
+      if(s){
+        if(over_rhandle(s,X,Y)){s->rhandle = 1;}
+        else{s->rhandle = 0;}
+        if(over_lhandle(s,X,Y)){s->lhandle = 1;}
+        else{s->lhandle = 0;}
+        if(s != last_handle){
+          if(last_handle){
+            last_handle->rhandle = 0;
+            last_handle->lhandle = 0;
+          }
+          last_handle = s;
+        }
+        redraw();
+      }
+      else if(last_handle){
+        last_handle->rhandle = 0;
+        last_handle->lhandle = 0;
+        last_handle = NULL;
+        redraw();
+      }
+      return 1;
+
   }
   return 0;
 }
@@ -440,7 +473,33 @@ void Arranger::draw(){
 
       fltk::push_clip(tick2xpix(s->tick),s->track*30,tick2xpix(s->dur),30);
 
+     if(s->rhandle){
+        setcolor(cx);
+        W = 5;
+        X = tick2xpix(s->tick+s->dur) - W - 1;
+        Y = s->track*30;
+        //fillrect(X,Y,W,27);
+        addvertex(X+W,Y+28/2);
+        addvertex(X,Y);
+        addvertex(X,Y+28);
+        fillpath();
+      }
+
+      if(s->lhandle){
+        setcolor(cx);
+        setcolor(cx);
+        W = 5;
+        X = tick2xpix(s->tick)+1;
+        Y = s->track*30;
+        //fillrect(X,Y,W,27);
+        addvertex(X,Y+28/2);
+        addvertex(X+W,Y);
+        addvertex(X+W,Y+28);
+        fillpath();
+      }
+
       fltk::setcolor(cx);
+
 
       mevent* e = s->p->events;
       while(e){
@@ -517,11 +576,34 @@ seqpat* Arranger::over_seqpat(){
   return NULL;
 }
 
-//0 not over, 1 over handle, 2 over middle
-int Arranger::over_handle(seqpat* s){
-  return 0;
+
+//true if over right handle of s
+int Arranger::over_rhandle(seqpat* s, int X, int Y){
+  int X1 = tick2xpix(s->tick);
+  int X2 = X1 + tick2xpix(s->dur);
+  int Y1 = s->track * 30 + 1;
+  int Y2 = Y1 + 29;
+
+  if(tick2xpix(s->dur) < 10){
+    return 0;
+  }
+
+  return (Y > Y1 && Y < Y2 && X < X2 && X > X2 - 5);
 }
 
+//true if over left handle of s
+int Arranger::over_lhandle(seqpat* s, int X, int Y){
+  int X1 = tick2xpix(s->tick);
+  int X2 = X1 + tick2xpix(s->dur);
+  int Y1 = s->track * 30 + 1;
+  int Y2 = Y1 + 29;
+
+  if(tick2xpix(s->dur) < 10){
+    return 0;
+  }
+
+  return (Y > Y1 && Y < Y2 && X < X1 + 5 + 1 && X > X1+1);
+}
 
 // 4=beats per measure, 128=ticks per beat, 30=width of measure in pixels
 int Arranger::tick2xpix(int tick){
@@ -764,4 +846,6 @@ int Arranger::check_resize_safety(){
 int Arranger::check_paste_safety(){
   return 1;
 }
+
+
 

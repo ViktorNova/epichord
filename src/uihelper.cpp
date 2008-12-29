@@ -147,10 +147,6 @@ void update_config_gui(){
 
 
 void playing_timeout_cb(void* v){
-  //if(!is_backend_playing()){
-  //  return;
-  //}
-
   int pos = get_play_position();
   if(config.follow){
     ui->arranger->update(pos);
