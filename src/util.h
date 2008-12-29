@@ -31,4 +31,7 @@ void hsv_to_rgb(float h, float s, float v, unsigned char* r, unsigned char* g, u
 int ypix2note(int ypix, int black);
 int note2ypix(int note, int* black);
 
+
+int seqpat_nonstick(seqpat* s);
+int unmodify_and_unstick_tracks();
 #endif

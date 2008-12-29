@@ -316,7 +316,7 @@ void PianoRoll::draw(){
   }
 
   if(move_flag){
-    fltk::setcolor(fltk::color(255,0,0));
+    fltk::setcolor(fltk::MAGENTA);
     int X = tick2xpix(move_t)+1;
     int Y = note2ypix(move_note);
     int W = tick2xpix(main_sel->dur);

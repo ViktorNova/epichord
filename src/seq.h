@@ -140,6 +140,7 @@ struct seqpat {
 
  // unsigned char color[3][3];
   int selected;
+  int modified;
 
   int scrollx, scrolly;
 
@@ -150,7 +151,7 @@ struct seqpat {
     next = NULL;
     dur=0;
     selected=0;
-
+    modified=0;
   }
 
   seqpat(int ztrack, int ztick, int zdur, pattern* zp){
@@ -162,6 +163,7 @@ struct seqpat {
     prev = NULL;
     next = NULL;
     selected = 0;
+    modified=0;
   }
 
   seqpat(seqpat* zs){
@@ -179,6 +181,7 @@ struct seqpat {
     scrolly = zs->scrolly;
 
     selected = zs->selected;
+    modified = zs->modified;
   }
 
   seqpat(seqpat* zs, pattern* zp){
@@ -196,6 +199,7 @@ struct seqpat {
     scrolly = zs->scrolly;
 
     selected = zs->selected;
+    modified = zs->modified;
   }
 
   ~seqpat(){
@@ -217,6 +221,10 @@ struct track {
   seqpat* head;
   seqpat* skip;
 
+  int modified;
+
+  void restate();
+
   track(){
     port = 0;
     chan = 0;
@@ -231,6 +239,7 @@ struct track {
     head = new seqpat(0,0,0,new pattern());
     head->tick = 0;
     skip = head;
+    modified = 0;
   }
 
   ~track(){

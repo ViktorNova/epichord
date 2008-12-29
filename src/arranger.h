@@ -45,11 +45,14 @@ class Arranger : public fltk::Widget {
     int box_k1;
     int box_k2;
 
-    int move_offset;
-    int move_t;
-    int move_track;
     int move_flag;
-    int move_start;
+    int move_korig;
+    int move_torig;
+    int move_koffset;
+    int move_toffset;
+    int move_x;
+    int move_y;
+    int move_w;
 
     int paste_t;
     int paste_track;
@@ -82,9 +85,14 @@ class Arranger : public fltk::Widget {
 
     void apply_box();
     void apply_delete();
-    void apply_move();
+    int apply_move();
     void apply_paste();
     void apply_resize();
+
+    int check_move_safety();
+    int check_insert_safety();
+    int check_resize_safety();
+    int check_paste_safety();
 
   public:
 

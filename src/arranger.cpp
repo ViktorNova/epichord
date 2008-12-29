@@ -30,6 +30,8 @@
 
 #include "uihelper.h"
 
+#include "util.h"
+
 #include "backend.h"
 
 extern UI* ui;
@@ -46,7 +48,6 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   new_default_w = 128*4;
   delete_flag = 0;
   move_flag = 0;
-  move_start = 0;
   paste_flag = 0;
   main_sel = NULL;
 
@@ -143,7 +144,7 @@ int Arranger::handle(int event){
           }
         }
         else{
-          if(!(event_state()&fltk::SHIFT)){
+          if(!s->selected && !(event_state()&SHIFT)){
             unselect_all();
           }
           s->selected = 1;
@@ -173,10 +174,13 @@ int Arranger::handle(int event){
           if(over_handle(main_sel)){//begin resize
           }
           else{//begin move
-            move_start = 1;
-            move_t = quantize(main_sel->tick);
-            move_offset = quantize(xpix2tick(event_x())) - move_t;
-            move_track = event_y() / 30;
+            move_flag = 1;
+            move_torig = s->tick;
+            move_toffset = 0;
+            move_korig = s->track;
+            move_koffset = 0;
+            move_x = X;
+            move_y = Y;
           }
         }
       }
@@ -216,6 +220,9 @@ int Arranger::handle(int event){
         else{//begin delete
           delete_flag = 1;
           delete_sel = s;//this line needs to be removed
+          if(!(s->selected)){
+            unselect_all();
+          }
           s->selected = 1;
         }
       }
@@ -236,9 +243,6 @@ int Arranger::handle(int event){
         color_v = color_sel->v;
         set_default_hsv_value(color_v);
       }
-      if(move_start){
-        move_flag = 1;
-      }
       if(insert_flag){
         //new_right_t = quantize(xpix2tick(event_x())) + quantize(q_tick);
         new_right_t = quantize(xpix2tick(event_x()+tick2xpix(q_tick)));
@@ -252,9 +256,8 @@ int Arranger::handle(int event){
         new_track = Y / 30;
       }
       else if(move_flag){
-        //printf("moving something\n");
-        move_t = quantize(xpix2tick(event_x())) - move_offset;
-        move_track = event_y() / 30;
+        move_toffset = quantize(xpix2tick(X)) - move_torig;
+        move_koffset = event_y() / 30 - move_korig;
       }
       else if(paste_flag){
         paste_t = quantize(xpix2tick(event_x()));
@@ -275,13 +278,10 @@ int Arranger::handle(int event){
             undo_push(1);
           }
         }
-        else if(move_flag && move_track < tracks.size()){
-          c = new MoveSeqpat(main_sel,move_track,move_t);
-          set_undo(c);
-          undo_push(1);
+        else if(move_flag){
+          apply_move();
+          move_flag = 0;
         }
-        move_start=0;
-        move_flag=0;
         insert_flag=0;
         color_sel = NULL;
       }
@@ -306,7 +306,6 @@ int Arranger::handle(int event){
           }
         }
         delete_flag=0;
-        unselect_all();
       }
 
       redraw();
@@ -338,7 +337,7 @@ void Arranger::draw(){
   }
 
   if(insert_flag){
-    fltk::setcolor(fltk::RED);
+    fltk::setcolor(fltk::BLUE);
     int X = tick2xpix(new_left_t)+1;
     int Y = new_track*30;
     int W = tick2xpix(new_right_t)-X;
@@ -346,14 +345,35 @@ void Arranger::draw(){
   }
 
   if(move_flag){
-    fltk::setcolor(fltk::RED);
-    int X = tick2xpix(move_t)+1;
-    int Y = move_track*30;
-    int W = tick2xpix(main_sel->dur);
-    fltk::fillrect(X,Y,W-1,1);
-    fltk::fillrect(X,Y+28,W-1,1);
-    fltk::fillrect(X,Y,1,28);
-    fltk::fillrect(X+W-2,Y,1,28);
+    if(check_move_safety()){
+      fltk::setcolor(fltk::MAGENTA);
+    }
+    else{
+      fltk::setcolor(fltk::RED);
+    }
+
+    for(int i=0; i<tracks.size(); i++){
+      seqpat* s = tracks[i]->head->next;
+      while(s){
+        if(s->selected){
+          int X = tick2xpix(s->tick + move_toffset);
+          int Y = (s->track + move_koffset)*30;
+          int W = tick2xpix(s->dur);
+          fltk::fillrect(X+1,Y+1,W-1,1);
+          fltk::fillrect(X+1,Y+1,1,29-1);
+          fltk::fillrect(X+1,Y+29-1,W-1,1);
+          fltk::fillrect(X+W-1,Y+1,1,29-1);
+        }
+        s = s->next;
+      }
+    }
+    //int X = tick2xpix(move_t)+1;
+    //int Y = move_track*30;
+    //int W = tick2xpix(main_sel->dur);
+    //fltk::fillrect(X,Y,W-1,1);
+    //fltk::fillrect(X,Y+28,W-1,1);
+    //fltk::fillrect(X,Y,1,28);
+    //fltk::fillrect(X+W-2,Y,1,28);
   }
 
   if(paste_flag){
@@ -535,7 +555,6 @@ void Arranger::update(int pos){
 }
 
 
-
 void Arranger::unselect_all(){
   seqpat* s;
   for(int i=0; i<tracks.size(); i++){
@@ -576,6 +595,7 @@ void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fl
     if(T1>T2){SWAP(T1,T2);}
     if(K1<K2){SWAP(K1,K2);}
     if(s->tick+s->dur > T1 && s->tick < T2 && K >= K2 && K <= K1){
+      *c1 = fltk::color(0,255,0);
       *c2 = fltk::color(71,120,59);
       *c3 = fltk::color(108,229,75);
       return;
@@ -627,6 +647,7 @@ void Arranger::apply_delete(){
     while(s){
       next = s->next;
       if(s->selected){
+        seqpat_nonstick(s);
         c=new DeleteSeqpat(s);
         set_undo(c);
         N++;
@@ -635,10 +656,51 @@ void Arranger::apply_delete(){
     }
   }
   undo_push(N);
+
+  unmodify_and_unstick_tracks();
 }
 
-void Arranger::apply_move(){
+//returns false if move failed
+int Arranger::apply_move(){
+  if(move_toffset==0 && move_koffset==0){
+    return 0;
+  }
 
+  if(!check_move_safety()){
+    return 0;
+  }
+
+  Command* c;
+  seqpat* s;
+  seqpat* next;
+  int N=0;
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      next = s->next;
+      if(s->selected && s->modified == 0){
+        s->modified = 1;
+        seqpat_nonstick(s);
+        c=new MoveSeqpat(s,s->track+move_koffset,s->tick+move_toffset);
+        set_undo(c);
+        N++;
+      }
+      s = next;
+    }
+  }
+  undo_push(N);
+
+  for(int i=0; i<tracks.size(); i++){
+    //tracks[i]->restate();
+    s = tracks[i]->head->next;
+    while(s){
+      s->modified = 0;
+      s = s->next;
+    }
+  }
+
+  unmodify_and_unstick_tracks();
+  return 1;
 }
 
 void Arranger::apply_paste(){
@@ -648,3 +710,55 @@ void Arranger::apply_paste(){
 void Arranger::apply_resize(){
 
 }
+
+
+
+int collision_test(int t11, int t12, int t21, int t22){
+  return !((t11 < t21 && t12 <= t21)  ||
+           (t11 >= t22 && t12 > t22)) ? 1 : 0;
+}
+
+int Arranger::check_move_safety(){
+  seqpat* s;
+  seqpat* ptr;
+
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      if(s->selected){
+        if(i+move_koffset < 0 || i+move_koffset > tracks.size()-1 ||
+           s->tick + move_toffset < 0){
+          return 0;
+        }
+        ptr = tracks[i+move_koffset]->head->next;
+        while(ptr){
+          if(ptr == s){
+            ptr=ptr->next; continue;
+          }
+          if(collision_test(s->tick+move_toffset,s->tick+s->dur+move_toffset,ptr->tick,ptr->tick+ptr->dur) ){
+            if(!ptr->selected){
+              return 0;
+            }
+          }
+          ptr = ptr->next;
+        }
+      }
+      s = s->next;
+    }
+  }
+
+  return 1;
+}
+
+int Arranger::check_insert_safety(){
+  return 1;
+}
+
+int Arranger::check_resize_safety(){
+  return 1;
+}
+
+int Arranger::check_paste_safety(){
+  return 1;
+}
+

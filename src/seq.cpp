@@ -325,6 +325,10 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
 
 
 void DeleteSeqpat::redo(){
+  int pos = get_play_position();
+  if(pos >= s->tick && pos <= s->tick+s->dur){
+    tracks[s->track]->skip = s->next;
+  }
   tremove<seqpat>(s);
 }
 
@@ -359,8 +363,11 @@ void MoveSeqpat::redo(){
 
   tremove<seqpat>(s);
 
-  //do this and now the audio cannot enter s
-  tracks[track1]->skip = s->next;
+
+  int play_pos = get_play_position();
+  if(play_pos >= s->tick && play_pos <= s->tick+s->dur){//no entry into s by cb
+    tracks[track1]->skip = s->next;
+  }
 
   track* t = tracks[track2];
 
@@ -370,7 +377,7 @@ void MoveSeqpat::redo(){
   s->track = track2;
 
   s->tick = tick2;
-  int play_pos = get_play_position();
+
   s->skip = tfind<mevent>(s->p->events, play_pos - s->tick)->next;
   tinsert<seqpat>(targ2,s);
 
@@ -392,11 +399,14 @@ void MoveSeqpat::undo(){
 
   tremove<seqpat>(s);
 
-  tracks[track2]->skip = s->next;
+   int play_pos = get_play_position();
+  if(play_pos >= s->tick && play_pos <= s->tick+s->dur){
+    tracks[track2]->skip = s->next;
+  }
   s->track = track1;
   s->tick = tick1;
 
- int play_pos = get_play_position();
+
   s->skip = tfind<mevent>(s->p->events, play_pos - s->tick)->next;
 
   tinsert<seqpat>(targ1,s);
@@ -674,4 +684,44 @@ mevent* find_off(mevent* e){
     ptr = ptr->next;
   }
   return NULL;
+}
+
+
+//used when the sequence is changed in such a way 
+//that the sequencer state needs to be updated
+void track::restate(){
+  int pos = get_play_position();
+  seqpat* s = head->next;
+  int snullflag = 1;
+  int pointfound = 0;
+  while(s){
+    if(pointfound){//we are past the point, reset up coming blocks
+      s->skip = s->p->events->next;
+    }
+
+    else if(s->tick+s->dur > pos && s->tick >= pos){//we are inside this block, point found
+      pointfound = 1;
+      snullflag = 0;
+      skip = s;
+      mevent* e = s->p->events->next;
+      while(e){
+        if(e->tick <= pos){
+          s->skip = e;
+          pointfound = 1;
+          break;
+        }
+        e = e->next;
+      }
+    }
+
+    else{//we are not in a block, point found
+      skip = s->next;
+      snullflag = 0;
+      pointfound = 1;
+    }
+
+    s = s->next;
+  }
+
+  if(snullflag){skip = NULL;}
 }

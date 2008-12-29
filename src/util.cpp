@@ -20,16 +20,24 @@
    Boston, MA  02110-1301, USA
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <vector>
+
 #include <fltk/TextDisplay.h>
 #include <fltk/TextBuffer.h>
 
+#include "backend.h"
+
+#include "seq.h"
 
 #include "util.h"
 
 
-#include <stdio.h>
+
+
+extern std::vector<track*> tracks;
 
 void load_text(fltk::TextDisplay* o, const char* filename){
   fltk::TextBuffer* T = new fltk::TextBuffer();
@@ -119,3 +127,23 @@ int note2ypix(int note, int* black){
 
 }
 
+
+//used when a block is modified
+//sets the modify flag is the current play position is in the block
+int seqpat_nonstick(seqpat* s){
+  int pos = get_play_position();
+  if(pos > s->tick && pos < s->tick + s->dur){
+    printf("track modified\n");
+    tracks[s->track]->modified = 1;
+  }
+}
+
+int unmodify_and_unstick_tracks(){
+  for(int i=0; i<tracks.size(); i++){
+    if(tracks[i]->modified){
+      printf("sending off on track\n");
+      midi_track_off(i);
+      tracks[i]->modified = 0;
+    }
+  }
+}
