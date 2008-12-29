@@ -124,7 +124,9 @@ int Arranger::handle(int event){
       if(event_button()==1){//left mouse
         seqpat* s = over_seqpat();
         if(s==NULL){
-          if(event_state()&fltk::SHIFT){//begin box
+          if(color_flag){//do nothing
+          }
+          else if(event_state()&fltk::SHIFT){//begin box
             box_flag = 1;
             box_x1=X;
             box_x2=X;
@@ -144,10 +146,6 @@ int Arranger::handle(int event){
           }
         }
         else{
-          if(!s->selected && !(event_state()&SHIFT)){
-            unselect_all();
-          }
-          s->selected = 1;
           main_sel = s;
           if(color_flag){
             color_sel = s->p;
@@ -159,6 +157,10 @@ int Arranger::handle(int event){
             color_v = color_orig_v;
             return 1;
           }
+          if(!s->selected && !(event_state()&SHIFT)){
+            unselect_all();
+          }
+          s->selected = 1;
           if(fltk::event_clicks() > 0){//'double click'
             ui->piano_roll->load(s);
             ui->event_edit->load(s);
@@ -185,17 +187,18 @@ int Arranger::handle(int event){
         }
       }
       else if(event_button()==2){//middle mouse
-        if(main_sel){
-          paste_flag = 1;
-          paste_t = quantize(xpix2tick(event_x()));
-          paste_track = event_y() / 30;
-        }
         seqpat* s = over_seqpat();
         if(color_flag && s){
           s->p->h = color_h;
           s->p->v = color_v;
           s->p->regen_colors();
           redraw();
+          return 1;
+        }
+        if(main_sel){
+          paste_flag = 1;
+          paste_t = quantize(xpix2tick(event_x()));
+          paste_track = event_y() / 30;
         }
       }
       else if(event_button()==3){//right mouse
