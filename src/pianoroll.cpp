@@ -118,12 +118,12 @@ int PianoRoll::handle(int event){
           }
           else{//begin insert
             insert_flag = 1;
-            new_left_t = quantize(xpix2tick(event_x()));
-            new_orig_t = new_left_t;
-            new_note = ypix2note(event_y(),1);
-            new_right_t = new_left_t + q_tick;
+            insert_torig = quantize(xpix2tick(event_x()));
+            insert_toffset = q_tick;
+            //new_orig_t = new_left_t;
+            insert_note = ypix2note(event_y(),1);
 
-            last_note = new_note;
+            last_note = insert_note;
             if(config.playinsert){
               ui->keyboard->play_note(last_note,0);
             }
@@ -182,21 +182,17 @@ int PianoRoll::handle(int event){
         box_n2 = ypix2note(Y,1);
       }
       else if(insert_flag){
-        new_right_t = quantize(xpix2tick(event_x())+q_tick);
-        if(new_right_t <= new_orig_t){
-          new_left_t = new_right_t - q_tick;
-          new_right_t = new_orig_t;
+        insert_toffset = quantize(xpix2tick(event_x())+q_tick) - insert_torig;
+        if(insert_toffset<=0){
+          insert_toffset -= q_tick;
         }
-        else{
-          new_left_t = new_orig_t;
-        }
-        new_note = ypix2note(event_y(),1);
-        if(new_note != last_note){
+        insert_note = ypix2note(event_y(),1);
+        if(insert_note != last_note){
           if(config.playinsert){//play on insert
             ui->keyboard->release_note(last_note,0);
-            ui->keyboard->play_note(new_note,0);
+            ui->keyboard->play_note(insert_note,0);
           }
-          last_note = new_note;
+          last_note = insert_note;
         }
       }
       else if(move_flag){
@@ -219,12 +215,12 @@ int PianoRoll::handle(int event){
           ui->event_edit->redraw();
           box_flag=0;
         }
-        if(insert_flag && new_note < 128 && new_note >= 0){
-          p = cur_seqpat->p;
-          c=new CreateNote(p,new_note,127,new_left_t,new_right_t-new_left_t);
-          set_undo(c);
-          undo_push(1);
-          ui->keyboard->release_note(new_note,0);
+        if(insert_flag){
+          apply_insert();
+
+          insert_flag = 0;
+
+          ui->keyboard->release_note(insert_note,0);
           ui->keyboard->redraw();
           ui->event_edit->has[0]=1;
           ui->event_edit->has[1]=1;
@@ -307,11 +303,15 @@ void PianoRoll::draw(){
   fltk::setcolor(fltk::color(128,128,0));
   fltk::drawline(0,12*40,w(),12*40);
 
+  int tmp;
   if(insert_flag){
     fltk::setcolor(fltk::BLUE);
-    int X = tick2xpix(new_left_t)+1;
-    int Y = note2ypix(new_note);
-    int W = tick2xpix(new_right_t) - X;
+    int T1 = insert_torig;
+    int T2 = T1 + insert_toffset;
+    if(T1>T2){SWAP(T1,T2);}
+    int X = tick2xpix(T1)+1;
+    int Y = note2ypix(insert_note);
+    int W = tick2xpix(T2) - X;
     fltk::fillrect(X,Y,W,11);
   }
 
@@ -596,4 +596,44 @@ void PianoRoll::apply_box(){
     }
     e = e->next;
   }
+}
+
+void PianoRoll::apply_insert(){
+  if(insert_note > 127 || insert_note < 0){
+    return;
+  }
+
+  int tmp;
+  int T1 = insert_torig;
+  int T2 = T1 + insert_toffset;
+  if(T1>T2){SWAP(T1,T2);}
+
+  if(T1 < 0){
+    return;
+  }
+
+  pattern* p = cur_seqpat->p;
+  Command* c=new CreateNote(p,insert_note,127,T1,T2-T1);
+  set_undo(c);
+  undo_push(1);
+}
+
+void PianoRoll::apply_delete(){
+
+}
+
+void PianoRoll::apply_move(){
+
+}
+
+void PianoRoll::apply_paste(){
+
+}
+
+void PianoRoll::apply_rresize(){
+
+}
+
+void PianoRoll::apply_lresize(){
+
 }
