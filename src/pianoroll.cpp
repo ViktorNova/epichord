@@ -245,6 +245,7 @@ RESIZE
 
           insert_flag = 0;
 
+          cur_seqpat->restate();
           ui->keyboard->release_note(insert_note,0);
           ui->keyboard->redraw();
           ui->event_edit->has[0]=1;
@@ -287,6 +288,7 @@ RESIZE
         if(delete_flag && over_n){
           if(over_n->selected){
             apply_delete();
+            midi_track_off(cur_seqpat->track);
             cur_seqpat->restate();
             ui->event_edit->redraw();
           }

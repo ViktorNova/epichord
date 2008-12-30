@@ -719,6 +719,14 @@ void track::restate(){
 
 
 void seqpat::restate(){
-
-
+  mevent* e = p->events->next;
+  int pos = get_play_position();
+  while(e){
+    if(e->tick+tick >= pos){
+      skip = e;
+      return;
+    }
+    e = e->next;
+  }
+  skip = NULL;
 }
