@@ -21,7 +21,7 @@ aware softwares and hardware devices.
 Epichord is licensed under the GNU GPL, so by using this program you implicitly
 accept the ability to get the source code if you do not already have it.
 
-the source is... somewhere...
+the source is in a git repo at http://repo.or.cz/w/epichord.git
 
 
 **how to build**
@@ -31,6 +31,11 @@ some additional libs to build this program.
 
 fltk-2.0      graphical user interface
 jack-0.109.2  or any recent version of jack with midi support
+lash          use the latest version if you want to actually use lash
+
+Lash is currently required because autoconf does not define-or-not HAVE_LASH
+based on whether lash is available. If you would like to add this to the
+configure.ac please do and contribute your changes.
 
 After installing those, you can build and do a default install by:
 

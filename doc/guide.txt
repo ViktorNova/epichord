@@ -59,8 +59,7 @@ to be compressed into an ogg vorbis file or some such. Here
 is a list of JACK programs which will accomplish this for you.
 
 JAmin - full featured audio mastering suite
-SoX - audio swiss army knife
-
+jackrec - comes with jack
 
 
 For more linux audio applications just go to this website

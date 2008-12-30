@@ -1,197 +1,35 @@
-short list of features not yet implemented
+Short list
 
-keyboard input
-  allow remapping
-the rest of the mouse commands
-  select many notes/patterns
-  delete all selected
-  move all selected
-  copy all selected
-  split/join
-  no overlapping patterns
-the event editor
-  mouse commands
-  display
-  menu
-import midi file
-record midi input
-  overwrite mode
-  layer mode
-  out of bounds behavior
-  metronome lead in
+remaining mouse editing
+  resize notes
+  move notes
+  paste notes
+  paste blocks
+
+remaining tools
+  quantize note on
+  quantize note off
+  join blocks
+  split blocks
+  unclone block
+  (note off tool)
+  (aftertouch tool)
+  (portamento tool)
+
+enhance recording
+  overwrite block
+  layer block
+  extend block
+  new block
+
 undo and redo
-graphical upgrades
-trackselect in piano roll
-  toggle tracks shown
-  switch edited track
+
+midi files
+  import smf
+  export smf (partially working now)
+
 jack transport
-lash
 
 
-
-big list of features
-
-
-create seqpat (with new blank pattern)
-create note
-create event
-delete seqpat
-delete note
-delete event
-move note
-move seqpat
-resize seqpat
-resize note
-select seqpat
-select note
-select event
-shift select seqpat
-shift select note
-shift select event
-box select seqpat
-box select note
-box select event
-change event value
-add track
-remove track
-
-copy selected notes
-copy selected events
-soft copy selected seqpats
-hard copy selected seqpats
-uniquify seqpat
-split seqpat in half
-join two seqpats
-
-save textfile
-load textfile
-save type 1 standard midi file
-import type 0/1 standard midi file
-
-set loop start
-set loop end
-set song position
-
-play notes on virtual keyboard
-play notes on real keyboard
-
-x zoom in pattern editor or song editor
-
-options
-bpm
-beats per measure
-measures per phrase
-metronome lead in
-always hard copy
-record pass thru
-play note insertion
-play note selection
-follow playback
-quantize note off
-record modes
-merge - insert notes into current track
-overwrite - erase all notes before inserting into current track
-layer - on each loop create new track (muted)
-new - merge into new track created at time of recording
-
-toggle display of tracks on piano roll
-
-keyboard shortcuts
-ctrl-c copy
-ctrl-v paste
-ctrl-z undo
-ctrl-y redo
-ctrl-a select all
-ctrl-s save
-ctrl-o load
-
-graphics
-
-change pattern color
-timeline shows correct indicator
-trackmodule has updated info
-toggle buttons show correct state
-piano keyboard highlights keys
-
-
-
-save records the following
-track name
-track vol
-track pan
-track mute
-track solo
-track port
-track chan
-track prog
-loop positions
-loop flag
-keyboard flag
-song title
-song author
-song info
-seqpats
-patterns
-arranger scroll positions
-seqpat event editor controller
-beats per measure
-measures per phrase
-bpm
-metronome lead-in
-always hard copy
-auto track name
-record pass through
-play note insertion
-play note selection
-follow playback
-play note selection
-quantize note off
-record mode
-
-
-
-
-
-immediate features to be implemented
-
-
-volume and pan controls dont work
-change time signature and bars per measure
-
-select many patterns
-select many notes
-
-
-what i did instead (changes since last)
-
-saveload restores/clears title/author/info
-vol pan mute solo widgets work
-mute and solo works
-autohell
-
-
-BUGS
-
-if events are dispatched out of order, they are put in order by playing the
-rest of the notes after the first-out-of-order at the end of the buffer, causing
-an error on the order of 1024/48000 = 21 ms. to fix it, the events must be
-dispatched in time order. solution is to enqueue and sort before dispatch.
-the above workaround was done because if you try to dispatch them out of order
-jack crashes. this occurs when events occur near each other but not exactly
-at the same time, or at high bpm.
-
-the pattern drag sound bug is that when a pattern is moved, note offs do not
-occur. to fix it, when dragging a pattern you must dispatch note offs in one
-way or another.
-
-the hand doesnt point directly at notches 1 and 3 if they are numbered 0 1 2 3
-for each beat.
-
-there is a 1 frame error caused by a kludge in the sequencer mechanism.
-there are cases where a midi event is to be dispatched on the first 
-frame of the buffer, but also on the frame right after the last, i.e. 
-index 1024 in a frame buffer of 1024 frames. When a event appears to be
-destined for 1024, i dispatch at 1023 rather than waiting until next 
-process. a real solution would check the sequencer play mechanism and 
-its interation with the backend's real time to see why its considering 
-playing these notes.
+(track toggler)
+(sample name)

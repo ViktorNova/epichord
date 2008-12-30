@@ -1,70 +1,95 @@
-scratch work for manual text
+Song View Widgets
 
-overview of the widgets
+1 pattern block arranger - this canvas area allows you to create, move, resize, delete, copy, 
+join, split, recolor, mute and unmute blocks, among other things.
 
-The first screen that opens is the song view. You can use this to configure
-the initial state of the tracks and manipulate the song at a high level.
+2 song timeline - it shows you where in the song you are putting blocks. Use the mouse buttons 
+to change the loop endpoints and change the song position.
 
-On the left is the track info panel which has a vertical list of tracks and
-their configuration. Each track has the following widgets in the track 
-info from left to right:
+3 track info panel - contains a lot of info about tracks. Press the + button to toggle more 
+track settings.
 
-input selector - clicking here makes the keys appear next that track. 
-midi input and keyboard input will be recorded on this track.
+4 track selector - the piano keys next to a track means that recording and keyboard input will 
+use this track.
 
-track name - type anything you want here to describe the track.
+5 track name - you can put whatever you want here. epichord uses fltk2's unicode support.
 
-volume control - sets the initial volume of the channel.
-pan control - sets the initial pan of the channel.
-solo toggle - if enabled only this channel will play
-mute toggle - if enabled this channel will not play.
+6 track settings - these widgets display the track settings and allow you to edit their values. 
+Volume, pan, solo, and mute widgets are displayed by default. Press + at the top of the track 
+info panel to toggle the program, bank, channel, and port settings. Drag your mouse on a widget 
+to change the value or use the mouse wheel.
 
-by pressing the + button at the top of the track info panel, you toggle
-whether four more track settings are shown, from leftmost to rightmost:
+7 color tool - when the color tool button is activated, your mouse will edit the color of 
+blocks. Drag on a block to change the color. Click on a block to copy color. Middle click on a 
+block to paste color. Right click on a block to paste color on the entire channel. Your last 
+used color will be used as a basis for future block insertions.
 
-program - select the program for this track
-bank - select the bank for this track
-channel - select the channel for this track
-port - select which port this track sends on
+8 unclone tool - when blocks are copied the default behavior is to make clones. Any changes to 
+a clone block will affect the pattern in other clones. Use the clone tool to make a clone unique 
+with its own copy of a pattern.
 
+9 join tool - after pressing join, click on two blocks that are adjacent. These blocks will be 
+joined. If either are clones, they will be uncloned first.
 
-On the right is the pattern arranger. You use this to create delete copy move
-and resize patterns in the song.
-
-The timeline at the top of the arranger gives an indication of the current
-play position and current loop endpoints. You can click in this to change the
-endpoints or set current play position.
-
-The bottom of the screen contains buttons that are always visible whether or
-not you are in song edit or pattern edit mode. From left to right:
-
-play button (arrow)   - begin playing the song at current position
-pause button (bars)   - appears while playing, pauses play at current position
-stop button (square)  - stop playback and reset to time zero
-record button (circle)- toggle whether midi input is recorded
-
-loop button - toggle whether the play will loop between current loop endpoints.
-keyboard button - change keyboard layout
-oscillo button - open the configuration window
-floppy button - open the save/load menu
-question button - open the info/help window
+10 split tool - after pressing split, click on a block at a position you want to split it. The 
+block will be split into two new blocks. If it is a clone it will be uncloned first.
 
 
-When you double click on a pattern in the song view, you will open the pattern
-editor. Here you can view or edit individual notes and other midi events in
-a given pattern.
 
-On the left is the keyboard. This shows what note each horizontal delineation
-corresponds to. You can click on the keyboard to send a midi note on this
-channel.
+Global Widgets
 
-The timeline shows the same thing as the song view timeline but zero begins
-at the start of the pattern and not the start of the entire song.
+1 play/pause - Press this to make the sequencer start playing the song from the current play 
+position. Press it again to pause playback at current play position. Pause sends all notes off 
+and all sound off midi messages.
 
-The grid or the piano roll region shows notes. You click here to create delete
-move resize select or copy notes in much the same way as the arranger.
+2 stop - Press this to stop the sequencer and reset the play position to zero. Any time the play 
+position becomes zero by any means, tracks will be reset to values shown in their track 
+settings. Stop sends all notes off and all sound off on all tracks. This can be used as a panic 
+button.
 
-The event editor at the bottom of the pattern view screen lets you create delete
-edit move and copy individual midi messages.
+3 record - When this is pressed and the sequencer is playing, midi input, keyboard input, and 
+virtual keyboard input will be recorded. The default is to insert events into existing blocks 
+only. More advanced behavior is described in the manual section on recording.
 
-the left arrow button in the bottom left will return you to the song editor.
+4 metronome - A graphical metronome to help keep rhythm.
+
+5 loop toggle - When pressed the song will loop between loop points.
+
+6 configuration - Opens the configuration panel.
+
+7 scope - Opens the midi scope panel.
+
+8 file - Opens the file menu so you can save or load your work.
+
+9 help - Opens the info panel with help docs and song info.
+
+
+Pattern Editor Widgets
+
+1 piano roll - This canvas area lets you insert, move, resize, copy, and delete notes.
+
+2 virtual keyboard - Lets you see where you are placing the notes. You can also click on it with 
+the mouse to play notes. Space bar acts as a sustain pedal. The + button above the virtual keyboard 
+does nothing.
+
+3 pattern timeline - Equivalent to the arranger timeline except zero is the start of the block 
+rather than the start of the song, and it counts beats rather than measures. Use the mouse to 
+set loop endpoints or change the song position.
+
+4 event editor - Shows you the value of many midi messages that are stored in the pattern. By 
+default it shows the note on velocity, but you can change that with the mouse wheel or by 
+opening the event type menu with the E button on the right. You can also create, delete, or 
+modify event values with the mouse.
+
+5 back button - Exist the pattern editor and return to the block arranger.
+
+6 quantization settings - Inserting, moving, and resizing operations will be snapped to the grid 
+using granularity chosen by these buttons. The shorter the note length, the smaller the grid 
+snap width. Simply imagine placing quarter notes or eighth notes when you click on the canvas. 
+Press the blank button to turn off snapping altogether.
+
+7 quantize note on - Quantize the selected notes so they snap to the grid using the current 
+quantization settings.
+
+8 quantize note off - This is the same as quantize note on, but it effectively quantizes the 
+length of the note.

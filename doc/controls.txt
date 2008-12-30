@@ -1,33 +1,31 @@
-Controls
+==controls==
 
-! means not yet implemented
+left click drag on empty space - new blocks/notes
+left click drag on selected pattern - move or resize blocks/notes
+left click - select block/note
+shift left click - select more blocks/notes
+shift left click drag - box select blocks/notes
+right click - delete blocks/notes
+middle click - paste selected blocks/notes
 
-left click drag on empty space - new pattern/note
-left click drag on selected pattern - move or resize pattern/note
-left click - select pattern/note
-!shift left click - select more patterns/notes
-!shift left click drag - box select
-right click - delete pattern/note
-middle click - paste clone pattern
-!middle click on pattern (song view) - make unique copy if a clone
+control c - copy selected blocks / notes
+control v - paste copied blocks / notes
+control z - undo
+control y - redo
+control a - select none / select all
+delete - delete selected blocks / notes
 
-!control v - paste clone pattern
-!delete - delete selected patterns/notes
-!control z - undo
-!control y - redo
-!control a - select none / select all
+right arrow - zoom in
+left arrow - zoom out
 
-shift+= - zoom in
-- - zoom out
+control s - save
+control o - open
+control w - save as
+control n - erase everything
 
-!control s - save
-!control o - open
-!control w - save as
-!control n - erase everything
-
-!backspace - reset play head
-!return - toggle recording
-
+ctrl+backspace - reset play head
+ctrl+return - toggle recording
+ctrl+space - toggle play
 
 
 You can play notes with the keyboard.
@@ -42,20 +40,20 @@ q w e r t y u i o p [ ]
  s d   g h j   k l
 z x c v b n m , . /
 
+space - sustain pedal
 shift+[ - octave down one
 shift+] - octave up one
 
 
-song view special controls
+==song view special controls==
+control left click - mute/unmute pattern
+double left click - edit pattern
 
-!control left click (song view) - mute/unmute pattern
-double left click (song view) - edit pattern
 
-
-Event Edit special controls
+==event edit special controls==
 left click drag - change event values with line
 shift left click drag - box select
 ctrl left click drag - insert new event
 right click drag - delete events in range
 right click - clear selection
-!delete key - delete all selected events
+delete key - delete all selected events
