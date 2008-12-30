@@ -196,6 +196,7 @@ int Arranger::handle(int event){
             move_koffset = 0;
             move_x = X;
             move_y = Y;
+            move_offset = xpix2tick(X)/q_tick*q_tick - s->tick;
           }
         }
       }
@@ -273,7 +274,7 @@ int Arranger::handle(int event){
         lresize_toffset = xpix2tick(X)/128*128 - lresize_torig;
       }
       else if(move_flag){
-        move_toffset = quantize(xpix2tick(X)) - move_torig;
+        move_toffset = quantize(xpix2tick(X)) - move_torig - move_offset;
         move_koffset = event_y() / 30 - move_korig;
       }
       else if(paste_flag){

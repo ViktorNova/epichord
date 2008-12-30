@@ -52,6 +52,7 @@ class Arranger : public fltk::Widget {
     int move_x;
     int move_y;
     int move_w;
+    int move_offset;
 
     seqpat* last_handle;
     int rresize_flag;
