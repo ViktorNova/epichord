@@ -28,11 +28,10 @@ class Arranger : public fltk::Widget {
     int xp_last;
     int yp_last;
 
-    int new_orig_t;
-    int new_left_t;
-    int new_right_t;
     int insert_flag;
-    int new_track;
+    int insert_torig;
+    int insert_toffset;
+    int insert_track;
     int new_default_w;
 
     int box_flag;
@@ -99,6 +98,7 @@ class Arranger : public fltk::Widget {
     void apply_paste();
     void apply_rresize();
     void apply_lresize();
+    void apply_insert();
 
     int check_move_safety();
     int check_insert_safety();

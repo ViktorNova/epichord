@@ -143,10 +143,9 @@ int Arranger::handle(int event){
           }
           else{//begin insert
             insert_flag = 1;
-            new_left_t = quantize(xpix2tick(event_x()));
-            new_orig_t = new_left_t;
-            new_track = event_y() / 30;
-            new_right_t = new_left_t + quantize(q_tick);
+            insert_torig = xpix2tick(X)/q_tick*q_tick;
+            insert_toffset = q_tick;
+            insert_track = event_y() / 30;
           }
         }
         else{
@@ -261,16 +260,11 @@ int Arranger::handle(int event){
         set_default_hsv_value(color_v);
       }
       if(insert_flag){
-        //new_right_t = quantize(xpix2tick(event_x())) + quantize(q_tick);
-        new_right_t = quantize(xpix2tick(event_x()+tick2xpix(q_tick)));
-        if(new_right_t <= new_orig_t){
-          new_left_t = new_right_t - quantize(q_tick);
-          new_right_t = new_orig_t;
+        insert_toffset = xpix2tick(X)/q_tick*q_tick + q_tick - insert_torig;
+        if(insert_toffset <=0){
+          insert_toffset -= q_tick;
         }
-        else{
-          new_left_t = new_orig_t;
-        }
-        new_track = Y / 30;
+        insert_track = Y / 30;
       }
       else if(rresize_flag){
         rresize_toffset = xpix2tick(X)/128*128 - rresize_torig;
@@ -294,12 +288,9 @@ int Arranger::handle(int event){
           apply_box();
           box_flag = 0;
         }
-        if(insert_flag && new_track < tracks.size()){
-          if(tracks[new_track]->alive){
-           c=new CreateSeqpatBlank(new_track,new_left_t,new_right_t-new_left_t);
-            set_undo(c);
-            undo_push(1);
-          }
+        if(insert_flag){
+          apply_insert();
+          insert_flag = 0;
         }
         else if(move_flag){
           apply_move();
@@ -403,11 +394,16 @@ void Arranger::draw(){
     }
   }
 
+
   if(insert_flag){
     fltk::setcolor(fltk::BLUE);
-    int X = tick2xpix(new_left_t)+1;
-    int Y = new_track*30;
-    int W = tick2xpix(new_right_t)-X;
+    int T1 = insert_torig;
+    int T2 = T1 + insert_toffset;
+    int tmp;
+    if(T1>T2){SWAP(T1,T2);}
+    int X = tick2xpix(T1)+1;
+    int Y = insert_track*30;
+    int W = tick2xpix(T2)-tick2xpix(T1) - 1;
     fltk::fillrect(X,Y,W,28);
   }
 
@@ -748,6 +744,26 @@ void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fl
 
 }
 
+
+void Arranger::apply_insert(){
+  if(insert_track > tracks.size()-1){
+    return;
+  }
+
+  if(!check_insert_safety()){
+    return;
+  }
+
+  int tmp;
+  int T1 = insert_torig;
+  int T2 = T1 + insert_toffset;
+  if(T1>T2){SWAP(T1,T2);}
+
+  Command* c=new CreateSeqpatBlank(insert_track,T1,T2-T1);
+  set_undo(c);
+  undo_push(1);
+}
+
 void Arranger::apply_box(){
   seqpat* s;
   int tmp;
@@ -995,6 +1011,27 @@ int Arranger::check_move_safety(){
 }
 
 int Arranger::check_insert_safety(){
+  seqpat* s;
+
+  int T1 = insert_torig;
+  int T2 = T1 + insert_toffset;
+  int tmp;
+
+  if(T1>T2){SWAP(T1,T2);}
+
+  if(T1 < 0){
+    return 0;
+  }
+
+  s = tracks[insert_track]->head->next;
+
+  while(s){
+    if(collision_test(T1,T2,s->tick,s->tick+s->dur)){
+      return 0;
+    }
+    s = s->next;
+  }
+
   return 1;
 }
 
