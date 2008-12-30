@@ -51,6 +51,7 @@ struct mevent {
   struct mevent* next;
 
   int selected;
+  int modified;
 
   mevent(){
     type = -1;
@@ -59,6 +60,7 @@ struct mevent {
     next = NULL;
     dur = 32;
     selected = 0;
+    modified = 0;
   }
 
   mevent(int ztype, int ztick, int zv1){
@@ -71,6 +73,7 @@ struct mevent {
     value1=zv1;
     value2=0x7f;
     selected = 0;
+    modified = 0;
   }
 
   mevent(mevent* e){
@@ -83,6 +86,7 @@ struct mevent {
     prev = e->prev;
     next = e->next;
     selected = e->selected;
+    modified = 0;
   }
 
 };
@@ -145,6 +149,8 @@ struct seqpat {
   int lhandle;
 
   int scrollx, scrolly;
+
+  void restate();
 
   seqpat(){
     p = NULL;

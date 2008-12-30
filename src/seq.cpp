@@ -672,25 +672,24 @@ mevent* find_off(mevent* e){
 //used when the sequence is changed in such a way 
 //that the sequencer state needs to be updated
 void track::restate(){
-printf("restate\n");
   int pos = get_play_position();
   seqpat* s = head->next;
   int snullflag = 1;
   int pointfound = 0;
   while(s){
-printf("trying block: pos %d, tick %d, t2 %d\n",pos,s->tick,s->tick+s->dur);
+//printf("trying block: pos %d, tick %d, t2 %d\n",pos,s->tick,s->tick+s->dur);
     if(pointfound){//we are past the point, reset up coming blocks
-      printf("future block\n");
+      //printf("future block\n");
       s->skip = s->p->events->next;
     }
 
     else if(s->tick+s->dur < pos){//we are past this block
-      printf("past block\n");
+      //printf("past block\n");
       s->skip = NULL;
     }
 
     else if(s->tick+s->dur > pos && s->tick <= pos){//we are inside this block, point found
-      printf("inside block\n");
+      //printf("inside block\n");
       pointfound = 1;
       snullflag = 0;
       skip = s;
@@ -706,7 +705,7 @@ printf("trying block: pos %d, tick %d, t2 %d\n",pos,s->tick,s->tick+s->dur);
     }
 
     else{//we are not in a block, point found
-      printf("pointfound outside block\n");
+      //printf("pointfound outside block\n");
       skip = s;
       snullflag = 0;
       pointfound = 1;
@@ -716,4 +715,10 @@ printf("trying block: pos %d, tick %d, t2 %d\n",pos,s->tick,s->tick+s->dur);
   }
 
   if(snullflag){skip = NULL;}
+}
+
+
+void seqpat::restate(){
+
+
 }

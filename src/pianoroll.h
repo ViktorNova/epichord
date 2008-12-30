@@ -37,14 +37,15 @@ class PianoRoll : public fltk::Widget {
   int insert_flag;
   int insert_torig;
   int insert_toffset;
-  //int new_orig_t;
-  //int new_drag;
   int insert_note;
 
-  int move_t;
-  int move_offset;
-  int move_note;
   int move_flag;
+  int move_torig;
+  int move_toffset;
+  int move_norig;
+  int move_noffset;
+  int move_offset;
+  int move_qoffset;
 
   int box_flag;
   int box_x1;
@@ -55,8 +56,6 @@ class PianoRoll : public fltk::Widget {
   int box_t2;
   int box_n1;
   int box_n2;
-
-  mevent* main_sel;
 
   int q_tick;
 

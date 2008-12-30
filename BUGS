@@ -1,3 +1,10 @@
+ overlapping notes bug
+
+the algorithm to find the note off will currently fail is it finds the noteoff
+of an overlapping note.
+
+
+
  event on end of frame bug
 
 there is a 1 frame error caused by a kludge in the sequencer mechanism.
@@ -26,7 +33,6 @@ but not exactly at the same time, or at high bpm.
   zoom range bug in arranger
 
 zooming has no effect on the possible range of scrolling.
-
 
 
 

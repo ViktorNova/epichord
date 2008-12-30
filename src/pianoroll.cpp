@@ -48,7 +48,6 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   wkeyh = 12;
   bkeyh = 7;
   cur_seqpat = NULL;
-  main_sel = NULL;
 
   zoom = 15;
   zoom_n = 3;
@@ -57,11 +56,16 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   xp_last = 0;
   yp_last = 0;
+
+  box_flag = 0;
+
+  move_toffset = 0;
 }
 
 int PianoRoll::handle(int event){
   Command* c;
   pattern* p;
+  mevent* e;
 
   int X = event_x();
   int Y = event_y();
@@ -110,8 +114,9 @@ int PianoRoll::handle(int event){
       return 0;
     case fltk::PUSH:
       take_focus();
+      e = over_note();
       if(event_button()==1){//left mouse
-        if(over_note()==NULL){//new note init
+        if(e==NULL){//new note init
           if(event_state()&fltk::SHIFT){//begin box
             box_flag = 1;
             box_x1=X;
@@ -138,25 +143,38 @@ int PianoRoll::handle(int event){
 
         }
         else{
-          main_sel = over_note();
 
-          if(!(event_state()&fltk::SHIFT)){
+          if(!(e->selected) && !(event_state()&fltk::SHIFT)){
             unselect_all();
           }
-          main_sel->selected = 1;
+          e->selected = 1;
 
 
 
-          if(over_handle(main_sel)){//begin resize or resize move
+          if(over_handle(e)){//begin resize or resize move
+/*
+
+
+RESIZE
+
+
+*/
           }
           else{//begin move
             move_flag = 1;
-            move_t = quantize(main_sel->tick);
-            move_offset = quantize(xpix2tick(event_x())) - move_t;
-            //move_track = event_y() / 30;
-            move_note = ypix2note(event_y(),1);
 
-            last_note = move_note;
+            move_torig = e->tick;
+            move_qoffset = e->tick - quantize(e->tick);
+
+            move_toffset = -move_qoffset;
+
+            //move_offset = quantize(xpix2tick(X)) - move_torig - move_qoffset;
+            //move_toffset = 0;
+            move_offset = X - tick2xpix(e->tick);
+            move_norig = ypix2note(event_y(),1);
+            move_noffset = 0;
+
+            last_note = move_norig;
             if(config.playmove){
               ui->keyboard->play_note(last_note,0);
             }
@@ -167,15 +185,13 @@ int PianoRoll::handle(int event){
         //button initiates paste
       }
       else if(event_button()==3){//right mouse
-        main_sel = over_note();
-        if(over_note()==NULL){
+        if(e==NULL){
           unselect_all();
           ui->event_edit->redraw();
         }
         else{//set up for deletion
-          main_sel->selected = 1;
+          e->selected = 1;
           delete_flag = 1;
-          main_sel = over_note();
         }
       }
       redraw();
@@ -189,11 +205,11 @@ int PianoRoll::handle(int event){
         box_n2 = ypix2note(Y,1);
       }
       else if(insert_flag){
-        insert_toffset = quantize(xpix2tick(event_x())+q_tick) - insert_torig;
+        insert_toffset = quantize(xpix2tick(X)+q_tick) - insert_torig;
         if(insert_toffset<=0){
           insert_toffset -= q_tick;
         }
-        insert_note = ypix2note(event_y(),1);
+        insert_note = ypix2note(Y,1);
         if(insert_note != last_note){
           if(config.playinsert){//play on insert
             ui->keyboard->release_note(last_note,0);
@@ -203,19 +219,21 @@ int PianoRoll::handle(int event){
         }
       }
       else if(move_flag){
-        move_t = quantize(xpix2tick(event_x())) - move_offset;
-        move_note = ypix2note(event_y(),1);
-        if(move_note != last_note){
+        move_toffset = quantize(xpix2tick(X - move_offset)) - move_torig;
+        move_noffset = ypix2note(Y,1) - move_norig;
+        int N = move_norig+move_noffset;
+        if(N != last_note){
           if(config.playmove){//play on move
             ui->keyboard->release_note(last_note,0);
-            ui->keyboard->play_note(move_note,0);
+            ui->keyboard->play_note(N,0);
           }
-          last_note = move_note;
+          last_note = N;
         }
       }
       redraw();
       return 1;
     case fltk::RELEASE:
+      e = over_note();
       if(event_button()==1){
         if(box_flag){
           apply_box();
@@ -234,23 +252,30 @@ int PianoRoll::handle(int event){
           ui->event_edit->redraw();
           ui->event_menu->redraw();
         }
-        else if(move_flag && move_note < 128 && move_note >= 0){
+        else if(move_flag){
+          apply_move();
+          move_flag = 0;
+/*
           int play_pos = get_play_position();
           mevent* e = main_sel;
           track* tr = tracks[cur_seqpat->track];
           if(play_pos > e->tick && play_pos < e->tick + e->dur){
             midi_note_off(e->value1,tr->chan,tr->port);
           }
-          int old_note = main_sel->value1;
+
           c=new MoveNote(cur_seqpat->p,main_sel,move_t,move_note);
           set_undo(c);
           undo_push(1);
-
+*/
+          //int old_note = e->value1;
           int cur_chan = tracks[cur_seqpat->track]->chan;
           int cur_port = tracks[cur_seqpat->track]->port;
-          midi_note_off(old_note,cur_chan,cur_port);
+          //midi_note_off(old_note,cur_chan,cur_port);
 
-          ui->keyboard->release_note(move_note,0);
+          cur_seqpat->restate();
+          midi_track_off(cur_seqpat->track);
+          ui->keyboard->release_note(last_note,0);
+          ui->keyboard->release_note(move_norig+move_noffset,0);
           ui->keyboard->redraw();
           ui->event_edit->redraw();
         }
@@ -262,6 +287,7 @@ int PianoRoll::handle(int event){
         if(delete_flag && over_n){
           if(over_n->selected){
             apply_delete();
+            cur_seqpat->restate();
             ui->event_edit->redraw();
           }
         }
@@ -323,13 +349,19 @@ void PianoRoll::draw(){
 
   if(move_flag){
     fltk::setcolor(fltk::MAGENTA);
-    int X = tick2xpix(move_t)+1;
-    int Y = note2ypix(move_note);
-    int W = tick2xpix(main_sel->dur);
-    fltk::fillrect(X,Y,W-1,1);
-    fltk::fillrect(X,Y+11,W-1,1);
-    fltk::fillrect(X,Y,1,11);
-    fltk::fillrect(X+W-2,Y,1,11);
+    mevent* ptr = cur_seqpat->p->events->next;
+    while(ptr){
+      if(ptr->type == MIDI_NOTE_ON && ptr->selected){
+        int X = tick2xpix(ptr->tick+move_toffset)+1;
+        int Y = note2ypix(ptr->value1+move_noffset);
+        int W = tick2xpix(ptr->dur);
+        fltk::fillrect(X,Y,W-1,1);
+        fltk::fillrect(X,Y+11,W-1,1);
+        fltk::fillrect(X,Y,1,11);
+        fltk::fillrect(X+W-2,Y,1,11);
+      }
+      ptr=ptr->next;
+    }
   }
 
   //draw all notes
@@ -591,10 +623,11 @@ void PianoRoll::apply_box(){
   int T2=box_t2;
   int N1 = box_n1;
   int N2 = box_n2;
-  int N = e->value1;
+
   if(T1>T2){SWAP(T1,T2);}
   if(N1<N2){SWAP(N1,N2);}
   while(e){
+    int N = e->value1;
     if(e->type == MIDI_NOTE_ON &&
        e->tick+e->dur > T1 && e->tick < T2 && 
        N >= N2 && N <= N1){
@@ -646,7 +679,49 @@ void PianoRoll::apply_delete(){
 }
 
 void PianoRoll::apply_move(){
+  if(move_toffset==0 && move_noffset==0){
+    return;
+  }
 
+  pattern* p = cur_seqpat->p;
+  mevent* e = p->events->next;
+  while(e){
+    int K = e->value1+move_noffset;
+    int T = e->tick+move_toffset;
+    if(e->type == MIDI_NOTE_ON && e->selected && (T<0 || K < 0 || K > 127)){
+      return;
+    }
+    e = e->next;
+  }
+
+
+  Command* c;
+  e = p->events->next;
+
+  mevent* next;
+  int M=0;
+  for(int i=0; i<tracks.size(); i++){
+    e = p->events->next;
+    while(e){
+      next = e->next;
+      if(e->selected && e->modified == 0){
+        int K = e->value1 + move_noffset;
+        int T = e->tick + move_toffset;
+        e->modified = 1;
+        c=new MoveNote(p,e,T,K);
+        set_undo(c);
+        M++;
+      }
+      e = next;
+    }
+  }
+  undo_push(M);
+
+  e = p->events->next;
+  while(e){
+    if(e->modified){e->modified=0;}
+    e = e->next;
+  }
 }
 
 void PianoRoll::apply_paste(){
