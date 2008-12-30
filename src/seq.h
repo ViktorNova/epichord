@@ -188,6 +188,9 @@ struct seqpat {
 
     selected = zs->selected;
     modified = zs->modified;
+
+    rhandle=0;
+    lhandle=0;
   }
 
   seqpat(seqpat* zs, pattern* zp){
@@ -206,6 +209,9 @@ struct seqpat {
 
     selected = zs->selected;
     modified = zs->modified;
+
+    rhandle=0;
+    lhandle=0;
   }
 
   ~seqpat(){

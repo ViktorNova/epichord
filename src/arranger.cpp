@@ -179,8 +179,14 @@ int Arranger::handle(int event){
           }
 
           if(over_lhandle(s,X,Y)){//begin resize
+            lresize_flag = 1;
+            lresize_torig = s->tick;
+            lresize_toffset = 0;
           }
           else if(over_rhandle(s,X,Y)){//begin resizemove
+            rresize_flag = 1;
+            rresize_torig = s->tick+s->dur;
+            rresize_toffset = 0;
           }
 
           else{//begin move
@@ -266,6 +272,12 @@ int Arranger::handle(int event){
         }
         new_track = Y / 30;
       }
+      else if(rresize_flag){
+        rresize_toffset = xpix2tick(X)/128*128 - rresize_torig;
+      }
+      else if(lresize_flag){
+        lresize_toffset = xpix2tick(X)/128*128 - lresize_torig;
+      }
       else if(move_flag){
         move_toffset = quantize(xpix2tick(X)) - move_torig;
         move_koffset = event_y() / 30 - move_korig;
@@ -293,6 +305,23 @@ int Arranger::handle(int event){
           apply_move();
           move_flag = 0;
         }
+        else if(rresize_flag){
+          apply_rresize();
+          rresize_flag = 0;
+      if(last_handle){
+        last_handle->lhandle = 0;
+        last_handle->rhandle = 0;
+      }
+        }
+        else if(lresize_flag){
+          apply_lresize();
+          lresize_flag = 0;
+      if(last_handle){
+        last_handle->lhandle = 0;
+        last_handle->rhandle = 0;
+      }
+        }
+
         insert_flag=0;
         color_sel = NULL;
       }
@@ -318,6 +347,8 @@ int Arranger::handle(int event){
         }
         delete_flag=0;
       }
+
+
 
       redraw();
       return 1;
@@ -455,9 +486,25 @@ void Arranger::draw(){
       get_outline_color(s,&c1,&c2,&c3,&cx);
 
       fltk::setcolor(c1);
-      int X = tick2xpix(s->tick)+1;
+
+      int R1 = lresize_flag&&s->selected ? lresize_toffset : 0;
+      int R2 = rresize_flag&&s->selected ? rresize_toffset : 0;
+
+      int T1 = s->tick+R1;
+      int T2 = s->tick+s->dur+R2;
+
+      if(T1 > T2){SWAP(T1,T2)};
+
+      int X = tick2xpix(T1)+1;
       int Y = s->track * 30;
-      int W = tick2xpix(s->tick+s->dur) - X;
+      int W = tick2xpix(T2)-tick2xpix(T1)-1;
+
+      if(rresize_flag && s->selected && T1==T2){
+        W = tick2xpix(128)-1;
+      }
+      if(lresize_flag && s->selected && T1==T2){
+        W = tick2xpix(128)-1;
+      }
 
       fillrect(X+1,Y+1,W-2,27);
       float a = 1.5f;
@@ -471,9 +518,9 @@ void Arranger::draw(){
       fillrect(X,Y,1,28);
       fillrect(X,Y,W,1);
 
-      fltk::push_clip(tick2xpix(s->tick),s->track*30,tick2xpix(s->dur),30);
+      fltk::push_clip(tick2xpix(T1),s->track*30,tick2xpix(T2-T1),30);
 
-     if(s->rhandle){
+     if(s->rhandle && !rresize_flag){
         setcolor(cx);
         W = 5;
         X = tick2xpix(s->tick+s->dur) - W - 1;
@@ -485,7 +532,7 @@ void Arranger::draw(){
         fillpath();
       }
 
-      if(s->lhandle){
+      if(s->lhandle && !lresize_flag){
         setcolor(cx);
         setcolor(cx);
         W = 5;
@@ -732,7 +779,7 @@ void Arranger::apply_delete(){
     while(s){
       next = s->next;
       if(s->selected){
-        seqpat_nonstick(s);
+        tracks[s->track]->modified = 1;
         c=new DeleteSeqpat(s);
         set_undo(c);
         N++;
@@ -764,8 +811,8 @@ int Arranger::apply_move(){
     while(s){
       next = s->next;
       if(s->selected && s->modified == 0){
+        tracks[s->track]->modified = 1;
         s->modified = 1;
-        seqpat_nonstick(s);
         c=new MoveSeqpat(s,s->track+move_koffset,s->tick+move_toffset);
         set_undo(c);
         N++;
@@ -776,7 +823,6 @@ int Arranger::apply_move(){
   undo_push(N);
 
   for(int i=0; i<tracks.size(); i++){
-    //tracks[i]->restate();
     s = tracks[i]->head->next;
     while(s){
       s->modified = 0;
@@ -784,6 +830,7 @@ int Arranger::apply_move(){
     }
   }
 
+  unmodify_blocks();
   unmodify_and_unstick_tracks();
   return 1;
 }
@@ -792,8 +839,94 @@ void Arranger::apply_paste(){
 
 }
 
-void Arranger::apply_resize(){
+void Arranger::apply_rresize(){
+  if(rresize_toffset==0){
+    return;
+  }
 
+  if(!check_resize_safety()){
+    return;
+  }
+
+  Command* c;
+  seqpat* s;
+  seqpat* next;
+  int N=0;
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      next = s->next;
+      if(s->selected && s->modified == 0){
+        tracks[i]->modified = 1;
+        s->modified = 1;
+        int T1 = s->tick;
+        int T2 = s->tick + s->dur + rresize_toffset;
+        if(T1 > T2){
+          //here perform reversal resize and move
+        }
+        else{
+          if(T1==T2){
+            T2 = T1+128; //magic
+          }
+          c=new ResizeSeqpat(s,s->dur+rresize_toffset);
+          set_undo(c);
+          N++;
+        }
+
+      }
+      s = next;
+    }
+  }
+  undo_push(N);
+
+  unmodify_blocks();
+  unmodify_and_unstick_tracks();
+}
+
+void Arranger::apply_lresize(){
+  if(lresize_toffset==0){
+    return;
+  }
+
+  if(!check_resize_safety()){
+    return;
+  }
+
+  Command* c;
+  seqpat* s;
+  seqpat* next;
+  int N=0;
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      next = s->next;
+      if(s->selected && s->modified == 0){
+        tracks[i]->modified = 1;
+        s->modified = 1;
+        int T1 = s->tick + lresize_toffset;
+        int T2 = s->tick + s->dur;
+        if(T1 > T2){
+          //here perform reversal resize and move
+        }
+        else{
+          if(T1==T2){
+            T2 = T1+128; //magic
+          }
+          c=new MoveSeqpat(s,s->track,T1);
+          set_undo(c);
+          c=new ResizeSeqpat(s,T2-T1);
+          set_undo(c);
+          N+=2;
+        }
+
+      }
+      s = next;
+    }
+  }
+  undo_push(N);
+
+  unmodify_blocks();
+  unmodify_and_unstick_tracks();
 }
 
 

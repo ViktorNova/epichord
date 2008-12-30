@@ -127,22 +127,22 @@ int note2ypix(int note, int* black){
 
 }
 
-
-//used when a block is modified
-//sets the modify flag is the current play position is in the block
-int seqpat_nonstick(seqpat* s){
-  int pos = get_play_position();
-  if(pos > s->tick && pos < s->tick + s->dur){
-    printf("track modified\n");
-    tracks[s->track]->modified = 1;
+void unmodify_blocks(){
+  seqpat* s;
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      s->modified = 0;
+      s = s->next;
+    }
   }
 }
 
 int unmodify_and_unstick_tracks(){
   for(int i=0; i<tracks.size(); i++){
     if(tracks[i]->modified){
-      printf("sending off on track\n");
       midi_track_off(i);
+      tracks[i]->restate();
       tracks[i]->modified = 0;
     }
   }

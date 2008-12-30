@@ -325,20 +325,25 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
 
 
 void DeleteSeqpat::redo(){
+  //check for restate
   int pos = get_play_position();
   if(pos >= s->tick && pos <= s->tick+s->dur){
     tracks[s->track]->skip = s->next;
   }
+
   tremove<seqpat>(s);
 }
 
 void DeleteSeqpat::undo(){
   tinsert<seqpat>(s->prev, s);
+  //check for restate
 }
 
 void ResizeSeqpat::redo(){
   tremove<seqpat>(s1);
   tinsert<seqpat>(s1->prev,s2);
+
+  //check for restate
 }
 
 void ResizeSeqpat::undo(){
@@ -381,6 +386,9 @@ void MoveSeqpat::redo(){
   s->skip = tfind<mevent>(s->p->events, play_pos - s->tick)->next;
   tinsert<seqpat>(targ2,s);
 
+  //restate track 1
+  //restate track 2
+/*
   if(s->tick+s->dur >= play_pos){
     if(tracks[track2]->skip){
       if(s->tick < tracks[track2]->skip->tick){
@@ -391,15 +399,14 @@ void MoveSeqpat::redo(){
       tracks[track2]->skip = s;
     }
   }
-
-  //send note off for all playing notes / all notes on this channel
+*/
 }
 
 void MoveSeqpat::undo(){
 
   tremove<seqpat>(s);
 
-   int play_pos = get_play_position();
+  int play_pos = get_play_position();
   if(play_pos >= s->tick && play_pos <= s->tick+s->dur){
     tracks[track2]->skip = s->next;
   }
@@ -410,6 +417,9 @@ void MoveSeqpat::undo(){
   s->skip = tfind<mevent>(s->p->events, play_pos - s->tick)->next;
 
   tinsert<seqpat>(targ1,s);
+
+  //restate tracks 1 and 2
+/*
   if(s->tick+s->dur >= play_pos){
     if(tracks[track1]->skip){
       if(s->tick < tracks[track1]->skip->tick){
@@ -420,6 +430,7 @@ void MoveSeqpat::undo(){
       tracks[track1]->skip = s;
     }
   }
+*/
 }
 
 void SplitSeqpat::redo(){

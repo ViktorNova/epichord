@@ -97,7 +97,8 @@ class Arranger : public fltk::Widget {
     void apply_delete();
     int apply_move();
     void apply_paste();
-    void apply_resize();
+    void apply_rresize();
+    void apply_lresize();
 
     int check_move_safety();
     int check_insert_safety();
