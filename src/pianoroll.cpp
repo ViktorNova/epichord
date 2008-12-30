@@ -70,6 +70,13 @@ int PianoRoll::handle(int event){
     case fltk::FOCUS:
       return 1;
     case fltk::SHORTCUT:
+      if(event_key()==fltk::DeleteKey){
+        apply_delete();
+        delete_flag = 0;
+        redraw();
+        ui->event_edit->redraw();
+        return 1;
+      }
       if(event_state(CTRL) && event_key()=='c'){
         //printf("roll copy\n");
         return 1;
@@ -154,7 +161,6 @@ int PianoRoll::handle(int event){
               ui->keyboard->play_note(last_note,0);
             }
           }
-          redraw();
         }
       }
       else if(event_button()==2){//middle mouse
@@ -167,6 +173,7 @@ int PianoRoll::handle(int event){
           ui->event_edit->redraw();
         }
         else{//set up for deletion
+          main_sel->selected = 1;
           delete_flag = 1;
           main_sel = over_note();
         }
@@ -251,15 +258,14 @@ int PianoRoll::handle(int event){
         move_flag=0;
       }
       if(event_button()==3){
-        if(delete_flag && over_note() == main_sel){
-          //here we need more branches for deleting the entire selection
-          c=new DeleteNote(cur_seqpat->p, main_sel);
-          set_undo(c);
-          undo_push(1);
-
-          ui->event_edit->redraw();
+        mevent* over_n = over_note();
+        if(delete_flag && over_n){
+          if(over_n->selected){
+            apply_delete();
+            ui->event_edit->redraw();
+          }
         }
-        delete_flag = 0;
+        delete_flag=0;
       }
       redraw();
 
@@ -619,6 +625,23 @@ void PianoRoll::apply_insert(){
 }
 
 void PianoRoll::apply_delete(){
+  Command* c;
+  mevent* e;
+  mevent* next;
+  pattern* p = cur_seqpat->p;
+  int N=0;
+
+  e = cur_seqpat->p->events->next;
+  while(e){
+    next = e->next;
+    if(e->selected && e->type == MIDI_NOTE_ON){
+      c=new DeleteNote(p,e);
+      set_undo(c);
+      N++;
+    }
+    e = next;
+  }
+  undo_push(N);
 
 }
 
