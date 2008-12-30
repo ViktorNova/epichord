@@ -999,8 +999,63 @@ int Arranger::check_insert_safety(){
 }
 
 int Arranger::check_resize_safety(){
+  seqpat* s;
+  seqpat* ptr;
+
+  int T1,T2;
+  int S1,S2;
+  int tmp;
+
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      if(!s->selected){
+        s = s->next; continue;
+      }
+
+      if(rresize_flag){
+        T1 = s->tick;
+        T2 = s->tick + s->dur + rresize_toffset;
+      }
+      else if(lresize_flag){
+        T1 = s->tick + lresize_toffset;
+        T2 = s->tick + s->dur;
+      }
+      if(T1>T2){SWAP(T1,T2);}
+
+      if(T1 < 0){
+        return 0;
+      }
+      ptr = tracks[s->track]->head->next;
+      while(ptr){
+        if(ptr == s){
+          ptr=ptr->next; continue;
+        }
+
+        S1 = ptr->tick;
+        S2 = ptr->tick + ptr->dur;
+        if(ptr->selected){
+          if(rresize_flag){
+            S2 += rresize_toffset;
+          }
+          else if(lresize_flag){
+            S1 += lresize_toffset;
+          }
+        }
+
+        if(collision_test(T1,T2,S1,S2)){
+          return 0;
+        }
+        ptr = ptr->next;
+      }
+
+      s = s->next;
+    }
+
+  }
   return 1;
 }
+
 
 int Arranger::check_paste_safety(){
   return 1;
