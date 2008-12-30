@@ -385,21 +385,6 @@ void MoveSeqpat::redo(){
 
   s->skip = tfind<mevent>(s->p->events, play_pos - s->tick)->next;
   tinsert<seqpat>(targ2,s);
-
-  //restate track 1
-  //restate track 2
-/*
-  if(s->tick+s->dur >= play_pos){
-    if(tracks[track2]->skip){
-      if(s->tick < tracks[track2]->skip->tick){
-        tracks[track2]->skip = s;
-      }
-    }
-    else{
-      tracks[track2]->skip = s;
-    }
-  }
-*/
 }
 
 void MoveSeqpat::undo(){
@@ -417,20 +402,6 @@ void MoveSeqpat::undo(){
   s->skip = tfind<mevent>(s->p->events, play_pos - s->tick)->next;
 
   tinsert<seqpat>(targ1,s);
-
-  //restate tracks 1 and 2
-/*
-  if(s->tick+s->dur >= play_pos){
-    if(tracks[track1]->skip){
-      if(s->tick < tracks[track1]->skip->tick){
-        tracks[track1]->skip = s;
-      }
-    }
-    else{
-      tracks[track1]->skip = s;
-    }
-  }
-*/
 }
 
 void SplitSeqpat::redo(){
@@ -701,22 +672,31 @@ mevent* find_off(mevent* e){
 //used when the sequence is changed in such a way 
 //that the sequencer state needs to be updated
 void track::restate(){
+printf("restate\n");
   int pos = get_play_position();
   seqpat* s = head->next;
   int snullflag = 1;
   int pointfound = 0;
   while(s){
+printf("trying block: pos %d, tick %d, t2 %d\n",pos,s->tick,s->tick+s->dur);
     if(pointfound){//we are past the point, reset up coming blocks
+      printf("future block\n");
       s->skip = s->p->events->next;
     }
 
-    else if(s->tick+s->dur > pos && s->tick >= pos){//we are inside this block, point found
+    else if(s->tick+s->dur < pos){//we are past this block
+      printf("past block\n");
+      s->skip = NULL;
+    }
+
+    else if(s->tick+s->dur > pos && s->tick <= pos){//we are inside this block, point found
+      printf("inside block\n");
       pointfound = 1;
       snullflag = 0;
       skip = s;
       mevent* e = s->p->events->next;
       while(e){
-        if(e->tick <= pos){
+        if(e->tick+s->tick >= pos){
           s->skip = e;
           pointfound = 1;
           break;
@@ -726,7 +706,8 @@ void track::restate(){
     }
 
     else{//we are not in a block, point found
-      skip = s->next;
+      printf("pointfound outside block\n");
+      skip = s;
       snullflag = 0;
       pointfound = 1;
     }

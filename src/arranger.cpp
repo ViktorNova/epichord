@@ -809,14 +809,14 @@ void Arranger::apply_delete(){
   unmodify_and_unstick_tracks();
 }
 
-//returns false if move failed
-int Arranger::apply_move(){
+
+void Arranger::apply_move(){
   if(move_toffset==0 && move_koffset==0){
-    return 0;
+    return;
   }
 
   if(!check_move_safety()){
-    return 0;
+    return;
   }
 
   Command* c;
@@ -828,9 +828,12 @@ int Arranger::apply_move(){
     while(s){
       next = s->next;
       if(s->selected && s->modified == 0){
+        int K = s->track + move_koffset;
+        int T = s->tick + move_toffset;
         tracks[s->track]->modified = 1;
+        tracks[K]->modified = 1;
         s->modified = 1;
-        c=new MoveSeqpat(s,s->track+move_koffset,s->tick+move_toffset);
+        c=new MoveSeqpat(s,K,T);
         set_undo(c);
         N++;
       }
@@ -839,17 +842,8 @@ int Arranger::apply_move(){
   }
   undo_push(N);
 
-  for(int i=0; i<tracks.size(); i++){
-    s = tracks[i]->head->next;
-    while(s){
-      s->modified = 0;
-      s = s->next;
-    }
-  }
-
   unmodify_blocks();
   unmodify_and_unstick_tracks();
-  return 1;
 }
 
 void Arranger::apply_paste(){
