@@ -851,6 +851,7 @@ void Arranger::apply_rresize(){
   Command* c;
   seqpat* s;
   seqpat* next;
+  int tmp;
   int N=0;
   for(int i=0; i<tracks.size(); i++){
     s = tracks[i]->head->next;
@@ -863,12 +864,23 @@ void Arranger::apply_rresize(){
         int T2 = s->tick + s->dur + rresize_toffset;
         if(T1 > T2){
           //here perform reversal resize and move
+          SWAP(T1,T2);
+          seqpat* stmp = s->prev;
+          //c=new ReverseSeqpat(s);
+          //set_undo(c);
+          s = stmp->next;
+          c=new ResizeSeqpat(s,T2-T1);
+          set_undo(c);
+          s = stmp->next;
+          c=new MoveSeqpat(s,s->track,T1);
+          set_undo(c);
+          N+=2;
         }
         else{
           if(T1==T2){
             T2 = T1+128; //magic
           }
-          c=new ResizeSeqpat(s,s->dur+rresize_toffset);
+          c=new ResizeSeqpat(s,T2-T1);
           set_undo(c);
           N++;
         }
@@ -895,6 +907,7 @@ void Arranger::apply_lresize(){
   Command* c;
   seqpat* s;
   seqpat* next;
+  int tmp;
   int N=0;
   for(int i=0; i<tracks.size(); i++){
     s = tracks[i]->head->next;
@@ -907,13 +920,26 @@ void Arranger::apply_lresize(){
         int T2 = s->tick + s->dur;
         if(T1 > T2){
           //here perform reversal resize and move
+          SWAP(T1,T2);
+          seqpat* stmp = s->prev;
+          //c=new ReverseSeqpat(s);
+          //set_undo(c);
+          s = stmp->next;
+          c=new ResizeSeqpat(s,T2-T1);
+          set_undo(c);
+          s = stmp->next;
+          c=new MoveSeqpat(s,s->track,T1);
+          set_undo(c);
+          N+=2;
         }
         else{
           if(T1==T2){
             T2 = T1+128; //magic
           }
+          seqpat* stmp = s->prev;
           c=new MoveSeqpat(s,s->track,T1);
           set_undo(c);
+          s = stmp->next;
           c=new ResizeSeqpat(s,T2-T1);
           set_undo(c);
           N+=2;
