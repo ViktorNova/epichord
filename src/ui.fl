@@ -110,7 +110,7 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {open
+        {fltk::Group} pattern_edit {
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -227,13 +227,13 @@ ui->event_edit->redraw();}
             }
             {fltk::Button} {} {
               label {@<-}
-              callback {show_song_edit();} selected
+              callback {show_song_edit();}
               xywh {0 370 45 75}
             }
           }
         }
       }
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -261,57 +261,62 @@ ui->event_edit->redraw();}
         {fltk::Group} {} {
           xywh {200 0 20 35} resizable
         } {}
-        {fltk::Group} pattern_buttons {open
-          xywh {220 5 235 25} hide
+        {fltk::Group} pattern_buttons {
+          xywh {145 5 310 25} hide
         } {
           {fltk::Button} qbutton4 {
             callback {set_quant(4);}
-            xywh {0 0 25 25}
+            xywh {135 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton8 {
             callback {set_quant(8);}
-            xywh {25 0 25 25}
+            xywh {160 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton16 {
             callback {set_quant(16);}
-            xywh {50 0 25 25}
+            xywh {185 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);
 o->state(1);}
           }
           {fltk::Button} qbutton32 {
             callback {set_quant(32);}
-            xywh {75 0 25 25}
+            xywh {210 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton64 {
             callback {set_quant(64);}
-            xywh {100 0 25 25}
+            xywh {235 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton128 {
             callback {set_quant(128);}
-            xywh {125 0 25 25}
+            xywh {260 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} qbutton0 {
             callback {set_quant(0);}
-            xywh {150 0 25 25}
+            xywh {285 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} quant1_button {
             label qua
             tooltip {quantize selected notes}
-            xywh {180 0 25 25}
+            xywh {15 0 25 25}
           }
           {fltk::Button} quant0_button {
-            label qua
-            tooltip {quantize selected notes}
-            xywh {210 0 25 25}
+            label qu_
+            tooltip {quantize length of selected notes}
+            xywh {45 0 25 25}
+          }
+          {fltk::Button} tool_button {
+            label tool
+            callback {toggle_tool();}
+            xywh {75 0 25 25}
           }
         }
-        {fltk::Group} song_buttons {
+        {fltk::Group} song_buttons {selected
           xywh {340 5 115 25}
         } {
           {fltk::Button} color_toggle {

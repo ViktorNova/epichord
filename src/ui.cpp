@@ -171,6 +171,13 @@ void UI::cb_qbutton0(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_qbutton0_i(o,v);
 }
 
+inline void UI::cb_tool_button_i(fltk::Button*, void*) {
+  toggle_tool();
+}
+void UI::cb_tool_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_tool_button_i(o,v);
+}
+
 inline void UI::cb_color_toggle_i(fltk::Button* o, void*) {
   arranger->color_flag = o->state();
 }
@@ -546,43 +553,46 @@ UI::UI() {
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }
-       {fltk::Group* o = pattern_buttons = new fltk::Group(220, 5, 235, 25);
+       {fltk::Group* o = pattern_buttons = new fltk::Group(145, 5, 310, 25);
         o->hide();
         o->begin();
-         {fltk::Button* o = qbutton4 = new fltk::Button(0, 0, 25, 25);
+         {fltk::Button* o = qbutton4 = new fltk::Button(135, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton8 = new fltk::Button(25, 0, 25, 25);
+         {fltk::Button* o = qbutton8 = new fltk::Button(160, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton8);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton16 = new fltk::Button(50, 0, 25, 25);
+         {fltk::Button* o = qbutton16 = new fltk::Button(185, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton16);
           o->type(fltk::Button::TOGGLE);
           o->state(1);
         }
-         {fltk::Button* o = qbutton32 = new fltk::Button(75, 0, 25, 25);
+         {fltk::Button* o = qbutton32 = new fltk::Button(210, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton32);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton64 = new fltk::Button(100, 0, 25, 25);
+         {fltk::Button* o = qbutton64 = new fltk::Button(235, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton64);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton128 = new fltk::Button(125, 0, 25, 25);
+         {fltk::Button* o = qbutton128 = new fltk::Button(260, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton128);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = qbutton0 = new fltk::Button(150, 0, 25, 25);
+         {fltk::Button* o = qbutton0 = new fltk::Button(285, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton0);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = quant1_button = new fltk::Button(180, 0, 25, 25, "qua");
+         {fltk::Button* o = quant1_button = new fltk::Button(15, 0, 25, 25, "qua");
           o->tooltip("quantize selected notes");
         }
-         {fltk::Button* o = quant0_button = new fltk::Button(210, 0, 25, 25, "qua");
-          o->tooltip("quantize selected notes");
+         {fltk::Button* o = quant0_button = new fltk::Button(45, 0, 25, 25, "qu_");
+          o->tooltip("quantize length of selected notes");
+        }
+         {fltk::Button* o = tool_button = new fltk::Button(75, 0, 25, 25, "tool");
+          o->callback((fltk::Callback*)cb_tool_button);
         }
         o->end();
       }

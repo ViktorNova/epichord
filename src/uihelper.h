@@ -69,4 +69,5 @@ void set_robmode(int n);
 void show_song_edit();
 void show_pattern_edit();
 
+void toggle_tool();
 #endif

@@ -579,3 +579,30 @@ void show_pattern_edit(){
   ui->pattern_edit->show();
   ui->pattern_buttons->show();
 }
+
+
+static int tool = 0;
+//switch between normal, note off, portamento, and aftertouch
+void toggle_tool(){
+  switch(tool){
+    case 0:
+      tool=1;
+      ui->tool_button->copy_label("80");
+      ui->tool_button->state(1);
+      break;
+    case 1:
+      tool=2;
+      ui->tool_button->copy_label("A0");
+      break;
+    case 2:
+      tool=3;
+      ui->tool_button->copy_label("po");
+      break;
+    case 3:
+      tool=0;
+      ui->tool_button->copy_label("tool");
+      ui->tool_button->state(0);
+      break;
+  }
+}
+

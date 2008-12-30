@@ -129,6 +129,11 @@ private:
 public:
         fltk::Button *quant1_button;
         fltk::Button *quant0_button;
+        fltk::Button *tool_button;
+private:
+        inline void cb_tool_button_i(fltk::Button*, void*);
+        static void cb_tool_button(fltk::Button*, void*);
+public:
       fltk::Group *song_buttons;
         fltk::Button *color_toggle;
 private:
