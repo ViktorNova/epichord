@@ -86,7 +86,7 @@ struct mevent {
     prev = e->prev;
     next = e->next;
     selected = e->selected;
-    modified = 0;
+    modified = e->modified;
   }
 
 };

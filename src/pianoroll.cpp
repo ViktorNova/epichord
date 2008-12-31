@@ -199,6 +199,9 @@ int PianoRoll::handle(int event){
           ui->event_edit->redraw();
         }
         else{//set up for deletion
+          if(!(e->selected) && !(event_state()&fltk::SHIFT)){
+            unselect_all();
+          }
           e->selected = 1;
           delete_flag = 1;
           resize_arrow_color = fltk::color(120,60,58);
@@ -853,7 +856,7 @@ void PianoRoll::apply_rresize(){
   e = p->events->next;
   while(e){
     next = e->next;
-    if(e->selected && e->modified == 0){
+    if(e->type == MIDI_NOTE_ON && e->selected && e->modified == 0){
       e->modified = 1;
       int W = e->dur;
       int R = rresize_toffset;
@@ -867,13 +870,80 @@ void PianoRoll::apply_rresize(){
     e = next;
   }
 
+  e = p->events->next;
+  while(e){
+    if(e->modified){e->modified=0;}
+    e = e->next;
+  }
+
   cur_track->restate();
   undo_push(N);
 }
 
 void PianoRoll::apply_lresize(){
+  if(lresize_toffset==0){
+    return;
+  }
 
+  Command* c;
+  mevent* e;
+  mevent* next;
+  pattern* p = cur_seqpat->p;
+  int tmp;
+  int N=0;
+
+  e = p->events->next;
+  while(e){
+    if(e->type == MIDI_NOTE_ON && e->selected){
+      if(e->tick + lresize_toffset < 0){
+        return;
+      }
+    }
+    e = e->next;
+  }
+
+  e = p->events->next;
+  while(e){
+    next = e->next;
+    if(e->type == MIDI_NOTE_ON && e->selected && e->modified == 0){
+      e->modified = 1;
+      int T = e->tick;
+      int W = e->dur;
+      int R = lresize_toffset;
+
+      if(R > W-q_tick){
+        R = W-q_tick;
+      }
+
+      mevent* etmp = e->prev;
+      c=new ResizeNote(p,e,W-R);
+      set_undo(c);
+
+      e = etmp->next;
+      c=new MoveNote(p,e,T+R,e->value1);
+      set_undo(c);
+
+      N+=2;
+    }
+    e = next;
+  }
+
+  e = p->events->next;
+  while(e){
+    if(e->modified){e->modified=0;}
+    e = e->next;
+  }
+
+  cur_track->restate();
+  undo_push(N);
 }
+
+
+
+
+
+
+
 
 
 int PianoRoll::over_rhandle(mevent* e, int X, int Y){
