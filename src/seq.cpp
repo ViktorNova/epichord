@@ -213,54 +213,7 @@ void do_redo(){
 }
 
 
-pattern::pattern(pattern* p){
-    mevent* ptr = p->events;
-    mevent* ptr2;
-    events = new mevent(ptr);
-    ptr2 = events;
-    ptr=ptr->next;
-    while(ptr){
-      ptr2->next = new mevent(ptr);
-      ptr2->next->prev = ptr2;
-      ptr=ptr->next;
-      ptr2=ptr2->next; 
-    }
-    ptr2->next = NULL;
 
-    pattern* tmp = patterns;
-    while(tmp->next){
-      tmp=tmp->next;
-    }
-    tmp->next = this;
-
-    next = NULL;
-    ref_c = 0;
-    h = p->h;
-    s = p->s;
-    v = p->v;
-    regen_colors();
-}
-
-void pattern::regen_colors(){
-
-  while(h>360){h-=360;}
-  while(h<0){h+=360;}
-  if(s < 0){s = 0;}
-  if(s > 1){s = 1;}
-  if(v < 0.2){v = 0.2;}
-  if(v > 0.8){v = 0.8;}
-
-  hsv_to_rgb(h,s,v,&r1,&g1,&b1);
-  hsv_to_rgb(h,s,v/2,&r2,&g2,&b2);
-  hsv_to_rgb(h,s,v+0.2 > 1 ? 1 : v+0.2,&r3,&g3,&b3);
-  if(v > 0.5){
-    hsv_to_rgb(h,s,v-0.3,&rx,&gx,&bx);
-  }
-  else{
-    hsv_to_rgb(h,s,0.7,&rx,&gx,&bx);
-  }
-
-}
 
 
 CreateSeqpat::CreateSeqpat(int track, int tick, seqpat* zs, int copy){
@@ -616,6 +569,79 @@ mevent* find_off(mevent* e){
 }
 
 
+
+
+pattern::pattern(){
+  events = new mevent();//dummy
+  events->tick = 0;
+  next = NULL;
+  ref_c = 0;
+  h=0;
+  s=1;
+  v=0.8;
+  regen_colors();
+}
+
+pattern::~pattern(){
+  mevent* e = events;
+  mevent* next;
+  while(e){
+    next = e->next;
+    delete e;
+    e = next;
+  }
+}
+
+pattern::pattern(pattern* p){
+    mevent* ptr = p->events;
+    mevent* ptr2;
+    events = new mevent(ptr);
+    ptr2 = events;
+    ptr=ptr->next;
+    while(ptr){
+      ptr2->next = new mevent(ptr);
+      ptr2->next->prev = ptr2;
+      ptr=ptr->next;
+      ptr2=ptr2->next; 
+    }
+    ptr2->next = NULL;
+
+    pattern* tmp = patterns;
+    while(tmp->next){
+      tmp=tmp->next;
+    }
+    tmp->next = this;
+
+    next = NULL;
+    ref_c = 0;
+    h = p->h;
+    s = p->s;
+    v = p->v;
+    regen_colors();
+}
+
+void pattern::regen_colors(){
+
+  while(h>360){h-=360;}
+  while(h<0){h+=360;}
+  if(s < 0){s = 0;}
+  if(s > 1){s = 1;}
+  if(v < 0.2){v = 0.2;}
+  if(v > 0.8){v = 0.8;}
+
+  hsv_to_rgb(h,s,v,&r1,&g1,&b1);
+  hsv_to_rgb(h,s,v/2,&r2,&g2,&b2);
+  hsv_to_rgb(h,s,v+0.2 > 1 ? 1 : v+0.2,&r3,&g3,&b3);
+  if(v > 0.5){
+    hsv_to_rgb(h,s,v-0.3,&rx,&gx,&bx);
+  }
+  else{
+    hsv_to_rgb(h,s,0.7,&rx,&gx,&bx);
+  }
+
+}
+
+
 //used when the sequence is changed in such a way 
 //that the sequencer state needs to be updated
 void track::restate(){
@@ -674,7 +700,6 @@ void seqpat::restate(){
   mevent* e = p->events->next;
   int pos = get_play_position();
   while(e){
-printf("%d %d\n",e->tick+tick,pos);
     if(e->tick+tick >= pos){
       skip = e;
       return;
@@ -683,3 +708,138 @@ printf("%d %d\n",e->tick+tick,pos);
   }
   skip = NULL;
 }
+
+
+//clear the pattern
+void seqpat::apply_erase(){
+  if(layers){
+    layers->ref_c--;
+    if(layers->ref_c == 0){
+      delete layers;
+    }
+  }
+
+  pattern* ptmp = new pattern();
+  ptmp->ref_c = 1;
+  ptmp->h = p->h;
+  ptmp->s = p->s;
+  ptmp->v = p->v;
+  ptmp->regen_colors();
+
+  if(p){
+    if(--(p->ref_c) == 0){
+      delete p;
+    }
+  }
+
+  p = ptmp;
+}
+
+//create new pattern and make it current
+void seqpat::apply_layer(){
+  if(layers){
+    p = layers->push_new();
+  }
+  else{
+    layers = new layerstack();
+    layers->ref_c = 1;
+    layers->push_new(p);
+    p = layers->push_new();
+  }
+}
+
+void seqpat::next_layer(){
+  if(layers){
+    p = layers->next();
+  }
+}
+
+void seqpat::prev_layer(){
+  if(layers){
+    p = layers->prev();
+  }
+}
+
+int seqpat::layer_index(){
+  if(layers){
+    return layers->index;
+  }
+  else{
+    return 1;
+  }
+}
+
+int seqpat::layer_total(){
+  if(layers){
+    return layers->total;
+  }
+  else{
+    return 1;
+  }
+}
+
+
+
+
+
+pattern* layerstack::push_new(){
+  if(total==memsize){
+    //reallocate
+  }
+
+  index++;
+  total++;
+  array[index] = new pattern();
+  return array[index];
+}
+
+void layerstack::push_new(pattern* p){
+  if(total==memsize){
+    //reallocate
+  }
+
+  index++;
+  total++;
+  array[index] = p;
+  p->ref_c++;
+}
+
+pattern* layerstack::next(){
+  if(index==total-1){
+    index=0;
+  }
+  else{
+    index++;
+  }
+  return array[index];
+}
+
+pattern* layerstack::prev(){
+  if(index==0){
+    index=total-1;
+  }
+  else{
+    index--;
+  }
+  return array[index];
+}
+
+layerstack::layerstack(pattern* p){
+  index = 0;
+  total = 1;
+  array = new pattern*[16];
+  memsize = 16;
+  array[0] = p;
+  ptr = array[0];
+  ref_c = 0;
+}
+
+layerstack::~layerstack(){
+  for(int i=0; i<total; i++){
+    array[i]->ref_c--;
+    if(array[i]->ref_c == 0){
+      delete array[i];
+    }
+  }
+}
+

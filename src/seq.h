@@ -106,31 +106,32 @@ struct pattern {
 
   void regen_colors();
 
-  pattern(){
-    events = new mevent();//dummy
-    events->tick = 0;
-    next = NULL;
-    ref_c = 0;
-    h=0;
-    s=1;
-    v=0.8;
-    regen_colors();
-  }
-
+  pattern();
   pattern(pattern* p);
-
-  ~pattern(){
-    mevent* e = events;
-    mevent* next;
-    while(e){
-      next = e->next;
-      delete e;
-      e = next;
-    }
-  }
+  ~pattern();
 };
 
 
+
+struct layerstack {
+  pattern** array;
+  pattern* ptr;
+
+  int index;
+  int total;
+  int memsize;
+
+  int ref_c;
+
+  pattern* push_new();
+  void push_new(pattern* p);
+  pattern* next();
+  pattern* prev();
+
+  layerstack(){};
+  layerstack(pattern* p);
+  ~layerstack();
+};
 
 
 struct seqpat {
@@ -142,15 +143,24 @@ struct seqpat {
   struct seqpat* prev;
   struct seqpat* next;
 
+  layerstack* layers;
+
  // unsigned char color[3][3];
   int selected;
   int modified;
+  int record_flag;//0=on record, erase/save. 1=dont
   int rhandle;
   int lhandle;
 
   int scrollx, scrolly;
 
   void restate();
+  void apply_erase();
+  void apply_layer();
+  void next_layer();
+  void prev_layer();
+  int layer_index();
+  int layer_total();
 
   seqpat(){
     p = NULL;
@@ -162,10 +172,13 @@ struct seqpat {
     modified=0;
     rhandle=0;
     lhandle=0;
+    record_flag=0;
+    layers = NULL;
   }
 
   seqpat(int ztrack, int ztick, int zdur, pattern* zp){
     p = zp;
+    p->ref_c++;
     track = ztrack;
     dur = zdur;
     tick = ztick;
@@ -173,13 +186,16 @@ struct seqpat {
     prev = NULL;
     next = NULL;
     selected = 0;
-    modified=0;
-    rhandle=0;
-    lhandle=0;
+    modified = 0;
+    rhandle = 0;
+    lhandle = 0;
+    record_flag = 0;
+    layers = NULL;
   }
 
   seqpat(seqpat* zs){
     p = zs->p;
+    p->ref_c++;
     track = zs->track;
     dur = zs->dur;
     tick = zs->tick;
@@ -195,12 +211,18 @@ struct seqpat {
     selected = zs->selected;
     modified = zs->modified;
 
-    rhandle=0;
-    lhandle=0;
+    rhandle = 0;
+    lhandle = 0;
+    record_flag = 0;
+    layers = zs->layers;
+    if(layers){
+      layers->ref_c++;
+    }
   }
 
   seqpat(seqpat* zs, pattern* zp){
     p = zp;
+    p->ref_c++;
     track = zs->track;
     dur = zs->dur;
     tick = zs->tick;
@@ -218,11 +240,30 @@ struct seqpat {
 
     rhandle=0;
     lhandle=0;
+    record_flag=0;
+    layers = NULL;
   }
 
   ~seqpat(){
+     if(p){
+       p->ref_c--;
+       if(p->ref_c == 0){
+         delete p;
+       }
+     }
+     if(layers){
+       layers->ref_c--;
+       if(layers->ref_c == 0){
+         delete layers;
+       }
+     }
    }
 };
+
+
+
+
+
 
 
 struct track {
@@ -432,7 +473,7 @@ class SplitSeqpat : public Command {
     }
 
     SplitSeqpat(){
-      if(p2->ref_c-- == 0){
+      if(--(p2->ref_c) == 0){
         delete p2;
       }
     }
