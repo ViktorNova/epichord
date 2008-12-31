@@ -61,8 +61,13 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   insert_flag = 0;
   box_flag = 0;
+  rresize_flag = 0;
+  lresize_flag = 0;
 
   last_handle == NULL;
+
+  color_flag = 0;
+
 }
 
 int Arranger::handle(int event){
@@ -472,6 +477,7 @@ void Arranger::draw(){
   fltk::Color c;
 
   fltk::Color c1,c2,c3,cx;
+  c1 = fltk::BLACK;
 
   for(int i=0; i<tracks.size(); i++){
 

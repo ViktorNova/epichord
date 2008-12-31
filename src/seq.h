@@ -562,16 +562,7 @@ class ResizeNote : public Command {
 
   public:
 
-  ResizeNote(pattern* zp, mevent* ze, int dur){
-    p = zp;
-    l1 = ze;
-    r1 = find_off(ze);
-    l2 = new mevent(ze);
-    l2->dur = dur;
-    r2 = new mevent(r1);
-    r2->prev = tfind<mevent>(p->events, ze->tick + dur);
-    r2->tick = ze->tick + dur;
-  }
+  ResizeNote(pattern* zp, mevent* ze, int dur);
   ~ResizeNote(){
     delete l2;
     delete r2;

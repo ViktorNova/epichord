@@ -242,7 +242,7 @@ int PianoRoll::handle(int event){
         }
       }
       else if(rresize_flag){
-        rresize_toffset = quantize(xpix2tick(X)) - rresize_torig;
+        rresize_toffset = quantize(xpix2tick(X)) + q_tick - rresize_torig;
       }
       else if(lresize_flag){
         lresize_toffset = quantize(xpix2tick(X)) - lresize_torig;
@@ -260,17 +260,20 @@ int PianoRoll::handle(int event){
         else if(rresize_flag){
           apply_rresize();
           rresize_flag = 0;
+          resize_arrow = 0;
+          ui->event_edit->redraw();
         }
         else if(lresize_flag){
           apply_lresize();
           lresize_flag = 0;
+          resize_arrow = 0;
+          ui->event_edit->redraw();
         }
         else if(insert_flag){
           apply_insert();
 
           insert_flag = 0;
 
-          cur_seqpat->restate();
           ui->keyboard->release_note(insert_note,0);
           ui->keyboard->redraw();
           ui->event_edit->has[0]=1;
@@ -282,7 +285,6 @@ int PianoRoll::handle(int event){
           apply_move();
           move_flag = 0;
 
-          cur_seqpat->restate();
           midi_track_off(cur_seqpat->track);
           ui->keyboard->release_note(last_note,0);
           ui->keyboard->release_note(move_norig+move_noffset,0);
@@ -298,7 +300,6 @@ int PianoRoll::handle(int event){
           if(over_n->selected){
             apply_delete();
             midi_track_off(cur_seqpat->track);
-            cur_seqpat->restate();
             ui->event_edit->redraw();
           }
         }
@@ -436,7 +437,7 @@ void PianoRoll::draw(){
       int T1 = e->tick + R2;
       int T2 = e->tick+e->dur + R1;
 
-      if(T1 >= T2-q_tick){
+      if(T1 >= T2-q_tick && e->selected){
         if(rresize_flag){
           T1 = e->tick;
           T2 = T1 + q_tick;
@@ -757,6 +758,8 @@ void PianoRoll::apply_insert(){
   Command* c=new CreateNote(p,insert_note,127,T1,T2-T1);
   set_undo(c);
   undo_push(1);
+
+  cur_track->restate();
 }
 
 void PianoRoll::apply_delete(){
@@ -778,6 +781,7 @@ void PianoRoll::apply_delete(){
   }
   undo_push(N);
 
+  cur_track->restate();
 }
 
 void PianoRoll::apply_move(){
@@ -824,14 +828,47 @@ void PianoRoll::apply_move(){
     if(e->modified){e->modified=0;}
     e = e->next;
   }
+
+  cur_track->restate();
 }
 
 void PianoRoll::apply_paste(){
 
 }
 
-void PianoRoll::apply_rresize(){
 
+
+void PianoRoll::apply_rresize(){
+  if(rresize_toffset==0){
+    return;
+  }
+
+  Command* c;
+  mevent* e;
+  mevent* next;
+  pattern* p = cur_seqpat->p;
+  int tmp;
+  int N=0;
+
+  e = p->events->next;
+  while(e){
+    next = e->next;
+    if(e->selected && e->modified == 0){
+      e->modified = 1;
+      int W = e->dur;
+      int R = rresize_toffset;
+      if(W+R < q_tick){
+        R = q_tick-W;
+      }
+      c=new ResizeNote(p,e,W+R);
+      set_undo(c);
+      N++;
+    }
+    e = next;
+  }
+
+  cur_track->restate();
+  undo_push(N);
 }
 
 void PianoRoll::apply_lresize(){

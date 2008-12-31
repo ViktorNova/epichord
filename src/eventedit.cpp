@@ -62,6 +62,7 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
   line_flag = 0;
   paste_flag = 0;
   delete_flag = 0;
+  box_flag = 0;
 
   for(int i=0; i<134; i++){
     has[i] = 0;
@@ -294,6 +295,9 @@ void EventEdit::draw(){
       int H = h()-Y;
 
       fltk::Color c1,c2,c3;
+      c1 = fltk::BLACK;
+      c2 = fltk::BLACK;
+      c3 = fltk::BLACK;
       get_event_color(e,&c1,&c2,&c3);
 
       fltk::setcolor(c1);

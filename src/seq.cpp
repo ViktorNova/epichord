@@ -530,18 +530,47 @@ void MoveNote::undo(){
 
 
 
+
+ResizeNote::ResizeNote(pattern* zp, mevent* ze, int dur){
+  p = zp;
+  l1 = ze;
+  l2 = new mevent(ze);
+  l2->dur = dur;
+
+  r2 = NULL;
+  r1 = find_off(ze);
+  if(r1){
+    r2 = new mevent(r1);
+    r2->prev = tfind<mevent>(p->events, ze->tick + dur);
+    if(r2->prev == r1 || r2->prev == l1){
+      r2->prev = l2;
+    }
+    r2->tick = ze->tick + dur;
+  }
+}
+
 void ResizeNote::redo(){
   tremove<mevent>(l1);
+  if(r1){
+    tremove<mevent>(r1);
+  }
+
   tinsert<mevent>(l2->prev, l2);
-  tremove<mevent>(r1);
-  tinsert<mevent>(r2->prev, r2);
+  if(r2){
+    tinsert<mevent>(r2->prev, r2);
+  }
 }
 
 void ResizeNote::undo(){
+  if(r2){
+    tremove<mevent>(r2);
+  }
   tremove<mevent>(l2);
+
   tinsert<mevent>(l1->prev, l1);
-  tremove<mevent>(r2);
-  tinsert<mevent>(r1->prev, r1);
+  if(r1){
+    tinsert<mevent>(r1->prev, r1);
+  }
 }
 
 
@@ -675,6 +704,7 @@ void track::restate(){
   int pos = get_play_position();
   seqpat* s = head->next;
   int snullflag = 1;
+  int pnullflag = 1;
   int pointfound = 0;
   while(s){
 //printf("trying block: pos %d, tick %d, t2 %d\n",pos,s->tick,s->tick+s->dur);
@@ -698,9 +728,13 @@ void track::restate(){
         if(e->tick+s->tick >= pos){
           s->skip = e;
           pointfound = 1;
+          pnullflag = 0;
           break;
         }
         e = e->next;
+      }
+      if(pnullflag){
+        s->skip = NULL;
       }
     }
 
@@ -722,6 +756,7 @@ void seqpat::restate(){
   mevent* e = p->events->next;
   int pos = get_play_position();
   while(e){
+printf("%d %d\n",e->tick+tick,pos);
     if(e->tick+tick >= pos){
       skip = e;
       return;
