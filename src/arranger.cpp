@@ -518,6 +518,10 @@ void Arranger::draw(){
 
      if(s->rhandle && !rresize_flag){
         setcolor(cx);
+        if(delete_flag){
+          setcolor(fltk::color(128,0,0));
+        }
+
         W = 5;
         X = tick2xpix(s->tick+s->dur) - W - 1;
         Y = s->track*30;
@@ -529,7 +533,9 @@ void Arranger::draw(){
 
       if(s->lhandle && !lresize_flag){
         setcolor(cx);
-        setcolor(cx);
+        if(delete_flag){
+          setcolor(fltk::color(128,0,0));
+        }
         W = 5;
         X = tick2xpix(s->tick)+1;
         Y = s->track*30;
