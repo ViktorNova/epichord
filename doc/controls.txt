@@ -8,20 +8,20 @@ shift left click drag - box select blocks/notes
 right click - delete blocks/notes
 middle click - paste selected blocks/notes
 
-control c - copy selected blocks / notes
-control v - paste copied blocks / notes
-control z - undo
-control y - redo
-control a - select none / select all
+ctrl+c - copy selected blocks / notes
+ctrl+v - paste copied blocks / notes
+ctrl+z - undo
+ctrl+y - redo
+ctrl+a - select none / select all
 delete - delete selected blocks / notes
 
-right arrow - zoom in
-left arrow - zoom out
+shift+= - zoom in
+shift+- - zoom out
 
-control s - save
-control o - open
-control w - save as
-control n - erase everything
+ctrl s - save
+ctrl o - open
+ctrl w - save as
+ctrl n - erase everything
 
 ctrl+backspace - reset play head
 ctrl+return - toggle recording
@@ -31,8 +31,8 @@ ctrl+space - toggle play
 You can play notes with the keyboard.
 This is the layout for qwerty.
 
- # #   # # #   # #
-C D E F G A B C D E
+ # #   # # #   # #   # #
+C D E F G A B C D E F G
 
  2 3   5 6 7   9 0   = \
 q w e r t y u i o p [ ] 

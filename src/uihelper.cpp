@@ -57,7 +57,7 @@ void load_config(){
   fstream f;
   f.open(config_filename,fstream::in);
   if(!f.is_open()){
-    printf("unable to open config file for reading\n");
+    printf("load_config: Unable to open config file for reading.\n");
     config.beats_per_measure = 4;
     config.measures_per_phrase = 4;
     config.measures_until_record = 1;
@@ -107,7 +107,7 @@ void save_config(){
   fstream f;
   f.open(config_filename,fstream::out);
   if(!f.is_open()){
-    printf("unable to open config file %s for saving\n",config_filename);
+    printf("save_config: Unable to open config file %s for saving.\n", config_filename);
     return;
   }
 
@@ -130,8 +130,6 @@ void save_config(){
 void update_config_gui(){
   ui->beats_per_measure->value(config.beats_per_measure);
   ui->measures_per_phrase->value(config.measures_per_phrase);
-  //ui->bpm_wheel.value(config.bpm);
-  //ui->bpm_output.value(config.bpm);
   ui->measures_until_record->value(config.measures_until_record);
 
   ui->check_alwayscopy->state(config.alwayscopy);
@@ -403,12 +401,6 @@ void press_stop(){
 
   ui->song_timeline->redraw();
   ui->pattern_timeline->redraw();
-
-  //send program change on all channels
-  //char buf[3];
-  //for(int i = 0; i<tracks.size(); i++){
-  //  program_change(i, tracks[i]->program);
-  //}
 
   ui->play_button->label("@>");
   ui->play_button->redraw();

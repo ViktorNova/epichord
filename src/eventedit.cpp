@@ -476,8 +476,6 @@ void EventEdit::set_event_type(int type, int controller){
 int EventEdit::ypix2mag(int ypix){
   int H = h()-3;
   int R = ypix*MAG_MAX/H;
-  //if(R>MAG_MAX){return 0;}
-  //if(R<0){return MAG_MAX;}
   return MAG_MAX-R;
 }
 

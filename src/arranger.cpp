@@ -82,19 +82,19 @@ int Arranger::handle(int event){
     case fltk::ENTER:
       return 1;
     case fltk::KEYUP:
-      //might want to consume release control c, etc
+
       return 0;
     case fltk::SHORTCUT:
-      if(event_state(CTRL) && event_key()=='c'){
-        //printf("arranger copy\n");
+      if(event_state() && event_key()=='c'){
+
         return 1;
       }
-      if(event_state(CTRL) && event_key()=='v'){
-        //printf("arranger paste\n");
+      if(event_state() && event_key()=='v'){
+
         return 1;
       }
-      if(event_state(CTRL) && event_key()=='z'){
-        //printf("arranger undo\n");
+      if(event_state() && event_key()=='z'){
+
         return 1;
       }
       if(event_key()==fltk::DeleteKey){
@@ -104,7 +104,7 @@ int Arranger::handle(int event){
         return 1;
       }
       if(zoom_out_key(event_key(),event_state())){
-        //printf("arranger zoom out\n");
+      //if(event_key()==fltk::LeftKey){
         if(zoom_n > 1){
           zoom_n--;
           zoom = 30*(1<<zoom_n)/16;
@@ -116,7 +116,7 @@ int Arranger::handle(int event){
         return 1;
       }
       if(zoom_in_key(event_key(),event_state())){
-        //printf("arranger zoom in\n");
+      //if(event_key()==fltk::RightKey){
         if(zoom_n < 8){
           zoom_n++;
           zoom = 30*(1<<zoom_n)/16;
@@ -436,13 +436,6 @@ void Arranger::draw(){
         s = s->next;
       }
     }
-    //int X = tick2xpix(move_t)+1;
-    //int Y = move_track*30;
-    //int W = tick2xpix(main_sel->dur);
-    //fltk::fillrect(X,Y,W-1,1);
-    //fltk::fillrect(X,Y+28,W-1,1);
-    //fltk::fillrect(X,Y,1,28);
-    //fltk::fillrect(X+W-2,Y,1,28);
   }
 
   if(paste_flag){
@@ -528,7 +521,6 @@ void Arranger::draw(){
         W = 5;
         X = tick2xpix(s->tick+s->dur) - W - 1;
         Y = s->track*30;
-        //fillrect(X,Y,W,27);
         addvertex(X+W,Y+28/2);
         addvertex(X,Y);
         addvertex(X,Y+28);
@@ -541,7 +533,6 @@ void Arranger::draw(){
         W = 5;
         X = tick2xpix(s->tick)+1;
         Y = s->track*30;
-        //fillrect(X,Y,W,27);
         addvertex(X,Y+28/2);
         addvertex(X+W,Y);
         addvertex(X+W,Y+28);
@@ -713,12 +704,10 @@ void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fl
   int tmp;
   seqpat* over_s = over_seqpat();
   if(delete_flag && s->selected){
-    //if(over_s->selected){
-      *c1 = fltk::color(255,0,0);
-      *c2 = fltk::color(255,0,0);
-      *c3 = fltk::color(255,0,0);
-      return;
-    //}
+    *c1 = fltk::color(255,0,0);
+    *c2 = fltk::color(255,0,0);
+    *c3 = fltk::color(255,0,0);
+    return;
   }
 
   if(box_flag){
@@ -880,7 +869,6 @@ void Arranger::apply_rresize(){
         int T1 = s->tick;
         int T2 = s->tick + s->dur + rresize_toffset;
         if(T1 > T2){
-          //here perform reversal resize and move
           SWAP(T1,T2);
           seqpat* stmp = s->prev;
           //c=new ReverseSeqpat(s);
@@ -936,7 +924,6 @@ void Arranger::apply_lresize(){
         int T1 = s->tick + lresize_toffset;
         int T2 = s->tick + s->dur;
         if(T1 > T2){
-          //here perform reversal resize and move
           SWAP(T1,T2);
           seqpat* stmp = s->prev;
           //c=new ReverseSeqpat(s);

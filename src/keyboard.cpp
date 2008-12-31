@@ -43,18 +43,6 @@ using namespace std;
 using namespace fltk;
 
 
-/*
-namespace keymap{
-
-  combo lower[18];
-  combo upper[21];
-  combo octaveup;
-  combo octavedown;
-  combo zoomin;
-  combo zoomout;
-
-};*/
-
 Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   sustain = 0;
   cur_note = -1;
@@ -264,7 +252,6 @@ void Keyboard::set_sustain(int state){
   if(state==0){
     for(int i=0; i<128; i++){
       if(ons[i]==1 && helds[i]==0){
-        //midi_note_off(i,cur_chan,cur_port);
         release_note(i,1);
       }
     }
@@ -493,7 +480,6 @@ int specialok=0;
         }
         if(specialok || event_key()<0x80){
           set_key(event_key(),event_state());
-          //do_callback();
           in_flag = 0;
           redraw();
           return 1;
@@ -599,8 +585,6 @@ char* get_keystring(int key, int mod){
   k[0] = key;
   k[1] = '\0';
   switch(key){
-    //case fltk::SpaceKey: strcpy(keystring+N,"spc"); break;
-    //case fltk::BackSpaceKey: strcpy(keystring+N,"bksp"); break;
     case fltk::Keypad: strcpy(keystring+N,"keypad"); break;
     case fltk::KeypadEnter: strcpy(keystring+N,"enter"); break;
     case fltk::MultiplyKey: strcpy(keystring+N,"mult"); break;
@@ -770,7 +754,7 @@ void load_default_keymap(){
   ui->kg_ou->set_key(']',fltk::SHIFT);
   ui->kg_od->set_key('[',fltk::SHIFT);
   ui->kg_zi->set_key('=',fltk::SHIFT);
-  ui->kg_zo->set_key('-',0);
+  ui->kg_zo->set_key('-',fltk::SHIFT);
 
 }
 
