@@ -70,13 +70,8 @@ int clear(){
     tracks.pop_back();
     delete t;
   }
-  pattern* p = patterns;
-  pattern* next;
-  while(p){
-    next = p->next;
-    delete p;
-    p = next;
-  }
+
+  pattern_clear();
 
   set_bpm(120);
 
@@ -286,9 +281,6 @@ int load(const char* filename){
   clear();
   last_filename = filename;
   set_last_dir(filename);
-
-
-  patterns = new pattern();
 
   pattern* pend = patterns;
 

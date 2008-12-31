@@ -224,12 +224,18 @@ public:
 private:
         inline void cb_check_follow_i(fltk::CheckButton*, void*);
         static void cb_check_follow(fltk::CheckButton*, void*);
+public:
+        fltk::Choice *menu_recordmode;
+private:
           inline void cb_merge_i(fltk::Item*, void*);
           static void cb_merge(fltk::Item*, void*);
           inline void cb_overwrite_i(fltk::Item*, void*);
           static void cb_overwrite(fltk::Item*, void*);
           inline void cb_layer_i(fltk::Item*, void*);
           static void cb_layer(fltk::Item*, void*);
+public:
+        fltk::Choice *menu_rob;
+private:
           inline void cb_do_i(fltk::Item*, void*);
           static void cb_do(fltk::Item*, void*);
           inline void cb_new_i(fltk::Item*, void*);

@@ -55,7 +55,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open
+save_config();}
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -316,7 +316,7 @@ o->state(1);}
             xywh {75 0 25 25}
           }
         }
-        {fltk::Group} song_buttons {selected
+        {fltk::Group} song_buttons {
           xywh {340 5 115 25}
         } {
           {fltk::Button} color_toggle {
@@ -373,14 +373,14 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label controls
+      label controls open
       xywh {589 130 320 285} hide resizable
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
       } {
         {fltk::Group} {} {
-          label options
+          label options open
           xywh {145 15 170 265} horizontal
         } {
           {fltk::ValueInput} beats_per_measure {
@@ -449,8 +449,8 @@ ui->bpm_output->value(o->value());}
             tooltip {Auto scroll horizontally when play head leaves viewing area.}
             xywh {5 179 25 26} horizontal align 4 value 1
           }
-          {fltk::Choice} {} {
-            label {record mode} open
+          {fltk::Choice} menu_recordmode {
+            label {record mode}
             xywh {5 210 160 25}
           } {
             {fltk::Item} {} {
@@ -466,8 +466,8 @@ ui->bpm_output->value(o->value());}
               callback {set_recordmode(2);}
               }
           }
-          {fltk::Choice} {} {
-            label {record outside block} open
+          {fltk::Choice} menu_rob {
+            label {record outside block} selected
             xywh {5 240 160 25}
           } {
             {fltk::Item} {} {

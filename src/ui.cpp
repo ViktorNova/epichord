@@ -722,7 +722,7 @@ track.");
           o->align(fltk::ALIGN_LEFT);
           o->tooltip("Auto scroll horizontally when play head leaves viewing area.");
         }
-         {fltk::Choice* o = new fltk::Choice(5, 210, 160, 25, "record mode");
+         {fltk::Choice* o = menu_recordmode = new fltk::Choice(5, 210, 160, 25, "record mode");
           o->begin();
            {fltk::Item* o = new fltk::Item("merge");
             o->callback((fltk::Callback*)cb_merge);
@@ -735,7 +735,7 @@ track.");
           }
           o->end();
         }
-         {fltk::Choice* o = new fltk::Choice(5, 240, 160, 25, "record outside block");
+         {fltk::Choice* o = menu_rob = new fltk::Choice(5, 240, 160, 25, "record outside block");
           o->begin();
            {fltk::Item* o = new fltk::Item("do nothing");
             o->callback((fltk::Callback*)cb_do);

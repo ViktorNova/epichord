@@ -47,6 +47,8 @@ static float default_hsv_value = 0.8;
 
 int init_seq(){
 
+  patterns = new pattern();
+
   track* t;
   for(int i=0; i<16; i++){
     t = new track();
@@ -55,9 +57,47 @@ int init_seq(){
     tracks.push_back(t);
   }
 
-  patterns = new pattern();
+
 
 }
+
+
+void pattern_add(pattern* p){
+  //printf("pattern_add: adding pattern %p\n",p);
+  pattern* ptr = patterns;
+  while(ptr->next){
+    ptr = ptr->next;
+  }
+  ptr->next = p;
+}
+
+
+void pattern_remove(pattern* p){
+  //printf("pattern_remove: %p removing\n",p);
+  pattern* ptr = patterns;
+  pattern* prev = patterns;
+  while(ptr){
+    if(ptr==p){
+      if(ptr!=patterns){
+        prev->next = ptr->next;
+      }
+      return;
+    }
+    prev=ptr;
+    ptr=ptr->next;
+  }
+  printf("pattern_remove: pattern %p not found. not good.\n",p);
+}
+
+
+void pattern_clear(){
+  while(patterns->next){
+    delete patterns->next;
+  }
+}
+
+
+
 
 int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick)){
 
@@ -241,35 +281,14 @@ CreateSeqpatBlank::CreateSeqpatBlank(int track, int tick, int len){
   s = new seqpat(track, tick, len, new pattern());
   unsigned char r,g,b;
 
-  //float X = rand()*1.0 / RAND_MAX * 360;
   pattern* p = s->p;
+  p->ref_c = 1;
   p->h = ((track%16) / 16.0) * 360;
   p->v = default_hsv_value;
   p->regen_colors();
-  /*float X = ;
-  hsv_to_rgb(X,1,0.8,&r,&g,&b);
-  s->color[0][0] = r;
-  s->color[0][1] = g;
-  s->color[0][2] = b;
-  hsv_to_rgb(X,1,0.4,&r,&g,&b);
-  s->color[1][0] = r;
-  s->color[1][1] = g;
-  s->color[1][2] = b;
-  hsv_to_rgb(X,1,1,&r,&g,&b);
-  s->color[2][0] = r;
-  s->color[2][1] = g;
-  s->color[2][2] = b;*/
-  
 
   s->scrolly = 300;
   s->scrollx = 0;
-
-  p = patterns;
-  s->p->ref_c = 1;
-  while(p->next){
-    p = p->next;
-  }
-  p->next = s->p;
 
   s->prev = tfind<seqpat>(tracks[track]->head,tick);
   s->next = s->prev->next;
@@ -580,6 +599,10 @@ pattern::pattern(){
   s=1;
   v=0.8;
   regen_colors();
+
+  if(patterns){
+    pattern_add(this);
+  }
 }
 
 pattern::~pattern(){
@@ -589,6 +612,10 @@ pattern::~pattern(){
     next = e->next;
     delete e;
     e = next;
+  }
+
+  if(this != patterns){
+    pattern_remove(this);
   }
 }
 
@@ -606,18 +633,14 @@ pattern::pattern(pattern* p){
     }
     ptr2->next = NULL;
 
-    pattern* tmp = patterns;
-    while(tmp->next){
-      tmp=tmp->next;
-    }
-    tmp->next = this;
-
     next = NULL;
     ref_c = 0;
     h = p->h;
     s = p->s;
     v = p->v;
     regen_colors();
+
+    pattern_add(this);
 }
 
 void pattern::regen_colors(){
@@ -778,6 +801,18 @@ int seqpat::layer_total(){
   }
 }
 
+void seqpat::record_check(int mode){
+  if(record_flag==0){
+    if(mode==1 || mode==2){
+      if(mode == 1){apply_erase();}
+      else if(mode == 2){/*apply_layer();*/}
+      tracks[track]->restate();
+      //midi_track_off(track);
+    }
+    record_flag = 1;
+  }
+}
+
 
 
 
@@ -843,3 +878,16 @@ layerstack::~layerstack(){
   }
 }
 
+
+
+void reset_record_flags(){
+  for(int i=0; i<tracks.size(); i++){
+    seqpat* s = tracks[i]->head->next;
+    while(s){
+      if(s->record_flag == 1){
+        s->record_flag = 0;
+      }
+      s = s->next;
+    }
+  }
+}

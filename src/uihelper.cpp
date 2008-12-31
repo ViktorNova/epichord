@@ -140,12 +140,22 @@ void update_config_gui(){
   ui->check_playmove->state(config.playmove);
   ui->check_follow->state(config.follow);
 
+  ui->menu_recordmode->value(config.recordmode);
+  ui->menu_rob->value(config.robmode);
+
   ui->config_window->redraw();
 }
 
 
+int last_pos=0;
 void playing_timeout_cb(void* v){
   int pos = get_play_position();
+
+  if(pos < last_pos){
+    reset_record_flags();
+  }
+  last_pos = pos;
+
   if(config.follow){
     ui->arranger->update(pos);
     ui->piano_roll->update(pos);
@@ -191,6 +201,8 @@ void playing_timeout_cb(void* v){
             //printf("rec head outside block\n");
             continue;
           }
+
+          s->record_check(config.recordmode);
           p = s->p;
           c=new CreateNoteOff(p,val1,val2,tick-s->tick);
           set_undo(c);
@@ -216,6 +228,8 @@ void playing_timeout_cb(void* v){
             //printf("rec head outside block\n");
             continue;
           }
+
+          s->record_check(config.recordmode);
           p = s->p;
           c=new CreateNoteOn(p,val1,val2,tick-s->tick,16);
           set_undo(c);
@@ -270,7 +284,7 @@ void playing_timeout_cb(void* v){
           if(!is_backend_recording())
             break;
 
-          
+          s->record_check(config.recordmode);
           p = s->p;
           c=new CreateEvent(p,type,tick,val1,val2);
           set_undo(c);

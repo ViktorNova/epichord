@@ -161,6 +161,7 @@ struct seqpat {
   void prev_layer();
   int layer_index();
   int layer_total();
+  void record_check(int mode);
 
   seqpat(){
     p = NULL;
@@ -684,7 +685,8 @@ void undo_push(int n);
 void do_undo();
 void do_redo();
 
-
+void pattern_clear();
+void reset_record_flags();
 
 
 //encodes data in e as a midi event placed in buf
