@@ -300,18 +300,18 @@ int Arranger::handle(int event){
         else if(rresize_flag){
           apply_rresize();
           rresize_flag = 0;
-      if(last_handle){
-        last_handle->lhandle = 0;
-        last_handle->rhandle = 0;
-      }
+          if(last_handle){
+            last_handle->lhandle = 0;
+            last_handle->rhandle = 0;
+          }
         }
         else if(lresize_flag){
           apply_lresize();
           lresize_flag = 0;
-      if(last_handle){
-        last_handle->lhandle = 0;
-        last_handle->rhandle = 0;
-      }
+          if(last_handle){
+            last_handle->lhandle = 0;
+            last_handle->rhandle = 0;
+          }
         }
 
         insert_flag=0;

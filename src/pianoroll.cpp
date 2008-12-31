@@ -158,25 +158,15 @@ int PianoRoll::handle(int event){
           e->selected = 1;
           resize_arrow_color = fltk::color(128,128,0);
 
-
-
           if(over_rhandle(e,X,Y)){//resize
-/*
-
-
-RESIZE
-
-
-*/
+            rresize_flag = 1;
+            rresize_torig = e->tick+e->dur;
+            rresize_toffset = 0;
           }
           else if(over_lhandle(e,X,Y)){//resize move
-/*
-
-
-RESIZE
-
-
-*/
+            lresize_flag = 1;
+            lresize_torig = e->tick;
+            lresize_toffset = 0;
           }
           else{//begin move
             move_flag = 1;
@@ -252,10 +242,10 @@ RESIZE
         }
       }
       else if(rresize_flag){
-
+        rresize_toffset = quantize(xpix2tick(X)) - rresize_torig;
       }
       else if(lresize_flag){
-
+        lresize_toffset = quantize(xpix2tick(X)) - lresize_torig;
       }
       redraw();
       return 1;
@@ -268,7 +258,12 @@ RESIZE
           box_flag=0;
         }
         else if(rresize_flag){
-
+          apply_rresize();
+          rresize_flag = 0;
+        }
+        else if(lresize_flag){
+          apply_lresize();
+          lresize_flag = 0;
         }
         else if(insert_flag){
           apply_insert();
@@ -286,22 +281,6 @@ RESIZE
         else if(move_flag){
           apply_move();
           move_flag = 0;
-/*
-          int play_pos = get_play_position();
-          mevent* e = main_sel;
-          track* tr = tracks[cur_seqpat->track];
-          if(play_pos > e->tick && play_pos < e->tick + e->dur){
-            midi_note_off(e->value1,tr->chan,tr->port);
-          }
-
-          c=new MoveNote(cur_seqpat->p,main_sel,move_t,move_note);
-          set_undo(c);
-          undo_push(1);
-*/
-          //int old_note = e->value1;
-          int cur_chan = tracks[cur_seqpat->track]->chan;
-          int cur_port = tracks[cur_seqpat->track]->port;
-          //midi_note_off(old_note,cur_chan,cur_port);
 
           cur_seqpat->restate();
           midi_track_off(cur_seqpat->track);
@@ -376,6 +355,7 @@ RESIZE
 }
 
 void PianoRoll::draw(){
+
   fltk::setcolor(fltk::GRAY05);
   fltk::fillrect(0,0,w(),h());
 
@@ -449,9 +429,27 @@ void PianoRoll::draw(){
   while(e){
     if(e->type == MIDI_NOTE_ON){
       //fltk::fillrect(tick2xpix(e->tick),note2ypix(e->value),e->dur,11);
-      int X = tick2xpix(e->tick) + 1;
+
+      int R1 = rresize_flag&&e->selected ? rresize_toffset : 0;
+      int R2 = lresize_flag&&e->selected ? lresize_toffset : 0;
+
+      int T1 = e->tick + R2;
+      int T2 = e->tick+e->dur + R1;
+
+      if(T1 >= T2-q_tick){
+        if(rresize_flag){
+          T1 = e->tick;
+          T2 = T1 + q_tick;
+        }
+        else if(lresize_flag){
+          T2 = e->tick + e->dur;
+          T1 = T2 - q_tick;
+        }
+      }
+
+      int X = tick2xpix(T1) + 1;
       int Y = note2ypix(e->value1);
-      int W = tick2xpix(e->tick+e->dur) - X;
+      int W = tick2xpix(T2) - X;
       get_event_color(e,&c1,&c2,&c3);
 
       fltk::setcolor(c1);
