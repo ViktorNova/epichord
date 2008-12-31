@@ -60,6 +60,11 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   box_flag = 0;
 
   move_toffset = 0;
+
+
+  resize_arrow = 0;
+  resize_e = NULL;
+  resize_handle_width = 4;
 }
 
 int PianoRoll::handle(int event){
@@ -71,6 +76,8 @@ int PianoRoll::handle(int event){
   int Y = event_y();
 
   switch(event){
+    case fltk::ENTER:
+      return 1;
     case fltk::FOCUS:
       return 1;
     case fltk::SHORTCUT:
@@ -78,6 +85,7 @@ int PianoRoll::handle(int event){
         apply_delete();
         delete_flag = 0;
         redraw();
+        resize_arrow = 0;
         ui->event_edit->redraw();
         return 1;
       }
@@ -148,10 +156,20 @@ int PianoRoll::handle(int event){
             unselect_all();
           }
           e->selected = 1;
+          resize_arrow_color = fltk::color(128,128,0);
 
 
 
-          if(over_handle(e)){//begin resize or resize move
+          if(over_rhandle(e,X,Y)){//resize
+/*
+
+
+RESIZE
+
+
+*/
+          }
+          else if(over_lhandle(e,X,Y)){//resize move
 /*
 
 
@@ -187,12 +205,15 @@ RESIZE
       else if(event_button()==3){//right mouse
         if(e==NULL){
           unselect_all();
+
           ui->event_edit->redraw();
         }
         else{//set up for deletion
           e->selected = 1;
           delete_flag = 1;
+          resize_arrow_color = fltk::color(120,60,58);
         }
+
       }
       redraw();
       return 1;
@@ -230,6 +251,12 @@ RESIZE
           last_note = N;
         }
       }
+      else if(rresize_flag){
+
+      }
+      else if(lresize_flag){
+
+      }
       redraw();
       return 1;
     case fltk::RELEASE:
@@ -240,7 +267,10 @@ RESIZE
           ui->event_edit->redraw();
           box_flag=0;
         }
-        if(insert_flag){
+        else if(rresize_flag){
+
+        }
+        else if(insert_flag){
           apply_insert();
 
           insert_flag = 0;
@@ -294,8 +324,51 @@ RESIZE
           }
         }
         delete_flag=0;
+        resize_arrow = 0;
       }
       redraw();
+
+      return 1;
+
+    case fltk::MOVE:
+      e = over_note();
+      if(e){
+        if(over_rhandle(e,X,Y)){
+          if(resize_e != e || resize_arrow != 1){
+            if(e->selected){resize_arrow_color = fltk::color(128,128,0);}
+            else{resize_arrow_color = fltk::color(95,58,119);}
+            resize_e = e;
+            resize_arrow = 1;
+            resize_x = tick2xpix(e->tick + e->dur) - resize_handle_width;
+            resize_y = note2ypix(e->value1);
+            redraw();
+          }
+        }
+        else if(over_lhandle(e,X,Y)){
+          if(resize_e != e || resize_arrow != 1){
+            if(e->selected){resize_arrow_color = fltk::color(128,128,0);}
+            else{resize_arrow_color = fltk::color(95,58,119);}
+            resize_e = e;
+            resize_arrow = -1;
+            resize_x = tick2xpix(e->tick)+1;
+            resize_y = note2ypix(e->value1);
+            redraw();
+          }
+        }
+        else{
+          if(resize_e != e || resize_arrow != 0){
+            resize_e = e;
+            resize_arrow = 0;
+            redraw();
+          }
+        }
+      }
+      else{
+        if(resize_arrow != 0){
+          resize_arrow = 0;
+          redraw();
+        }
+      }
 
       return 1;
   }
@@ -366,6 +439,8 @@ void PianoRoll::draw(){
     }
   }
 
+
+
   //draw all notes
   mevent* e = cur_seqpat->p->events->next;
 
@@ -392,6 +467,37 @@ void PianoRoll::draw(){
     }
     e=e->next;
   }
+
+
+  if(!rresize_flag && !lresize_flag){
+    if(resize_arrow > 0){
+      setcolor(resize_arrow_color);
+
+      int W = resize_handle_width;
+      int H = 12;
+      int X = resize_x;
+      int Y = resize_y;
+
+      addvertex(X,Y);
+      addvertex(X,Y+H);
+      addvertex(X+W,Y+H/2);
+      fillpath();
+    }
+    else if(resize_arrow < 0){
+      setcolor(resize_arrow_color);
+
+      int W = resize_handle_width;
+      int H = 12;
+      int X = resize_x;
+      int Y = resize_y;
+
+      addvertex(X+W,Y);
+      addvertex(X+W,Y+H);
+      addvertex(X,Y+H/2);
+      fillpath();
+    }
+  }
+
 
   if(box_flag){
     fltk::setcolor(fltk::GREEN);
@@ -535,10 +641,6 @@ mevent* PianoRoll::over_note(){
   }
 
   return NULL;
-}
-
-int PianoRoll::over_handle(mevent* e){
-  return 0;
 }
 
 
@@ -736,4 +838,31 @@ void PianoRoll::apply_rresize(){
 
 void PianoRoll::apply_lresize(){
 
+}
+
+
+int PianoRoll::over_rhandle(mevent* e, int X, int Y){
+  int X1 = tick2xpix(e->tick);
+  int X2 = X1 + tick2xpix(e->dur);
+  int Y1 = note2ypix(e->value1);
+  int Y2 = Y1 + 12;
+
+  if(X2-X1 < resize_handle_width*3){
+    return 0;
+  }
+
+  return (Y > Y1 && Y < Y2 && X < X2 && X > X2 - resize_handle_width);
+}
+
+int PianoRoll::over_lhandle(mevent* e, int X, int Y){
+  int X1 = tick2xpix(e->tick);
+  int X2 = X1 + tick2xpix(e->dur);
+  int Y1 = note2ypix(e->value1);
+  int Y2 = Y1 + 12;
+
+  if(X2-X1 < resize_handle_width*3){
+    return 0;
+  }
+
+  return (Y > Y1 && Y < Y2 && X < X1+ resize_handle_width +1 && X > X1 + 1);
 }

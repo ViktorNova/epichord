@@ -57,6 +57,23 @@ class PianoRoll : public fltk::Widget {
   int box_n1;
   int box_n2;
 
+  mevent* last_handle;
+  int rresize_flag;
+  int rresize_torig;
+  int rresize_toffset;
+
+  int lresize_flag;
+  int lresize_torig;
+  int lresize_toffset;
+
+  mevent* resize_e;
+  int resize_arrow;
+  int resize_redraw;
+  int resize_x;
+  int resize_y;
+  fltk::Color resize_arrow_color;
+  int resize_handle_width;
+
   int q_tick;
 
   int note2ypix(int note);
@@ -80,6 +97,9 @@ class PianoRoll : public fltk::Widget {
   void apply_lresize();
   void apply_insert();
 
+  int over_lhandle(mevent* e, int X, int Y);
+  int over_rhandle(mevent* e, int X, int Y);
+
   public:
 
     int tick2xpix(int time);
@@ -98,7 +118,7 @@ class PianoRoll : public fltk::Widget {
     void load(seqpat* s);
 
     mevent* over_note();
-    int over_handle(mevent* e);
+
 
     void set_zoom(int z);
     void set_qtick(int q){q_tick=q;}
