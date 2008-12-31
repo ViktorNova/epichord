@@ -739,6 +739,7 @@ void seqpat::apply_erase(){
     layers->ref_c--;
     if(layers->ref_c == 0){
       delete layers;
+      layers = NULL;
     }
   }
 
@@ -764,9 +765,8 @@ void seqpat::apply_layer(){
     p = layers->push_new();
   }
   else{
-    layers = new layerstack();
+    layers = new layerstack(p);
     layers->ref_c = 1;
-    layers->push_new(p);
     p = layers->push_new();
   }
 }
@@ -788,7 +788,7 @@ int seqpat::layer_index(){
     return layers->index;
   }
   else{
-    return 1;
+    return 0;
   }
 }
 
@@ -805,7 +805,7 @@ void seqpat::record_check(int mode){
   if(record_flag==0){
     if(mode==1 || mode==2){
       if(mode == 1){apply_erase();}
-      else if(mode == 2){/*apply_layer();*/}
+      else if(mode == 2){apply_layer();}
       tracks[track]->restate();
       //midi_track_off(track);
     }
@@ -819,25 +819,39 @@ void seqpat::record_check(int mode){
 
 pattern* layerstack::push_new(){
   if(total==memsize){
-    //reallocate
+    reallocate();
   }
-
-  index++;
   total++;
-  array[index] = new pattern();
+  array[total-1] = new pattern();
+  array[total-1]->h = array[0]->h;
+  array[total-1]->s = array[0]->s;
+  array[total-1]->v = array[0]->v;
+  array[total-1]->regen_colors();
+  index=total-1;
   return array[index];
 }
 
 void layerstack::push_new(pattern* p){
   if(total==memsize){
-    //reallocate
+    reallocate();
   }
 
-  index++;
   total++;
-  array[index] = p;
+  array[total-1] = p;
+  index = total-1;
   p->ref_c++;
 }
+
+void layerstack::reallocate(){
+  pattern** ptmp = new pattern*[memsize*2];
+  for(int i=0; i<memsize; i++){
+    ptmp[i] = array[i];
+  }
+  memsize *= 2;
+  delete [] array;
+  array = ptmp;
+}
+
 
 pattern* layerstack::next(){
   if(index==total-1){
@@ -865,7 +879,7 @@ layerstack::layerstack(pattern* p){
   array = new pattern*[16];
   memsize = 16;
   array[0] = p;
-  ptr = array[0];
+ // ptr = array[0];
   ref_c = 0;
 }
 

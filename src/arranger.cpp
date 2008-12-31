@@ -76,6 +76,8 @@ int Arranger::handle(int event){
   int X = event_x();
   int Y = event_y();
 
+  seqpat* s;
+
   switch(event){
     case fltk::FOCUS:
       return 1;
@@ -84,6 +86,17 @@ int Arranger::handle(int event){
     case fltk::KEYUP:
 
       return 0;
+    case fltk::MOUSEWHEEL:
+      s = over_seqpat();
+      if(s){
+        if(event_dy()>0){
+          printf("up!\n");
+        }
+        else if(event_dy()<0){
+          printf("down!\n");
+        }
+      }
+      return 1;
     case fltk::SHORTCUT:
       if(event_state() && event_key()=='c'){
 
@@ -380,6 +393,8 @@ int Arranger::handle(int event){
 
 void Arranger::draw(){
 
+  fltk::setfont(fltk::HELVETICA,8);
+
   fltk::setcolor(fltk::GRAY05);
   fltk::fillrect(0,0,w(),h());
 
@@ -562,6 +577,20 @@ void Arranger::draw(){
         }
         e=e->next;
       }
+
+
+      int total = s->layer_total();
+      if(total > 1){
+        fltk::setcolor(fltk::BLACK);
+        int X = tick2xpix(s->tick);
+        int Y = s->track * 30;
+        int count = s->layer_index()+1;
+        char buf[16];
+        snprintf(buf,16,"%d / %d",count,total);
+        fltk::drawtext(buf,X+2,Y+27);
+      }
+
+
       fltk::pop_clip();
 
       s=s->next;

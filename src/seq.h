@@ -127,6 +127,7 @@ struct layerstack {
   void push_new(pattern* p);
   pattern* next();
   pattern* prev();
+  void reallocate();
 
   layerstack(){};
   layerstack(pattern* p);
@@ -173,7 +174,7 @@ struct seqpat {
     modified=0;
     rhandle=0;
     lhandle=0;
-    record_flag=0;
+    record_flag=1;
     layers = NULL;
   }
 
@@ -190,7 +191,7 @@ struct seqpat {
     modified = 0;
     rhandle = 0;
     lhandle = 0;
-    record_flag = 0;
+    record_flag = 1;
     layers = NULL;
   }
 
@@ -214,7 +215,7 @@ struct seqpat {
 
     rhandle = 0;
     lhandle = 0;
-    record_flag = 0;
+    record_flag = 1;
     layers = zs->layers;
     if(layers){
       layers->ref_c++;
@@ -241,7 +242,7 @@ struct seqpat {
 
     rhandle=0;
     lhandle=0;
-    record_flag=0;
+    record_flag=1;
     layers = NULL;
   }
 
