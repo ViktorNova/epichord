@@ -91,12 +91,15 @@ int Arranger::handle(int event){
     case fltk::MOUSEWHEEL:
       s = over_seqpat();
       if(s){
+        s->autocomplete();
         if(event_dy()>0){
-          printf("down!\n");
+          s->prev_layer();
         }
         else if(event_dy()<0){
-          printf("up!\n");
+          s->next_layer();
         }
+        tracks[s->track]->restate();
+        redraw();
       }
       return 1;
     case fltk::SHORTCUT:

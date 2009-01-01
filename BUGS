@@ -1,3 +1,12 @@
+ when changing layers while playing
+
+notes might get stuck. also, if you are violent with it you will get the 
+message about notes playing in the past. this is a bad error.
+
+ copying layered blocks
+
+its not acting the way i want. neither is 'always hard copy'
+
  overlapping notes bug
 
 the algorithm to find the note off will currently fail is it finds the noteoff
