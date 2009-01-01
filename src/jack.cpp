@@ -400,12 +400,14 @@ void send_midi(char* raw, uint16_t n, uint8_t port){
   buf[0] = port;
   memcpy(buf+1,&n,2);
   memcpy(buf+3,raw,n);
+//FIXME check return value
   jack_ringbuffer_write(outbuf,buf,3+n);
 }
 
 void send_midi_local(char* raw, uint16_t n){
   uint32_t tick = cur_tick;
   uint16_t size = n;
+//FIXME chec return value
   jack_ringbuffer_write(inbuf,(char*)&tick,4);
   jack_ringbuffer_write(inbuf,(char*)&size,2);
   jack_ringbuffer_write(inbuf,raw,n);

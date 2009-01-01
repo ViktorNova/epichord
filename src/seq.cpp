@@ -804,15 +804,39 @@ int seqpat::layer_total(){
 void seqpat::record_check(int mode){
   if(record_flag==0){
     if(mode==1 || mode==2){
+      autocomplete();//end stuck notes
       if(mode == 1){apply_erase();}
       else if(mode == 2){apply_layer();}
       tracks[track]->restate();
-      //midi_track_off(track);
     }
     record_flag = 1;
   }
 }
 
+//sends note off if it determines that
+//we are in between two notes
+void seqpat::autocomplete(){
+  mevent* ptr;
+  mevent* e = p->events->next;
+  mevent* eoff;
+
+  int pos = get_play_position()-tick;
+
+  int chan = tracks[track]->chan;
+  int port = tracks[track]->port;
+
+  while(e){
+    if(e->type == MIDI_NOTE_ON && e->tick < pos){
+      eoff = find_off(e);
+      if(eoff){
+        if(eoff->tick > pos){
+          midi_note_off(e->value1,chan,port);
+        }
+      }
+    }
+    e = e->next;
+  }
+}
 
 
 

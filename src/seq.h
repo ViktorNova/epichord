@@ -163,6 +163,7 @@ struct seqpat {
   int layer_index();
   int layer_total();
   void record_check(int mode);
+  void autocomplete();
 
   seqpat(){
     p = NULL;
