@@ -126,6 +126,7 @@ int Arranger::handle(int event){
           ui->song_timeline->zoom = 30*(1<<zoom_n)/16;
           ui->song_timeline->update(get_play_position());
           ui->song_timeline->redraw();
+          relayout();
         }
         redraw();
         return 1;
@@ -138,6 +139,7 @@ int Arranger::handle(int event){
           ui->song_timeline->zoom = 30*(1<<zoom_n)/16;
           ui->song_timeline->update(get_play_position());
           ui->song_timeline->redraw();
+          relayout();
         }
         redraw();
         return 1;
