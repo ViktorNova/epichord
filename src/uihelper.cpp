@@ -160,19 +160,16 @@ seqpat* rob_check(seqpat* s){
     int P1 = pos/M*M;
     int P2 = P1 + M;
     int T = P1;
-    int W;
     int R = s->tick+s->dur;
     if(R > P1){
       T = R;
     }
+    int W = P2 - T;
     if(s->next){
       int L = s->next->tick;
       if(L < P2){
         W = L - T;
       }
-    }
-    else{
-      W = P2 - T;
     }
     c = new CreateSeqpatBlank(s->track,T,W);
     set_undo(c);

@@ -1,3 +1,15 @@
+ restore the measures per phrase and beats per measure gui on file new
+
+ arranger zoom range bug
+
+zooming has no effect on the scroll range, so you cannot see the entire 
+song
+
+ arranger song range
+
+putting blocks are the far right end should extend the arranger canvas 
+area. perhaps put a warning graphic at the extreme right end
+
  overlapping notes bug
 
 the algorithm to find the note off will currently fail is it finds the noteoff
