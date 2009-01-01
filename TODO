@@ -1,8 +1,6 @@
 Short list
 
 remaining mouse editing
-  //resize notes
-  //move notes
   paste notes
   paste blocks
 
@@ -16,17 +14,15 @@ remaining tools
   (aftertouch tool)
   (portamento tool)
 
-enhance recording
-  overwrite block
-  layer block
-  extend block
-  new block
+//enhance recording
+  //overwrite block
+  //layer block
 
 undo and redo
 
 midi files
   import smf
-  export smf (partially working now)
+  //export smf
 
 jack transport
 
