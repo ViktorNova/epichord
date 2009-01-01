@@ -35,13 +35,18 @@
 
 #include "backend.h"
 
+#include "uihelper.h"
+
 #include "util.h"
+
+
 
 extern UI* ui;
 
 using namespace std;
 using namespace fltk;
 
+extern struct conf config;
 
 Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   sustain = 0;
@@ -309,7 +314,7 @@ void Keyboard::play_note(int note, int rec){
   char buf[3];
   buf[0] = 0x90 | cur_chan;
   buf[1] = note;
-  buf[2] = 0x7f;
+  buf[2] = config.defaultvelocity;
   send_midi(buf,3,cur_port);
 
   ons[note] = 1;

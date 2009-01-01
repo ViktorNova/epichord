@@ -55,7 +55,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open
+save_config();}
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -64,7 +64,7 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {open
@@ -96,7 +96,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::ScrollGroup} song_scroll {open selected
+          {fltk::ScrollGroup} song_scroll {open
             xywh {255 15 385 430} resizable
             extra_code {\#include <fltk/ScrollGroup.h>
 \#include "customscroll.h"
@@ -376,8 +376,8 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label controls
-      xywh {589 130 320 285} hide resizable
+      label controls open
+      xywh {234 133 320 285} resizable visible
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
@@ -388,12 +388,20 @@ ui->action_window->show();}
         } {
           {fltk::ValueInput} beats_per_measure {
             label {beats per measure}
-            callback {set_beats_per_measure((int)o->value());}
-            xywh {5 5 45 20} minimum 2 maximum 31 step 1 value 4
+            callback {if(o->value() > o->maximum())
+  o->value(o->maximum());
+if(o->value() < o->minimum())
+  o->value(o->minimum());
+set_beats_per_measure((int)o->value());}
+            xywh {5 5 45 20} minimum 1 maximum 31 step 1 value 4
           }
           {fltk::ValueInput} measures_per_phrase {
             label {measures per phrase}
-            callback {set_measures_per_phrase((int)o->value());}
+            callback {if(o->value() > o->maximum())
+  o->value(o->maximum());
+if(o->value() < o->minimum())
+  o->value(o->minimum());
+set_measures_per_phrase((int)o->value());}
             xywh {5 30 45 20} maximum 128 step 1 value 4
           }
           {fltk::ValueOutput} bpm_output {
@@ -407,7 +415,11 @@ ui->bpm_output->value(o->value());}
           }
           {fltk::ValueInput} measures_until_record {
             label {measures until record}
-            callback {set_measures_until_record((int)o->value());}
+            callback {if(o->value() > o->maximum())
+  o->value(o->maximum());
+if(o->value() < o->minimum())
+  o->value(o->minimum());
+set_measures_until_record((int)o->value());}
             xywh {5 80 45 20} maximum 128 step 1 value 1
           }
           {fltk::CheckButton} check_alwayscopy {
@@ -453,7 +465,7 @@ ui->bpm_output->value(o->value());}
             xywh {5 179 25 26} horizontal align 4 value 1
           }
           {fltk::Choice} menu_recordmode {
-            label {record mode}
+            label {record mode} open
             xywh {5 210 160 25}
           } {
             {fltk::Item} {} {
@@ -470,7 +482,7 @@ ui->bpm_output->value(o->value());}
               }
           }
           {fltk::Choice} menu_rob {
-            label {record outside block}
+            label {record outside block} open
             xywh {5 240 160 25}
           } {
             {fltk::Item} {} {
@@ -485,6 +497,15 @@ ui->bpm_output->value(o->value());}
               label {extend block}
               callback {set_robmode(2);}
               }
+          }
+          {fltk::ValueInput} default_velocity {
+            label {default velocity}
+            callback {if(o->value() > o->maximum())
+  o->value(o->maximum());
+if(o->value() < o->minimum())
+  o->value(o->minimum());
+set_defaultvelocity(o->value());} selected
+            xywh {120 180 45 20} maximum 127 step 1 value 96
           }
         }
         {fltk::Group} {} {

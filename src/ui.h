@@ -244,6 +244,11 @@ private:
           inline void cb_extend_i(fltk::Item*, void*);
           static void cb_extend(fltk::Item*, void*);
 public:
+        fltk::ValueInput *default_velocity;
+private:
+        inline void cb_default_velocity_i(fltk::ValueInput*, void*);
+        static void cb_default_velocity(fltk::ValueInput*, void*);
+public:
         KeyGrabber *kg_l0;
         KeyGrabber *kg_l1;
         KeyGrabber *kg_l2;

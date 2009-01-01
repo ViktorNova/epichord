@@ -222,6 +222,10 @@ void UI::cb_help_button(fltk::Button* o, void* v) {
 }
 
 inline void UI::cb_beats_per_measure_i(fltk::ValueInput* o, void*) {
+  if(o->value() > o->maximum())
+    o->value(o->maximum());
+  if(o->value() < o->minimum())
+    o->value(o->minimum());
   set_beats_per_measure((int)o->value());
 }
 void UI::cb_beats_per_measure(fltk::ValueInput* o, void* v) {
@@ -229,6 +233,10 @@ void UI::cb_beats_per_measure(fltk::ValueInput* o, void* v) {
 }
 
 inline void UI::cb_measures_per_phrase_i(fltk::ValueInput* o, void*) {
+  if(o->value() > o->maximum())
+    o->value(o->maximum());
+  if(o->value() < o->minimum())
+    o->value(o->minimum());
   set_measures_per_phrase((int)o->value());
 }
 void UI::cb_measures_per_phrase(fltk::ValueInput* o, void* v) {
@@ -244,6 +252,10 @@ void UI::cb_bpm_wheel(fltk::ThumbWheel* o, void* v) {
 }
 
 inline void UI::cb_measures_until_record_i(fltk::ValueInput* o, void*) {
+  if(o->value() > o->maximum())
+    o->value(o->maximum());
+  if(o->value() < o->minimum())
+    o->value(o->minimum());
   set_measures_until_record((int)o->value());
 }
 void UI::cb_measures_until_record(fltk::ValueInput* o, void* v) {
@@ -339,6 +351,17 @@ inline void UI::cb_extend_i(fltk::Item*, void*) {
 }
 void UI::cb_extend(fltk::Item* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_extend_i(o,v);
+}
+
+inline void UI::cb_default_velocity_i(fltk::ValueInput* o, void*) {
+  if(o->value() > o->maximum())
+    o->value(o->maximum());
+  if(o->value() < o->minimum())
+    o->value(o->minimum());
+  set_defaultvelocity(o->value());
+}
+void UI::cb_default_velocity(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_default_velocity_i(o,v);
 }
 
 inline void UI::cb_kg_l10_i(KeyGrabber*, void*) {
@@ -650,7 +673,7 @@ UI::UI() {
        {fltk::Group* o = new fltk::Group(145, 15, 170, 265, "options");
         o->begin();
          {fltk::ValueInput* o = beats_per_measure = new fltk::ValueInput(5, 5, 45, 20, "beats per measure");
-          o->minimum(2);
+          o->minimum(1);
           o->maximum(31);
           o->step(1);
           o->value(4);
@@ -747,6 +770,12 @@ track.");
             o->callback((fltk::Callback*)cb_extend);
           }
           o->end();
+        }
+         {fltk::ValueInput* o = default_velocity = new fltk::ValueInput(120, 180, 45, 20, "default velocity");
+          o->maximum(127);
+          o->step(1);
+          o->value(96);
+          o->callback((fltk::Callback*)cb_default_velocity);
         }
         o->end();
       }

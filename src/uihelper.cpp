@@ -70,6 +70,7 @@ void load_config(){
     config.follow = 1;
     config.recordmode = 0;
     config.robmode = 0;
+    config.defaultvelocity = 96;
 
     load_default_keymap();
     update_config_gui();
@@ -95,6 +96,7 @@ void load_config(){
     else if(word == "recordmode"){f>>config.recordmode;}
     else if(word == "robmode"){f>>config.robmode;}
     else if(word == "keymap"){load_keymap(f);}
+    else if(word == "defaultvelocity"){f>>config.defaultvelocity;}
     else{
 //read line
     }
@@ -122,6 +124,7 @@ void save_config(){
   //f << "quantizedur " << config.quantizedur << endl;
   f << "recordmode " << config.recordmode << endl;
   f << "robmode " << config.robmode << endl;
+  f << "defaultvelocity " << config.defaultvelocity << endl;
   f << endl;
   save_keymap(f);
   f.close();
@@ -142,6 +145,8 @@ void update_config_gui(){
 
   ui->menu_recordmode->value(config.recordmode);
   ui->menu_rob->value(config.robmode);
+
+  ui->default_velocity->value(config.defaultvelocity);
 
   ui->config_window->redraw();
 }
@@ -611,6 +616,9 @@ void set_robmode(int n){
   config.robmode = n;
 }
 
+void set_defaultvelocity(int n){
+  config.defaultvelocity = n;
+}
 
 void scope_print(const char* text){
   ui->scope->append(text);

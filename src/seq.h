@@ -501,6 +501,7 @@ class CreateNote : public Command {
       e1->dur = dur;
       e1->value2 = vel;
       e2 = new mevent(MIDI_NOTE_OFF, tick+dur, note);
+      e2->value2 = 0;
       //e->off = new mevent(MIDI_NOTE_OFF, tick+dur, note);
     }
     ~CreateNote(){

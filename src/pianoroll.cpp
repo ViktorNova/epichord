@@ -761,7 +761,7 @@ void PianoRoll::apply_insert(){
   }
 
   pattern* p = cur_seqpat->p;
-  Command* c=new CreateNote(p,insert_note,127,T1,T2-T1);
+  Command* c=new CreateNote(p,insert_note,config.defaultvelocity,T1,T2-T1);
   set_undo(c);
   undo_push(1);
 
