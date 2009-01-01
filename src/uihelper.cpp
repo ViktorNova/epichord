@@ -147,6 +147,42 @@ void update_config_gui(){
 }
 
 
+
+seqpat* rob_check(seqpat* s){
+  seqpat* prev = s->prev;
+  Command* c;
+  if(config.robmode == 0){
+    return NULL;
+  }
+  else if(config.robmode == 1 || prev == NULL){
+  /*int T = 0;
+    int W = 512;
+    c = new CreateSeqpatBlank(s->track,T,W);
+    set_undo(c);
+    undo_push(1);
+    return s->next;*/
+    return NULL;
+  }
+  else if(config.robmode == 2){
+    int pos = get_play_position();
+    int M = config.measures_per_phrase*config.beats_per_measure*128;
+    int P = pos/M*M + M;//tick at next phrase boundary
+    int W = P - s->tick;
+    if(s->next){
+      int W2 = s->next->tick - s->tick;
+      if(W2 < W){
+        W=W2;
+      }
+    }
+    c = new ResizeSeqpat(s,W);
+    set_undo(c);
+    undo_push(1);
+    return prev->next;
+  }
+}
+
+
+
 int last_pos=0;
 void playing_timeout_cb(void* v){
   int pos = get_play_position();
@@ -198,8 +234,8 @@ void playing_timeout_cb(void* v){
 
           s = tfind<seqpat>(t->head,tick);
           if(s->tick+s->dur < tick){
-            //printf("rec head outside block\n");
-            continue;
+            s = rob_check(s);
+            if(!s){continue;}
           }
 
           s->record_check(config.recordmode);
@@ -225,8 +261,8 @@ void playing_timeout_cb(void* v){
 
           s = tfind<seqpat>(t->head,tick);
           if(s->tick+s->dur < tick){
-            //printf("rec head outside block\n");
-            continue;
+            s = rob_check(s);
+            if(!s){continue;}
           }
 
           s->record_check(config.recordmode);
@@ -251,8 +287,8 @@ void playing_timeout_cb(void* v){
 
           s = tfind<seqpat>(t->head,tick);
           if(s->tick+s->dur < tick){
-            //scope_print("record head outside block\n");
-            continue;
+            s = rob_check(s);
+            if(!s){continue;}
           }
 
           switch(type){
