@@ -20,7 +20,7 @@
    Boston, MA  02110-1301, USA
 */
 
-#include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <fltk/Group.h>
 #include <fltk/Widget.h>

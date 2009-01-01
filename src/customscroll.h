@@ -20,40 +20,15 @@
    Boston, MA  02110-1301, USA
 */
 
-#include <unistd.h>
+#ifndef customscroll_h
+#define customscroll_h
 
-#include <fltk/run.h>
-#include <fltk/Group.h>
-#include <fltk/Button.h>
-#include <fltk/Input.h>
-#include <fltk/ValueInput.h>
+class CustomScroll : public fltk::ScrollGroup {
+  public:
 
+    CustomScroll(int x, int y, int w, int h, const char* label=0);
+    int handle(int event);
 
-#include "ui.h"
-#include "backend.h"
-#include "uihelper.h"
+};
 
-UI* ui;
-
-int main(int argc, char* argv[]){
-
-  ui = new UI();
-  ui->arranger->take_focus();
-
-  load_config();
-
-  init_seq();
-  if(init_backend(&argc, &argv) < 0){
-    return 1;
-  }
-
-  int ret = fltk::run();
-
-  shutdown_backend();
-
-  delete ui;
-
-  return ret;
-
-}
-
+#endif

@@ -92,10 +92,10 @@ int Arranger::handle(int event){
       s = over_seqpat();
       if(s){
         if(event_dy()>0){
-          printf("up!\n");
+          printf("down!\n");
         }
         else if(event_dy()<0){
-          printf("down!\n");
+          printf("up!\n");
         }
       }
       return 1;

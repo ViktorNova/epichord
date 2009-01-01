@@ -55,7 +55,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();}
+save_config();} open
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -67,7 +67,7 @@ o->resize(640,455);} visible
       {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -96,9 +96,12 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::ScrollGroup} song_scroll {
+          {fltk::ScrollGroup} song_scroll {open selected
             xywh {255 15 385 430} resizable
-            extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
+            extra_code {\#include <fltk/ScrollGroup.h>
+\#include "customscroll.h"
+o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
+            class CustomScroll
           } {
             {fltk::Widget} arranger {
               label arranger
@@ -233,7 +236,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -373,7 +376,7 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label controls open
+      label controls
       xywh {589 130 320 285} hide resizable
     } {
       {fltk::TabGroup} {} {open
@@ -467,7 +470,7 @@ ui->bpm_output->value(o->value());}
               }
           }
           {fltk::Choice} menu_rob {
-            label {record outside block} selected
+            label {record outside block}
             xywh {5 240 160 25}
           } {
             {fltk::Item} {} {

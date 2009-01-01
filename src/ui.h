@@ -11,6 +11,7 @@
 #include "trackinfo.h"
 #include <fltk/Button.h>
 #include <fltk/ScrollGroup.h>
+#include "customscroll.h"
 #include "arranger.h"
 #include "timeline.h"
 #include "pianoroll.h"
@@ -47,7 +48,7 @@ private:
           static void cb_(fltk::Button*, void*);
 public:
           Timeline *song_timeline;
-        fltk::ScrollGroup *song_scroll;
+        CustomScroll *song_scroll;
           Arranger *arranger;
       fltk::Group *pattern_edit;
             Timeline *pattern_timeline;

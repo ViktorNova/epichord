@@ -20,40 +20,36 @@
    Boston, MA  02110-1301, USA
 */
 
-#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <fltk/ScrollGroup.h>
+#include <fltk/Widget.h>
 
-#include <fltk/run.h>
-#include <fltk/Group.h>
-#include <fltk/Button.h>
-#include <fltk/Input.h>
-#include <fltk/ValueInput.h>
-
+#include "customscroll.h"
 
 #include "ui.h"
-#include "backend.h"
-#include "uihelper.h"
 
-UI* ui;
 
-int main(int argc, char* argv[]){
 
-  ui = new UI();
-  ui->arranger->take_focus();
+extern UI* ui;
 
-  load_config();
 
-  init_seq();
-  if(init_backend(&argc, &argv) < 0){
-    return 1;
-  }
-
-  int ret = fltk::run();
-
-  shutdown_backend();
-
-  delete ui;
-
-  return ret;
+CustomScroll::CustomScroll(int x, int y, int w, int h, const char* label) : fltk::ScrollGroup(x, y, w, h, label) {
 
 }
+
+int CustomScroll::handle(int event){
+  switch(event){
+    case fltk::MOUSEWHEEL:
+      Widget* w = child(0);
+      if(w){
+        w->handle(event);
+      }
+      return 1;
+      break;
+  }
+
+  return fltk::ScrollGroup::handle(event);
+}
+
 

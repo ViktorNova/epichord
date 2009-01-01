@@ -422,7 +422,7 @@ UI::UI() {
           }
           o->end();
         }
-         {fltk::ScrollGroup* o = song_scroll = new fltk::ScrollGroup(255, 15, 385, 430);
+         {CustomScroll* o = song_scroll = new CustomScroll(255, 15, 385, 430);
           o->set_vertical();
           o->begin();
            {Arranger* o = arranger = new Arranger(0, 0, 245, 220, "arranger");
