@@ -155,13 +155,29 @@ seqpat* rob_check(seqpat* s){
     return NULL;
   }
   else if(config.robmode == 1 || prev == NULL){
-  /*int T = 0;
-    int W = 512;
+    int pos = get_play_position();
+    int M = config.measures_per_phrase*config.beats_per_measure*128;
+    int P1 = pos/M*M;
+    int P2 = P1 + M;
+    int T = P1;
+    int W;
+    int R = s->tick+s->dur;
+    if(R > P1){
+      T = R;
+    }
+    if(s->next){
+      int L = s->next->tick;
+      if(L < P2){
+        W = L - T;
+      }
+    }
+    else{
+      W = P2 - T;
+    }
     c = new CreateSeqpatBlank(s->track,T,W);
     set_undo(c);
     undo_push(1);
-    return s->next;*/
-    return NULL;
+    return s->next;
   }
   else if(config.robmode == 2){
     int pos = get_play_position();
