@@ -68,6 +68,8 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   color_flag = 0;
 
+  maxt = 0;
+
 }
 
 int Arranger::handle(int event){
@@ -605,9 +607,25 @@ void Arranger::layout(){
     return;
   }
 
+  maxt = 0;
+  for(int i=0; i<tracks.size(); i++){
+    seqpat* s = tracks[i]->head->next;
+    while(s){
+      if(s->tick+s->dur > maxt){maxt=s->tick+s->dur;}
+      s=s->next;
+    }
+  }
+  int ws = tick2xpix(maxt);
+  if(ws > w()-120){
+    w(ws+500);
+  }
+  if(ws < w()-120){
+    w(ws+500);
+  }
+
   int wp = ui->song_scroll->w();
   if(wp > w()){
-    w(wp+120);
+    w(wp+500);
   }
 
   int hp = ui->song_scroll->h();
@@ -793,6 +811,8 @@ void Arranger::apply_insert(){
   Command* c=new CreateSeqpatBlank(insert_track,T1,T2-T1);
   set_undo(c);
   undo_push(1);
+
+  if(T2>maxt){relayout();}
 }
 
 void Arranger::apply_box(){
@@ -866,6 +886,8 @@ void Arranger::apply_move(){
         c=new MoveSeqpat(s,K,T);
         set_undo(c);
         N++;
+
+        if(T+s->dur > maxt){relayout();}
       }
       s = next;
     }
@@ -915,6 +937,9 @@ void Arranger::apply_rresize(){
           c=new MoveSeqpat(s,s->track,T1);
           set_undo(c);
           N+=2;
+
+          s = stmp->next;
+          if(s->tick+s->dur > maxt){relayout();}
         }
         else{
           if(T1==T2){
@@ -923,6 +948,8 @@ void Arranger::apply_rresize(){
           c=new ResizeSeqpat(s,T2-T1);
           set_undo(c);
           N++;
+
+          if(T2 > maxt){relayout();}
         }
 
       }
@@ -970,6 +997,9 @@ void Arranger::apply_lresize(){
           c=new MoveSeqpat(s,s->track,T1);
           set_undo(c);
           N+=2;
+
+          s = stmp->next;
+          if(s->tick+s->dur > maxt){relayout();}
         }
         else{
           if(T1==T2){
@@ -982,6 +1012,9 @@ void Arranger::apply_lresize(){
           c=new ResizeSeqpat(s,T2-T1);
           set_undo(c);
           N+=2;
+
+          s = stmp->next;
+          if(s->tick+s->dur>maxt){relayout();}
         }
 
       }

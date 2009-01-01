@@ -25,6 +25,8 @@
 
 class Arranger : public fltk::Widget {
 
+    int maxt;
+
     int xp_last;
     int yp_last;
 
