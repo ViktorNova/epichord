@@ -251,6 +251,7 @@ void playing_timeout_cb(void* v){
             if(!s){continue;}
           }
 
+          //if(s->record_flag==1 && config.recordmode>0){show_song_edit();}
           s->record_check(config.recordmode);
           p = s->p;
           c=new CreateNoteOff(p,val1,val2,tick-s->tick);
@@ -278,6 +279,7 @@ void playing_timeout_cb(void* v){
             if(!s){continue;}
           }
 
+         // if(s->record_flag==1 && config.recordmode>0){show_song_edit();}
           s->record_check(config.recordmode);
           p = s->p;
           c=new CreateNoteOn(p,val1,val2,tick-s->tick,16);
@@ -333,6 +335,7 @@ void playing_timeout_cb(void* v){
           if(!is_backend_recording())
             break;
 
+        //  if(s->record_flag==1 && config.recordmode>0){show_song_edit();}
           s->record_check(config.recordmode);
           p = s->p;
           c=new CreateEvent(p,type,tick,val1,val2);

@@ -98,7 +98,8 @@ int Arranger::handle(int event){
         else if(event_dy()<0){
           s->next_layer();
         }
-        tracks[s->track]->restate();
+        //tracks[s->track]->restate();
+        s->restate();
         redraw();
       }
       return 1;
