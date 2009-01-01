@@ -111,7 +111,7 @@ void dispatch_event(mevent* e, int track, int tick_base){
     return;
   }
 
-printf("0x%x %d %llu %llu %llu %d %llu %d\n", e->type, e->tick, t2f(e->tick), base, last_frame, frame_jump, frame, bpm);
+//printf("0x%x %d %llu %llu %llu %d %llu %d\n", e->type, e->tick, t2f(e->tick), base, last_frame, frame_jump, frame, bpm);
 
 if(t2f(e->tick)+base < last_frame){
   printf("playing a note in the past?? lucky it didnt segfault!\n");
