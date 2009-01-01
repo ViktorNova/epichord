@@ -62,6 +62,7 @@ int clear(){
 
   set_beats_per_measure(4);
   set_measures_per_phrase(4);
+  update_config_gui();
 
   track* t;
   int total = tracks.size();
