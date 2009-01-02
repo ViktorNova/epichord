@@ -682,6 +682,11 @@ int getdelta(std::fstream& f){
   return (a<<23) | (b&0x7f<<15) | (c&0x7f<<7) | (d&0x7f);
 }
 
+
+
+
+
+
 int loadsmf(const char* filename){
   if(filename == NULL){
     return -1;

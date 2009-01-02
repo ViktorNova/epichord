@@ -622,6 +622,17 @@ void set_defaultvelocity(int n){
 
 
 int scopeon=0;
+void turnonscope(){
+  scopeon=1;
+}
+
+void turnoffscope(){
+  scopeon=0;
+  fltk::TextBuffer* ptr = ui->scope->buffer();
+  ptr->remove(0,ptr->length());
+ // ui->redraw();
+}
+
 void scope_print(const char* text){
   if(scopeon){
     ui->scope->append(text);
@@ -675,4 +686,7 @@ void toggle_tool(){
       break;
   }
 }
+
+
+
 

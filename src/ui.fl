@@ -789,7 +789,7 @@ set_defaultvelocity(o->value());}
       }
     }
     {fltk::Window} action_window {
-      label menu open
+      label menu
       xywh {286 302 100 130} horizontal hide
     } {
       {fltk::Button} {} {
@@ -821,7 +821,7 @@ load(fltk::file_chooser("open file",NULL,get_last_dir()));}
       {fltk::Button} {} {
         label import
         callback {action_window->hide();
-loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()));} selected
+loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()));}
         xywh {5 85 90 20}
       }
       {fltk::Button} {} {
@@ -832,7 +832,7 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       }
     }
     {fltk::Window} scope_window {
-      label scope
+      label scope open
       xywh {647 310 425 280} hide resizable
     } {
       {fltk::TextDisplay} scope {
@@ -841,6 +841,8 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       }
       {fltk::Button} {} {
         label on
+        callback {if(o->state()==1){turnonscope();}
+else{turnoffscope();}} selected
         xywh {5 255 30 20}
         extra_code {o->type(fltk::Button::TOGGLE);}
       }

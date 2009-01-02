@@ -421,6 +421,14 @@ void UI::cb_export(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_export_i(o,v);
 }
 
+inline void UI::cb_on_i(fltk::Button* o, void*) {
+  if(o->state()==1){turnonscope();}
+  else{turnoffscope();}
+;}
+void UI::cb_on(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_on_i(o,v);
+}
+
 UI::UI() {
   fltk::Window* w;
    {fltk::Window* o = main_window = new fltk::Window(640, 480, "Epichord");
@@ -1023,6 +1031,7 @@ track.");
       o->wrap_mode(1);
     }
      {fltk::Button* o = new fltk::Button(5, 255, 30, 20, "on");
+      o->callback((fltk::Callback*)cb_on);
       o->type(fltk::Button::TOGGLE);
     }
     o->end();

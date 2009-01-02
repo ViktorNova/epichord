@@ -49,6 +49,8 @@ void press_play();
 
 void set_quant(int q);
 
+void turnonscope();
+void turnoffscope();
 void scope_print(const char* text);
 
 void update_config_gui();
