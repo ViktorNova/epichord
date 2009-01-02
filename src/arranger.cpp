@@ -343,15 +343,8 @@ int Arranger::handle(int event){
         color_sel = NULL;
       }
       else if(event_button()==2){
-        if(paste_flag && paste_track < tracks.size()){
-          if(!config.alwayscopy){
-            c = new CreateSeqpat(paste_track,paste_t,main_sel,0);
-          }
-          else{
-            c = new CreateSeqpat(paste_track,paste_t,main_sel,1);
-          }
-          set_undo(c);
-          undo_push(1);
+        if(paste_flag){
+          apply_paste();
         }
         paste_flag=0;
       }
@@ -904,7 +897,16 @@ void Arranger::apply_move(){
 }
 
 void Arranger::apply_paste(){
+  //safety check
 
+
+  Command* c;
+
+  c = new CreateSeqpat(paste_track,paste_t,main_sel,0);
+  set_undo(c);
+  undo_push(1);
+
+  
 }
 
 void Arranger::apply_rresize(){

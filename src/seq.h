@@ -217,10 +217,7 @@ struct seqpat {
     rhandle = 0;
     lhandle = 0;
     record_flag = 1;
-    layers = zs->layers;
-    if(layers){
-      layers->ref_c++;
-    }
+    layers = NULL;
   }
 
   seqpat(seqpat* zs, pattern* zp){

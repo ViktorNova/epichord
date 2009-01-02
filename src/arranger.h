@@ -65,9 +65,11 @@ class Arranger : public fltk::Widget {
     int lresize_torig;
     int lresize_toffset;
 
+
+    int paste_flag;
     int paste_t;
     int paste_track;
-    int paste_flag;
+
 
     seqpat* main_sel;
     seqpat* delete_sel;

@@ -40,6 +40,8 @@
 
 #include "uihelper.h"
 
+#include "backend.h"
+
 extern UI* ui;
 
 extern std::vector<track*> tracks;
@@ -722,6 +724,8 @@ int loadsmf(const char* filename){
   last_filename = filename;
   set_last_dir(filename);
 
+  clear();
+
   unsigned char buf[64];
   char* abuf;
   char sbuf[256];
@@ -786,17 +790,22 @@ int loadsmf(const char* filename){
     snprintf(sbuf,256," tracks: %d\n",ntracks);
     scope_print(sbuf);
 
+
+    int tpb = TICKS_PER_BEAT;
     file.read((char*)buf,2);
     size = ntohs(*(unsigned short*)buf);
     if(size >> 15 == 0){
-      int tpb = size&0x7fff;
+      tpb = size&0x7fff;
       snprintf(sbuf,256," time division: %d ticks per beat\n",tpb);
       scope_print(sbuf);
     }
     else{
       int fps = size&0x7fff;
-      snprintf(sbuf,256," time division: %d frames per second\n",fps);
+      snprintf(sbuf,256," time division: %d frames per second (wrong)\n",fps);
       scope_print(sbuf);
+      scope_print("error: smpte time division not support\n");
+      file.close();
+      return -1;
     }
 
 
@@ -824,6 +833,7 @@ int loadsmf(const char* filename){
       }
 
       int time = 0;
+      int tick = 0;
       int endtrack=0;
 
       /***read events***/
@@ -836,7 +846,7 @@ int loadsmf(const char* filename){
           return -1;
         }
         time += delta;
-
+        tick = time*128/tpb;
 
 
         int last_byte0;
@@ -872,10 +882,12 @@ int loadsmf(const char* filename){
               break;
           }
 
-
+          Command* c;
           switch(type){
             case 0x80://note off
-
+              //c = new CreateNoteOff(p,value1,value2,tick);
+              //set_undo(c);
+              //U++;
               break;
             case 0x90://note on
 if(val2==0){/*consider this a note off*/}
@@ -1079,7 +1091,7 @@ if(val2==0){/*consider this a note off*/}
             free(tbuf);
 
             file.read((char*)buf,1);
-            if((signed char)buf[0]!=0xf7){
+            if(buf[0]!=0xf7){
               file.putback(buf[0]);
             }
             else{
@@ -1105,7 +1117,7 @@ if(val2==0){/*consider this a note off*/}
             free(tbuf);
 
             file.read((char*)buf,1);
-            if((signed char)buf[0]!=0xf7){
+            if(buf[0]!=0xf7){
               file.putback(buf[0]);
             }
             else{
