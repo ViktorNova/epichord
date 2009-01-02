@@ -53,6 +53,13 @@ std::string last_filename;
 char last_dir[1024] = "";
 
 
+void nextline(ifstream& f){
+  char dummy[512];
+  f.getline(dummy,512);
+  printf("%s\n",dummy);
+}
+
+
 int clear(){
 
   pause_backend();
@@ -109,6 +116,10 @@ int save(){
 
 
 int save(const char* filename){
+
+  if(filename == NULL){
+    return -1;
+  }
 
   //create file
   fstream file;
@@ -268,6 +279,10 @@ void repair(){
 
 int load(const char* filename){
 
+  if(filename == NULL){
+    return -1;
+  }
+
   ifstream file;
   string str;
   file.open(filename, fstream::in);
@@ -285,8 +300,9 @@ int load(const char* filename){
 
   pattern* pend = patterns;
 
+  file >> str;
   while(!file.eof()){
-    file >> str;
+
     int n;
 
     if(str == "title"){
@@ -394,30 +410,12 @@ int load(const char* filename){
         }
         else if(key == "alive"){ file >> t->alive; }
         else if(key == "seqpat"){
-
           int pattern_number;
           seqpat* s = new seqpat();
           s->track = tracks.size();
           file >> s->tick;
           file >> s->dur;
           int C;
-          //for(int i=0; i<3; i++){
-          //  for(int j=0; j<3; j++){
-          //    file >> C;
-          //    s->color[i][j] = C;
-          //  }
-          //}
-
-          ////color info is in pattern section now
-          //float h;
-          //float v;
-          //file >> h;
-          //file >> v;
-
-          //s->h = h;
-          //s->v = v;
-
-          //s->regen_colors();
 
           file >> s->scrollx >> s->scrolly;
           file >> pattern_number;
@@ -427,6 +425,7 @@ int load(const char* filename){
             if(p == NULL){
               printf("load: error opening file, bad pattern reference\n");
               file.close();
+              clear();
               return -1;
             }
             p = p->next;
@@ -440,10 +439,10 @@ int load(const char* filename){
       tracks.push_back(t);
     }
     else{
-      printf("load: unrecognized line (fixme, ignore these lines)\n");
-      file.close();
-      return -1;
+      file.ignore(std::numeric_limits<streamsize>::max(),'\n');
     }
+
+    file >> str;
   }
 
   repair();
@@ -496,6 +495,10 @@ int tick2delta(unsigned tick, vector<unsigned char>& vbuf){
 }
 
 int savesmf(const char* filename){
+
+  if(filename == NULL){
+    return -1;
+  }
 
   fstream file;
   file.open(filename, fstream::out);
@@ -661,4 +664,374 @@ int savesmf(const char* filename){
 
 }
 
+
+
+int getdelta(std::fstream& f){
+  unsigned char a,b,c,d;
+
+  f.read((char*)&a,1);
+  if(a<0x80){return a;}
+
+  f.read((char*)&b,1);
+  if(b<0x80){return (a<<7) | (b&0x7f);}
+
+  f.read((char*)&c,1);
+  if(c<0x80){return (a<<15) | (b&0x7f<<7) | (c&0x7f);}
+
+  f.read((char*)&d,1);
+  return (a<<23) | (b&0x7f<<15) | (c&0x7f<<7) | (d&0x7f);
+}
+
+int loadsmf(const char* filename){
+  if(filename == NULL){
+    return -1;
+  }
+
+  fstream file;
+  file.open(filename, fstream::in);
+
+  if(!file.is_open()){
+    printf("error, cant open file for saving\n");
+    return -1;
+  }
+
+  last_filename = filename;
+  set_last_dir(filename);
+
+  unsigned char buf[64];
+  unsigned char* abuf;
+  uint32_t size;
+
+  while(!file.eof()){
+
+    file.read((char*)buf,4);
+    if(memcmp(buf,"MThd",4)){
+      printf("missing header, probably not a midi file\n");
+      file.close();
+      return -1;
+    }
+    printf("MThd\n");
+
+    file.read((char*)buf,4);
+    if(buf[3] != 6){
+      printf("header has wrong size, probably a broken midi file\n");
+      file.close();
+      return -1;
+    }
+    printf("header size\n");
+
+    file.read((char*)buf,2);
+    if(buf[0] != 0){
+      printf("bad smf type code, probably a broken midi file\n");
+      file.close();
+      return -1;
+    }
+
+
+    int smftype;
+    switch(buf[1]){
+      case 0: smftype=0; printf("type 0 midi file\n"); break;
+      case 1: smftype=1; printf("type 1 midi file\n"); break;
+      case 2: smftype=2; printf("type 2 midi file\n"); break;
+      default: 
+        printf("bad smf type code, probably a broken midi file\n");
+        file.close();
+        return -1;
+    }
+//printf("smf type %d\n",smftype);
+
+    file.read((char*)buf,2);
+    size = ntohs(*(unsigned short*)buf);
+    if(size==0){
+      printf("track count of zero, probably a broken midi file\n");
+      file.close();
+      return -1;
+    }
+    int ntracks = size;
+//printf("number of tracks %d\n",ntracks);
+
+    file.read((char*)buf,2);
+    size = ntohs(*(unsigned short*)buf);
+    if(size >> 15 == 0){
+      int tpb = size&0x7fff;
+ //     printf("time division in ticks per beat: %d\n",tpb);
+    }
+    else{
+      int fps = size&0x7fff;
+//      printf("time division in frames per second: %d\n",fps);
+    }
+
+
+    /*** read tracks ***/
+    file.read((char*)buf,4);
+    while(!file.eof()){
+
+      if(memcmp(buf,"MTrk",4)){
+        printf("bad track header, probably a broken midi file\n");
+        file.close();
+        return -1;
+      }
+//printf("MTrk\n");
+
+      file.read((char*)buf,4);
+      size = ntohl(*(unsigned long*)buf);
+      if(size==0){
+        printf("empty track\n");
+        file.close();
+        return -1;
+      }
+//printf("track data size %d\n",size);
+
+      int time = 0;
+      int endtrack=0;
+
+      /***read events***/
+      while(!endtrack){
+        int delta = getdelta(file);
+        if(delta < 0){
+          printf("bad delta time, broken midi file\n");
+          file.close();
+          return -1;
+        }
+        time += delta;
+//printf("delta time %d\n",delta);
+
+
+        int last_byte0;
+        file.read((char*)buf,1);
+        int byte0 = buf[0];
+        int byte1 = -1;
+
+        if(byte0 < 0x80){//implicit byte0
+//printf("running status, using last byte0: %x\n",last_byte0);
+          byte1 = byte0;
+          byte0 = last_byte0;
+        }
+        last_byte0 = byte0;
+//printf("byte0=%x, byte1=%x\n",byte0,byte1);
+
+        if(byte0 < 0xf0){//channel event
+
+          int type = byte0&0xf0;
+          int chan = byte0&0x0f;
+
+          if(byte1<0){//didnt read byte1 yet
+            file.read((char*)buf,1);
+            byte1 = buf[0];
+          }
+
+          int val1 = byte1;
+          int val2;
+          switch(type){
+            case 0xC0:
+            case 0xD0:
+              break;
+            default:
+              file.read((char*)buf,1);
+              val2 = buf[0];
+              break;
+          }
+
+      //    printf("event %d %d %d %d\n",type,chan,val1,val2);
+          switch(type){
+            case 0x80://note off
+//printf("note off\n");
+              break;
+            case 0x90://note on
+//printf("note on\n");
+if(val2==0){printf("zero velocity note on -> note off\n");}
+              break;
+            case 0xA0://aftertouch
+printf("aftertouch\n");
+              break;
+            case 0xB0://controller change
+printf("controller change\n");
+              break;
+            case 0xC0://program change
+printf("prog change\n");
+              break;
+            case 0xD0://channel pressure
+printf("channel pressure\n");
+              break;
+            case 0xE0://pitchbend
+printf("pitchbend\n");
+              break;
+            default:
+              printf("unrecognized channel event %d\n",type);
+              file.close();
+              return -1;
+          }
+
+        }
+        else{/*** not a channel event ***/
+
+
+
+          if(byte0 == 255){//meta events
+
+            file.read((char*)buf,1);
+            int meta = buf[0];
+//printf("meta %d\n",meta);
+
+          size = getdelta(file);
+          if(size < 0){
+            printf("bad delta time\n");
+            file.close();
+            return -1;
+          }
+//          printf("meta size %d\n",size);
+
+          abuf = new unsigned char[size];
+
+          switch(meta){
+            case 0://sequence number
+              printf("sequence number\n");
+              if(size != 2){
+                printf("bad sequence number data length: %d\n",size);
+                file.close();
+                return -1;
+              }
+              file.read((char*)buf,2);
+              break;
+            case 1://text event
+              printf("text event\n");
+              file.read((char*)abuf,size);
+              break;
+            case 2://copyright notice
+              printf("copyright notice\n");
+              file.read((char*)abuf,size);
+              break;
+            case 3://track name
+              printf("track name\n");
+              file.read((char*)abuf,size);
+              break;
+            case 4://instrument name
+              printf("instrument name\n");
+              file.read((char*)abuf,size);
+              break;
+            case 5://lyrics
+              printf("lyrics\n");
+              file.read((char*)abuf,size);
+              break;
+            case 6://marker
+              printf("marker\n");
+              file.read((char*)abuf,size);
+              break;
+            case 7://cue point
+              printf("cue point\n");
+              file.read((char*)abuf,size);
+              break;
+            case 32://channel prefix
+              printf("channel prefix\n");
+              if(size!=1){
+                printf("bad channel prefix data size: %d\n",size);
+                file.close();
+                return -1;
+              }
+              file.read((char*)buf,1);
+              break;
+            case 47://end of track
+              printf("end of track\n");
+              if(size!=0){
+                printf("end of track has non zero data size: %d\n",size);
+                file.close();
+                return -1;
+              }
+              endtrack=1;
+              break;
+            case 81://set tempo
+              printf("set tempo\n");
+              if(size!=3){
+                printf("set tempo has non-3 data size: %d\n",size);
+                file.close();
+                return -1;
+              }
+              file.read((char*)buf,3);
+              break;
+            case 84://smpte offset
+              printf("smpte offset\n");
+              if(size!=5){
+                printf("smpte offset has non-5 data size: %d\n",size);
+                file.close();
+                return -1;
+              }
+              file.read((char*)buf,5);
+              break;
+            case 88://time signature
+              printf("time signature\n");
+              if(size!=4){
+                printf("time signature has non-4 data size: %d\n",size);
+                file.close();
+                return -1;
+              }
+              file.read((char*)buf,4);
+              break;
+            case 89://key signature
+              printf("key signature\n");
+              if(size!=2){
+                printf("time signature has non-2 data size: %d\n",size);
+                file.close();
+                return -1;
+              }
+              file.read((char*)buf,2);
+              break;
+            case 127://sequencer specific
+              printf("instrument name\n");
+              file.read((char*)abuf,size);
+              break;
+            default:
+              printf("unrecognized meta event %d\n",meta);
+              file.read((char*)abuf,size);
+          }
+          free(abuf);
+          }
+          else if(byte0 == 240){//sysex event
+            size = getdelta(file);
+            if(size < 0){
+              printf("bad delta time\n");
+              return -1;
+            }
+            printf("sysex event\n");
+            file.read((char*)abuf,size);
+            file.read((char*)buf,1);
+            if(buf[0]!=0xf7){
+              file.putback(buf[0]);
+            }
+            else{
+              printf("end of sysex\n");
+            }
+          }
+          else if(byte0 == 247){//divided sysex event
+            size = getdelta(file);
+            if(size < 0){
+              printf("bad delta time\n");
+              return -1;
+            }
+            printf("sysex fragment/auth\n");
+            file.read((char*)abuf,size);
+            file.read((char*)buf,1);
+            if(buf[0]!=0xf7){
+              file.putback(buf[0]);
+            }
+            else{
+              printf("end of sysex\n");
+            }
+          }
+          else{
+            printf("bad event type %d, broken midi file\n",byte0);
+            file.close();
+            return -1;
+          }
+        }
+
+      }
+
+      file.read((char*)buf,4);//read first byte of next track or EOF
+    }
+
+    //printf("end of file\n");
+  }
+
+  return 0;
+}
 

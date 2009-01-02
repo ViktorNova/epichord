@@ -30,4 +30,4 @@ int save(const char* filename);
 int load(const char* filename);
 
 int savesmf(const char* filename);
-
+int loadsmf(const char* filename);

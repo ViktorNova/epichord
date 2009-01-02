@@ -98,7 +98,7 @@ void load_config(){
     else if(word == "keymap"){load_keymap(f);}
     else if(word == "defaultvelocity"){f>>config.defaultvelocity;}
     else{
-//read line
+      f.ignore(std::numeric_limits<streamsize>::max(),'\n');
     }
   }
   update_config_gui();
@@ -620,10 +620,14 @@ void set_defaultvelocity(int n){
   config.defaultvelocity = n;
 }
 
+
+int scopeon=0;
 void scope_print(const char* text){
-  ui->scope->append(text);
-  int N = ui->scope->buffer()->length();
-  ui->scope->scroll(N,0);
+  if(scopeon){
+    ui->scope->append(text);
+    int N = ui->scope->buffer()->length();
+    ui->scope->scroll(N,0);
+  }
 }
 
 

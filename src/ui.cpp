@@ -405,6 +405,14 @@ void UI::cb_load(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_load_i(o,v);
 }
 
+inline void UI::cb_import_i(fltk::Button*, void*) {
+  action_window->hide();
+  loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()));
+}
+void UI::cb_import(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_import_i(o,v);
+}
+
 inline void UI::cb_export_i(fltk::Button*, void*) {
   action_window->hide();
   savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));
@@ -995,7 +1003,9 @@ track.");
      {fltk::Button* o = new fltk::Button(5, 65, 90, 20, "load");
       o->callback((fltk::Callback*)cb_load);
     }
-    new fltk::Button(5, 85, 90, 20, "import");
+     {fltk::Button* o = new fltk::Button(5, 85, 90, 20, "import");
+      o->callback((fltk::Callback*)cb_import);
+    }
      {fltk::Button* o = new fltk::Button(5, 105, 90, 20, "export");
       o->callback((fltk::Callback*)cb_export);
     }

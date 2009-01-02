@@ -309,6 +309,8 @@ private:
     static void cb_save1(fltk::Button*, void*);
     inline void cb_load_i(fltk::Button*, void*);
     static void cb_load(fltk::Button*, void*);
+    inline void cb_import_i(fltk::Button*, void*);
+    static void cb_import(fltk::Button*, void*);
     inline void cb_export_i(fltk::Button*, void*);
     static void cb_export(fltk::Button*, void*);
 public:

@@ -376,14 +376,14 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label controls open
-      xywh {234 133 320 285} resizable visible
+      label controls
+      xywh {234 133 320 285} hide resizable
     } {
-      {fltk::TabGroup} {} {open
+      {fltk::TabGroup} {} {
         xywh {0 0 320 285}
       } {
         {fltk::Group} {} {
-          label options open
+          label options
           xywh {145 15 170 265} horizontal
         } {
           {fltk::ValueInput} beats_per_measure {
@@ -504,7 +504,7 @@ set_measures_until_record((int)o->value());}
   o->value(o->maximum());
 if(o->value() < o->minimum())
   o->value(o->minimum());
-set_defaultvelocity(o->value());} selected
+set_defaultvelocity(o->value());}
             xywh {120 180 45 20} maximum 127 step 1 value 96
           }
         }
@@ -789,7 +789,7 @@ set_defaultvelocity(o->value());} selected
       }
     }
     {fltk::Window} action_window {
-      label menu
+      label menu open
       xywh {286 302 100 130} horizontal hide
     } {
       {fltk::Button} {} {
@@ -820,6 +820,8 @@ load(fltk::file_chooser("open file",NULL,get_last_dir()));}
       }
       {fltk::Button} {} {
         label import
+        callback {action_window->hide();
+loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()));} selected
         xywh {5 85 90 20}
       }
       {fltk::Button} {} {
