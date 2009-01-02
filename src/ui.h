@@ -44,8 +44,8 @@ public:
       fltk::Group *song_edit;
           TrackInfo *track_info;
 private:
-          inline void cb__i(fltk::Button*, void*);
-          static void cb_(fltk::Button*, void*);
+          inline void cb_line_i(fltk::Button*, void*);
+          static void cb_line(fltk::Button*, void*);
 public:
           Timeline *song_timeline;
         CustomScroll *song_scroll;
@@ -73,8 +73,8 @@ public:
             SampleView *sample_view;
             Keyboard *keyboard;
 private:
-          inline void cb_1_i(fltk::Button*, void*);
-          static void cb_1(fltk::Button*, void*);
+          inline void cb__i(fltk::Button*, void*);
+          static void cb_(fltk::Button*, void*);
 public:
       fltk::Button *play_button;
 private:
@@ -317,7 +317,7 @@ public:
   fltk::Window *scope_window;
     fltk::TextDisplay *scope;
 private:
-    inline void cb_on_i(fltk::Button*, void*);
-    static void cb_on(fltk::Button*, void*);
+      inline void cb_on_i(fltk::Button*, void*);
+      static void cb_on(fltk::Button*, void*);
 };
 #endif

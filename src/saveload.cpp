@@ -673,18 +673,37 @@ int getdelta(std::fstream& f){
   if(a<0x80){return a;}
 
   f.read((char*)&b,1);
-  if(b<0x80){return (a<<7) | (b&0x7f);}
+  if(b<0x80){return ((a&0x7f)<<7) | b;}
 
   f.read((char*)&c,1);
-  if(c<0x80){return (a<<15) | (b&0x7f<<7) | (c&0x7f);}
+  if(c<0x80){return ((a&0x7f)<<14) | ((b&0x7f)<<7) | c;}
 
   f.read((char*)&d,1);
-  return (a<<23) | (b&0x7f<<15) | (c&0x7f<<7) | (d&0x7f);
+  return ((a&0x7f)<<21) | ((b&0x7f)<<14) | ((c&0x7f)<<7) | d;
 }
 
 
 
 
+
+
+char fifths[15][8] = {
+"Cb",
+"Gb",
+"Db",
+"Ab",
+"Eb",
+"Bb",
+"F",
+"C",
+"G",
+"D",
+"A",
+"E",
+"B",
+"F#",
+"C#"
+};
 
 
 int loadsmf(const char* filename){
@@ -704,8 +723,11 @@ int loadsmf(const char* filename){
   set_last_dir(filename);
 
   unsigned char buf[64];
-  unsigned char* abuf;
+  char* abuf;
+  char sbuf[256];
+  char* tbuf;
   uint32_t size;
+  uint32_t micros;
 
   while(!file.eof()){
 
@@ -715,19 +737,22 @@ int loadsmf(const char* filename){
       file.close();
       return -1;
     }
-    printf("MThd\n");
+    //printf("MThd\n");
+    scope_print("Standard Midi File\n");
 
     file.read((char*)buf,4);
     if(buf[3] != 6){
       printf("header has wrong size, probably a broken midi file\n");
+      scope_print("error: bad header size");
       file.close();
       return -1;
     }
-    printf("header size\n");
+    //printf("header size\n");
 
     file.read((char*)buf,2);
     if(buf[0] != 0){
       printf("bad smf type code, probably a broken midi file\n");
+      scope_print("error: bad smf type");
       file.close();
       return -1;
     }
@@ -735,38 +760,47 @@ int loadsmf(const char* filename){
 
     int smftype;
     switch(buf[1]){
-      case 0: smftype=0; printf("type 0 midi file\n"); break;
-      case 1: smftype=1; printf("type 1 midi file\n"); break;
-      case 2: smftype=2; printf("type 2 midi file\n"); break;
+      case 0: smftype=0; break;
+      case 1: smftype=1; break;
+      case 2: smftype=2; break;
       default: 
         printf("bad smf type code, probably a broken midi file\n");
+        scope_print("error: bad smf type");
         file.close();
         return -1;
     }
-//printf("smf type %d\n",smftype);
+
+    snprintf(sbuf,256," type: %d\n",smftype);
+    scope_print(sbuf);
 
     file.read((char*)buf,2);
     size = ntohs(*(unsigned short*)buf);
     if(size==0){
       printf("track count of zero, probably a broken midi file\n");
+      scope_print("error: zero tracks");
       file.close();
       return -1;
     }
     int ntracks = size;
-//printf("number of tracks %d\n",ntracks);
+
+    snprintf(sbuf,256," tracks: %d\n",ntracks);
+    scope_print(sbuf);
 
     file.read((char*)buf,2);
     size = ntohs(*(unsigned short*)buf);
     if(size >> 15 == 0){
       int tpb = size&0x7fff;
- //     printf("time division in ticks per beat: %d\n",tpb);
+      snprintf(sbuf,256," time division: %d ticks per beat\n",tpb);
+      scope_print(sbuf);
     }
     else{
       int fps = size&0x7fff;
-//      printf("time division in frames per second: %d\n",fps);
+      snprintf(sbuf,256," time division: %d frames per second\n",fps);
+      scope_print(sbuf);
     }
 
 
+    int trackindex = 0;
     /*** read tracks ***/
     file.read((char*)buf,4);
     while(!file.eof()){
@@ -776,7 +810,10 @@ int loadsmf(const char* filename){
         file.close();
         return -1;
       }
-//printf("MTrk\n");
+
+      trackindex++;
+      snprintf(sbuf,256," track %d\n",trackindex);
+      scope_print(sbuf);
 
       file.read((char*)buf,4);
       size = ntohl(*(unsigned long*)buf);
@@ -785,13 +822,13 @@ int loadsmf(const char* filename){
         file.close();
         return -1;
       }
-//printf("track data size %d\n",size);
 
       int time = 0;
       int endtrack=0;
 
       /***read events***/
       while(!endtrack){
+
         int delta = getdelta(file);
         if(delta < 0){
           printf("bad delta time, broken midi file\n");
@@ -799,7 +836,7 @@ int loadsmf(const char* filename){
           return -1;
         }
         time += delta;
-//printf("delta time %d\n",delta);
+
 
 
         int last_byte0;
@@ -808,12 +845,10 @@ int loadsmf(const char* filename){
         int byte1 = -1;
 
         if(byte0 < 0x80){//implicit byte0
-//printf("running status, using last byte0: %x\n",last_byte0);
           byte1 = byte0;
           byte0 = last_byte0;
         }
         last_byte0 = byte0;
-//printf("byte0=%x, byte1=%x\n",byte0,byte1);
 
         if(byte0 < 0xf0){//channel event
 
@@ -837,29 +872,28 @@ int loadsmf(const char* filename){
               break;
           }
 
-      //    printf("event %d %d %d %d\n",type,chan,val1,val2);
+
           switch(type){
             case 0x80://note off
-//printf("note off\n");
+
               break;
             case 0x90://note on
-//printf("note on\n");
-if(val2==0){printf("zero velocity note on -> note off\n");}
+if(val2==0){/*consider this a note off*/}
               break;
             case 0xA0://aftertouch
-printf("aftertouch\n");
+
               break;
             case 0xB0://controller change
-printf("controller change\n");
+
               break;
             case 0xC0://program change
-printf("prog change\n");
+
               break;
             case 0xD0://channel pressure
-printf("channel pressure\n");
+
               break;
             case 0xE0://pitchbend
-printf("pitchbend\n");
+
               break;
             default:
               printf("unrecognized channel event %d\n",type);
@@ -876,119 +910,159 @@ printf("pitchbend\n");
 
             file.read((char*)buf,1);
             int meta = buf[0];
-//printf("meta %d\n",meta);
 
-          size = getdelta(file);
-          if(size < 0){
-            printf("bad delta time\n");
-            file.close();
-            return -1;
-          }
-//          printf("meta size %d\n",size);
 
-          abuf = new unsigned char[size];
+            size = getdelta(file);
+            if(size < 0){
+              printf("bad delta time\n");
+              file.close();
+              return -1;
+            }
 
-          switch(meta){
-            case 0://sequence number
-              printf("sequence number\n");
-              if(size != 2){
-                printf("bad sequence number data length: %d\n",size);
-                file.close();
-                return -1;
-              }
-              file.read((char*)buf,2);
-              break;
-            case 1://text event
-              printf("text event\n");
-              file.read((char*)abuf,size);
-              break;
-            case 2://copyright notice
-              printf("copyright notice\n");
-              file.read((char*)abuf,size);
-              break;
-            case 3://track name
-              printf("track name\n");
-              file.read((char*)abuf,size);
-              break;
-            case 4://instrument name
-              printf("instrument name\n");
-              file.read((char*)abuf,size);
-              break;
-            case 5://lyrics
-              printf("lyrics\n");
-              file.read((char*)abuf,size);
-              break;
-            case 6://marker
-              printf("marker\n");
-              file.read((char*)abuf,size);
-              break;
-            case 7://cue point
-              printf("cue point\n");
-              file.read((char*)abuf,size);
-              break;
-            case 32://channel prefix
-              printf("channel prefix\n");
-              if(size!=1){
-                printf("bad channel prefix data size: %d\n",size);
-                file.close();
-                return -1;
-              }
-              file.read((char*)buf,1);
-              break;
-            case 47://end of track
-              printf("end of track\n");
-              if(size!=0){
-                printf("end of track has non zero data size: %d\n",size);
-                file.close();
-                return -1;
-              }
-              endtrack=1;
-              break;
-            case 81://set tempo
-              printf("set tempo\n");
-              if(size!=3){
-                printf("set tempo has non-3 data size: %d\n",size);
-                file.close();
-                return -1;
-              }
-              file.read((char*)buf,3);
-              break;
-            case 84://smpte offset
-              printf("smpte offset\n");
-              if(size!=5){
-                printf("smpte offset has non-5 data size: %d\n",size);
-                file.close();
-                return -1;
-              }
-              file.read((char*)buf,5);
-              break;
-            case 88://time signature
-              printf("time signature\n");
-              if(size!=4){
-                printf("time signature has non-4 data size: %d\n",size);
-                file.close();
-                return -1;
-              }
-              file.read((char*)buf,4);
-              break;
-            case 89://key signature
-              printf("key signature\n");
-              if(size!=2){
-                printf("time signature has non-2 data size: %d\n",size);
-                file.close();
-                return -1;
-              }
-              file.read((char*)buf,2);
-              break;
-            case 127://sequencer specific
-              printf("instrument name\n");
-              file.read((char*)abuf,size);
-              break;
-            default:
-              printf("unrecognized meta event %d\n",meta);
-              file.read((char*)abuf,size);
-          }
-          free(abuf);
+
+            abuf = new char[size+1];
+
+            switch(meta){
+              case 0://sequence number
+
+                snprintf(sbuf,256,"  %d sequence: ? ?\n",time);
+                scope_print(sbuf);
+                if(size != 2){
+                  printf("bad sequence number data length: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                file.read((char*)buf,2);
+                break;
+              case 1://text event
+                file.read(abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d text: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 2://copyright notice
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d copyright: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 3://track name
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d track name: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 4://instrument name
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d instrument name: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 5://lyrics
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d lyrics: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 6://marker
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d marker: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 7://cue point
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d cue point: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 32://channel prefix
+                if(size!=1){
+                  printf("bad channel prefix data size: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                file.read((char*)buf,1);
+                asprintf(&tbuf,"  %d channel prefix: %d\n",time,buf[0]);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 47://end of track
+                if(size!=0){
+                  printf("end of track has non zero data size: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                endtrack=1;
+                break;
+              case 81://set tempo
+                if(size!=3){
+                  printf("set tempo has non-3 data size: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                file.read((char*)buf,3);
+                buf[3]=0;
+                micros = ntohl(*(unsigned*)buf);
+                asprintf(&tbuf,"  %d set tempo: %d us/quarter\n",time,micros);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 84://smpte offset
+                if(size!=5){
+                  printf("smpte offset has non-5 data size: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                file.read((char*)buf,5);
+                asprintf(&tbuf,"  %d smpte offset: ?\n",time);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 88://time signature
+                if(size!=4){
+                  printf("time signature has non-4 data size: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                file.read((char*)buf,4);
+                asprintf(&tbuf,"  %d time signature: %d/%d\n",time,buf[0],1<<buf[1]);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 89://key signature
+                if(size!=2){
+                  printf("key signature has non-2 data size: %d\n",size);
+                  file.close();
+                  return -1;
+                }
+                file.read((char*)buf,2);
+                asprintf(&tbuf,"  %d key signature: %s %s\n",time,fifths[(signed char)buf[0]+7],buf[1]?"minor":"major");
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              case 127://sequencer specific
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d sequencer specific: \"%s\"\n",time,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+                break;
+              default://unknown meta event
+                file.read((char*)abuf,size);
+                abuf[size]='\0';
+                asprintf(&tbuf,"  %d meta %d: \"%s\"\n",time,meta,abuf);
+                scope_print(tbuf);
+                free(tbuf);
+            }
+            free(abuf);
           }
           else if(byte0 == 240){//sysex event
             size = getdelta(file);
@@ -996,15 +1070,25 @@ printf("pitchbend\n");
               printf("bad delta time\n");
               return -1;
             }
-            printf("sysex event\n");
+            abuf = new char[size+1];
             file.read((char*)abuf,size);
+            abuf[size]='\0';
+
+            asprintf(&tbuf,"  %d sysex: \"%s\"\n",time,abuf);
+            scope_print(tbuf);
+            free(tbuf);
+
             file.read((char*)buf,1);
-            if(buf[0]!=0xf7){
+            if((signed char)buf[0]!=0xf7){
               file.putback(buf[0]);
             }
             else{
-              printf("end of sysex\n");
+              scope_print("   end of sysex\n");
             }
+
+
+
+            free(abuf);
           }
           else if(byte0 == 247){//divided sysex event
             size = getdelta(file);
@@ -1012,15 +1096,22 @@ printf("pitchbend\n");
               printf("bad delta time\n");
               return -1;
             }
-            printf("sysex fragment/auth\n");
+            abuf = new char[size+1];
             file.read((char*)abuf,size);
+            abuf[size]='\0';
+
+            asprintf(&tbuf,"  %d sysex fragment: \"%s\"\n",time,abuf);
+            scope_print(tbuf);
+            free(tbuf);
+
             file.read((char*)buf,1);
-            if(buf[0]!=0xf7){
+            if((signed char)buf[0]!=0xf7){
               file.putback(buf[0]);
             }
             else{
-              printf("end of sysex\n");
+              scope_print("   end of sysex\n");
             }
+            free(abuf);
           }
           else{
             printf("bad event type %d, broken midi file\n",byte0);
@@ -1034,8 +1125,9 @@ printf("pitchbend\n");
       file.read((char*)buf,4);//read first byte of next track or EOF
     }
 
-    //printf("end of file\n");
   }
+
+  scope_print("End Of File\n\n");
 
   return 0;
 }

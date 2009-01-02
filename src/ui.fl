@@ -55,7 +55,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();}
+save_config();} open
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -64,13 +64,13 @@ save_config();}
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
-          {fltk::Group} {} {open
+          {fltk::Group} {} {
             xywh {0 0 255 445} box FLAT_BOX
           } {
             {fltk::Widget} track_info {
@@ -80,7 +80,7 @@ o->resize(640,455);} visible
               class TrackInfo
             }
             {fltk::Button} {} {
-              label {@+}
+              label {@line}
               callback {ui->track_info->toggle_controls();}
               xywh {0 0 255 15}
             }
@@ -96,7 +96,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::ScrollGroup} song_scroll {open
+          {fltk::ScrollGroup} song_scroll {
             xywh {255 15 385 430} resizable
             extra_code {\#include <fltk/ScrollGroup.h>
 \#include "customscroll.h"
@@ -113,7 +113,7 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {
+        {fltk::Group} pattern_edit {open
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -203,7 +203,7 @@ ui->event_edit->redraw();}
             xywh {0 0 45 445} horizontal
           } {
             {fltk::Button} {} {
-              label {@+}
+              label {@line} selected
               xywh {0 0 45 15}
             }
             {fltk::Group} {} {open
@@ -836,15 +836,8 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       xywh {647 310 425 280} hide resizable
     } {
       {fltk::TextDisplay} scope {
-        xywh {5 5 415 245} textfont 4 color 0x280000 textcolor 0xff0000
+        xywh {5 5 415 245} resizable textfont 4 color 0x280000 textcolor 0xff0000
         extra_code {o->wrap_mode(1);}
-      }
-      {fltk::Button} {} {
-        label on
-        callback {if(o->state()==1){turnonscope();}
-else{turnoffscope();}} selected
-        xywh {5 255 30 20}
-        extra_code {o->type(fltk::Button::TOGGLE);}
       }
     }
     code {loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));

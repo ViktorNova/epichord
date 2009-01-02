@@ -43,11 +43,11 @@ void UI::cb_main_window(fltk::Window* o, void* v) {
   ((UI*)(o->user_data()))->cb_main_window_i(o,v);
 }
 
-inline void UI::cb__i(fltk::Button*, void*) {
+inline void UI::cb_line_i(fltk::Button*, void*) {
   ui->track_info->toggle_controls();
 }
-void UI::cb_(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
+void UI::cb_line(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_line_i(o,v);
 }
 
 inline void UI::cb_event_menu_button_i(fltk::Button* o, void*) {
@@ -94,11 +94,11 @@ void UI::cb_Z(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_Z_i(o,v);
 }
 
-inline void UI::cb_1_i(fltk::Button*, void*) {
+inline void UI::cb__i(fltk::Button*, void*) {
   show_song_edit();
 }
-void UI::cb_1(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_1_i(o,v);
+void UI::cb_(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
 }
 
 inline void UI::cb_play_button_i(fltk::Button*, void*) {
@@ -426,7 +426,7 @@ inline void UI::cb_on_i(fltk::Button* o, void*) {
   else{turnoffscope();}
 ;}
 void UI::cb_on(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_on_i(o,v);
+  ((UI*)(o->parent()->parent()->user_data()))->cb_on_i(o,v);
 }
 
 UI::UI() {
@@ -447,8 +447,8 @@ UI::UI() {
             o->set_vertical();
             fltk::Group::current()->resizable(o);
           }
-           {fltk::Button* o = new fltk::Button(0, 0, 255, 15, "@+");
-            o->callback((fltk::Callback*)cb_);
+           {fltk::Button* o = new fltk::Button(0, 0, 255, 15, "@line");
+            o->callback((fltk::Callback*)cb_line);
           }
           o->end();
         }
@@ -541,7 +541,7 @@ UI::UI() {
         }
          {fltk::Group* o = new fltk::Group(0, 0, 45, 445);
           o->begin();
-          new fltk::Button(0, 0, 45, 15, "@+");
+          new fltk::Button(0, 0, 45, 15, "@line");
            {fltk::Group* o = new fltk::Group(0, 15, 45, 340);
             o->set_vertical();
             o->begin();
@@ -559,7 +559,7 @@ UI::UI() {
           }
            {fltk::Button* o = new fltk::Button(0, 370, 45, 75, "@<-");
             o->set_vertical();
-            o->callback((fltk::Callback*)cb_1);
+            o->callback((fltk::Callback*)cb_);
           }
           o->end();
         }
@@ -1028,14 +1028,14 @@ track.");
       o->textfont(fltk::COURIER);
       o->color((fltk::Color)0x280000);
       o->textcolor((fltk::Color)0xff0000);
+      fltk::Group::current()->resizable(o);
+       {fltk::Button* o = new fltk::Button(5, 255, 30, 20, "on");
+        o->callback((fltk::Callback*)cb_on);
+        o->type(fltk::Button::TOGGLE);
+      }
       o->wrap_mode(1);
     }
-     {fltk::Button* o = new fltk::Button(5, 255, 30, 20, "on");
-      o->callback((fltk::Callback*)cb_on);
-      o->type(fltk::Button::TOGGLE);
-    }
     o->end();
-    o->resizable(o);
   }
   loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
   color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
