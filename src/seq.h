@@ -109,6 +109,7 @@ struct pattern {
   pattern();
   pattern(pattern* p);
   ~pattern();
+  void append(mevent* ze);
 };
 
 

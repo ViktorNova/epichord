@@ -618,6 +618,15 @@ void pattern::regen_colors(){
 
 }
 
+void pattern::append(mevent* ze){
+  mevent* e = events;
+  while(e->next){
+    e = e->next;
+  }
+  e->next = ze;
+  ze->prev = e;
+}
+
 
 //used when the sequence is changed in such a way 
 //that the sequencer state needs to be updated

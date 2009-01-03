@@ -143,6 +143,8 @@ int clear(){
   fltk::TextBuffer* tb = ui->info_text->buffer();
   tb->text("");
 
+  ui->track_info->clear();
+
   ui->main_window->redraw();
 
 }
@@ -816,6 +818,8 @@ int loadsmf(const char* filename){
   uint32_t size;
   uint32_t micros;
 
+  std::list<pattern*> patlist;
+
   while(!file.eof()){
 
     file.read((char*)buf,4);
@@ -903,6 +907,9 @@ int loadsmf(const char* filename){
         return -1;
       }
 
+      pattern* p = new pattern();
+      mevent* e;
+
       trackindex++;
       snprintf(sbuf,256," track %d\n",trackindex);
       scope_print(sbuf);
@@ -965,36 +972,29 @@ int loadsmf(const char* filename){
               break;
           }
 
-          Command* c;
+          e = new mevent(type,tick,val1);
           switch(type){
-            case 0x80://note off
-              //c = new CreateNoteOff(p,value1,value2,tick);
-              //set_undo(c);
-              //U++;
-              break;
             case 0x90://note on
-if(val2==0){/*consider this a note off*/}
+              if(val2==0){//fake note off
+                e->type = 0x80;
+              }
+              e->value2 = val2;
               break;
+            case 0x80://note off
             case 0xA0://aftertouch
-
-              break;
             case 0xB0://controller change
-
+            case 0xE0://pitchbend
+              e->value2 = val2;
               break;
             case 0xC0://program change
-
-              break;
             case 0xD0://channel pressure
-
-              break;
-            case 0xE0://pitchbend
-
               break;
             default:
               printf("unrecognized channel event %d\n",type);
               file.close();
               return -1;
           }
+          p->append(e);
 
         }
         else{/*** not a channel event ***/
@@ -1213,9 +1213,13 @@ if(val2==0){/*consider this a note off*/}
             file.close();
             return -1;
           }
+
         }
 
       }
+
+
+      patlist.push_back(p);
 
       file.read((char*)buf,4);//read first byte of next track or EOF
     }
@@ -1223,6 +1227,27 @@ if(val2==0){/*consider this a note off*/}
   }
 
   scope_print("End Of File\n\n");
+  file.close();
+
+  //TODO set up track settings using data remembered from the reading
+  std::list<pattern*>::iterator p = patlist.begin();
+  int i=0;
+  while(p!=patlist.end()){
+    track* t = new track();
+    seqpat* s = new seqpat(i,0,128*64,*p);
+    t->head->next = s;
+    s->prev = t->head;
+    t->skip = s;
+    tracks.push_back(t);
+    p++;
+    i++;
+  }
+
+  //ui->track_info->update();
+
+  ui->arranger->redraw();
+
+  reset_backend(0);
 
   return 0;
 }
