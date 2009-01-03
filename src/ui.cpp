@@ -421,14 +421,6 @@ void UI::cb_export(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_export_i(o,v);
 }
 
-inline void UI::cb_on_i(fltk::Button* o, void*) {
-  if(o->state()==1){turnonscope();}
-  else{turnoffscope();}
-;}
-void UI::cb_on(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_on_i(o,v);
-}
-
 UI::UI() {
   fltk::Window* w;
    {fltk::Window* o = main_window = new fltk::Window(640, 480, "Epichord");
@@ -927,6 +919,19 @@ track.");
         }
         o->end();
       }
+       {fltk::Group* o = new fltk::Group(0, 15, 320, 270, "colors");
+        o->hide();
+        o->begin();
+        new fltk::Button(250, 245, 65, 20, "apply");
+         {fltk::Choice* o = new fltk::Choice(55, 10, 100, 20, "presets");
+          o->begin();
+          new fltk::Item("windo");
+          new fltk::Item("midnight");
+          new fltk::Item("xterm");
+          o->end();
+        }
+        o->end();
+      }
       o->end();
     }
     o->end();
@@ -1029,10 +1034,6 @@ track.");
       o->color((fltk::Color)0x280000);
       o->textcolor((fltk::Color)0xff0000);
       fltk::Group::current()->resizable(o);
-       {fltk::Button* o = new fltk::Button(5, 255, 30, 20, "on");
-        o->callback((fltk::Callback*)cb_on);
-        o->type(fltk::Button::TOGGLE);
-      }
       o->wrap_mode(1);
     }
     o->end();

@@ -316,8 +316,5 @@ private:
 public:
   fltk::Window *scope_window;
     fltk::TextDisplay *scope;
-private:
-      inline void cb_on_i(fltk::Button*, void*);
-      static void cb_on(fltk::Button*, void*);
 };
 #endif

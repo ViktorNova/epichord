@@ -64,7 +64,7 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {
@@ -113,13 +113,13 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {open
+        {fltk::Group} pattern_edit {
           xywh {0 0 640 445} hide
         } {
-          {fltk::Group} {} {open
+          {fltk::Group} {} {
             xywh {45 0 595 445} resizable
           } {
-            {fltk::Group} {} {open
+            {fltk::Group} {} {
               xywh {0 0 595 15}
             } {
               {fltk::Widget} pattern_timeline {
@@ -203,7 +203,7 @@ ui->event_edit->redraw();}
             xywh {0 0 45 445} horizontal
           } {
             {fltk::Button} {} {
-              label {@line} selected
+              label {@line}
               xywh {0 0 45 15}
             }
             {fltk::Group} {} {open
@@ -376,14 +376,14 @@ ui->action_window->show();}
       }
     }
     {fltk::Window} config_window {
-      label controls
-      xywh {234 133 320 285} hide resizable
+      label controls open
+      xywh {52 125 320 285} hide resizable
     } {
-      {fltk::TabGroup} {} {
+      {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
       } {
         {fltk::Group} {} {
-          label options
+          label options selected
           xywh {145 15 170 265} horizontal
         } {
           {fltk::ValueInput} beats_per_measure {
@@ -722,6 +722,29 @@ set_defaultvelocity(o->value());}
             label {octave down}
             xywh {265 110 45 15} align 4
             class KeyGrabber
+          }
+        }
+        {fltk::Group} {} {
+          label colors open
+          xywh {0 15 320 270} hide
+        } {
+          {fltk::Button} {} {
+            label apply
+            xywh {250 245 65 20}
+          }
+          {fltk::Choice} {} {
+            label presets open
+            xywh {55 10 100 20}
+          } {
+            {fltk::Item} {} {
+              label windo
+              }
+            {fltk::Item} {} {
+              label midnight
+              }
+            {fltk::Item} {} {
+              label xterm
+              }
           }
         }
       }
