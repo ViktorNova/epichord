@@ -55,7 +55,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open
+save_config();} open selected
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -359,7 +359,7 @@ ui->config_window->show();}
         }
         {fltk::Button} scope_button {
           callback {ui->scope_window->hide();
-ui->scope_window->show();} selected
+ui->scope_window->show();}
           tooltip scope
           xywh {550 5 25 25}
         }
@@ -842,6 +842,24 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       {fltk::TextDisplay} scope {
         xywh {5 5 415 245} resizable textfont 4 color 0x280000 textcolor 0xff0000
         extra_code {o->wrap_mode(1);}
+      }
+      {fltk::Group} {} {
+        xywh {5 255 410 20}
+      } {
+        {fltk::Button} {} {
+          label on
+          callback {if(o->state()){
+  turnonscope();
+}
+else{
+  turnoffscope();
+}}
+          xywh {0 0 40 20}
+          extra_code {o->type(fltk::Button::TOGGLE);}
+        }
+        {fltk::InvisibleBox} {} {
+          xywh {45 0 95 20} resizable
+        }
       }
     }
     code {loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
