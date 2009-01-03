@@ -115,7 +115,6 @@ struct pattern {
 
 struct layerstack {
   pattern** array;
-  pattern* ptr;
 
   int index;
   int total;
@@ -685,7 +684,7 @@ void undo_push(int n);
 void do_undo();
 void do_redo();
 
-void pattern_clear();
+
 void reset_record_flags();
 
 

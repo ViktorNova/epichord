@@ -33,7 +33,6 @@
 #include "backend.h"
 
 std::vector<track*> tracks;
-pattern* patterns;
 
 std::list<Command*> undo_stack;
 std::list<int> undo_number;
@@ -47,8 +46,6 @@ static float default_hsv_value = 0.8;
 
 int init_seq(){
 
-  patterns = new pattern();
-
   track* t;
   for(int i=0; i<16; i++){
     t = new track();
@@ -60,42 +57,6 @@ int init_seq(){
 
 
 }
-
-
-void pattern_add(pattern* p){
-  //printf("pattern_add: adding pattern %p\n",p);
-  pattern* ptr = patterns;
-  while(ptr->next){
-    ptr = ptr->next;
-  }
-  ptr->next = p;
-}
-
-
-void pattern_remove(pattern* p){
-  //printf("pattern_remove: %p removing\n",p);
-  pattern* ptr = patterns;
-  pattern* prev = patterns;
-  while(ptr){
-    if(ptr==p){
-      if(ptr!=patterns){
-        prev->next = ptr->next;
-      }
-      return;
-    }
-    prev=ptr;
-    ptr=ptr->next;
-  }
-  printf("pattern_remove: pattern %p not found. not good.\n",p);
-}
-
-
-void pattern_clear(){
-  while(patterns->next){
-    delete patterns->next;
-  }
-}
-
 
 
 
@@ -600,9 +561,6 @@ pattern::pattern(){
   v=0.8;
   regen_colors();
 
-  if(patterns){
-    pattern_add(this);
-  }
 }
 
 pattern::~pattern(){
@@ -614,9 +572,6 @@ pattern::~pattern(){
     e = next;
   }
 
-  if(this != patterns){
-    pattern_remove(this);
-  }
 }
 
 pattern::pattern(pattern* p){
@@ -640,7 +595,6 @@ pattern::pattern(pattern* p){
     v = p->v;
     regen_colors();
 
-    pattern_add(this);
 }
 
 void pattern::regen_colors(){

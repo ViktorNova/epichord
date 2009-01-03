@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <list>
 
 #include <arpa/inet.h>
 #include <string.h>
@@ -45,7 +46,7 @@
 extern UI* ui;
 
 extern std::vector<track*> tracks;
-extern pattern* patterns;
+
 
 extern struct conf config;
 
@@ -62,6 +63,58 @@ void nextline(ifstream& f){
 }
 
 
+std::list<pattern*> collectpatterns(){
+  std::list<pattern*> patlist;
+
+  for(int i=0; i<tracks.size(); i++){
+    seqpat* s = tracks[i]->head->next;
+    while(s){
+      if(s->layers){
+        for(int j=0; j<s->layers->total; j++){
+          pattern* p = s->layers->array[j];
+          patlist.push_back(p);
+        }
+      }
+      else{
+        patlist.push_back(s->p);
+      }
+      s=s->next;
+    }
+  }
+
+  patlist.sort();
+  patlist.unique();
+
+  return patlist;
+}
+
+int findpatternindex(pattern* p, std::list<pattern*>& patlist){
+  std::list<pattern*>::iterator i = patlist.begin();
+  int q = 0;
+  while(i != patlist.end()){
+    if(*i==p){
+      return q;
+    }
+    q++;
+    i++;
+  }
+  return -1;
+}
+
+pattern* findpatternbyindex(int index, std::list<pattern*>& patlist){
+  std::list<pattern*>::iterator i = patlist.begin();
+  int q = 0;
+  while(i != patlist.end()){
+    if(q==index){
+      return *i;
+    }
+    q++;
+    i++;
+  }
+  return NULL;
+}
+
+
 int clear(){
 
   pause_backend();
@@ -75,13 +128,12 @@ int clear(){
 
   track* t;
   int total = tracks.size();
+
   for(int i=0; i<total; i++){
     t = tracks[tracks.size()-1];
     tracks.pop_back();
     delete t;
   }
-
-  pattern_clear();
 
   set_bpm(120);
 
@@ -135,6 +187,12 @@ int save(const char* filename){
   last_filename = filename;
   set_last_dir(filename);
 
+  //header to protect against accidentally opening wrong file
+  file << "J2ULJwCgwHA" << endl;
+  file << "epichord" << endl;
+  file << "fileversion " << FILE_VERSION << endl;
+  file << "ticksperbeat " << TICKS_PER_BEAT << endl << endl;
+
   //write song info
   file << "title " << ui->title_text->size() << " "
                    << ui->title_text->text() << endl;
@@ -152,14 +210,18 @@ int save(const char* filename){
 
   file << endl;
 
+
+  //collect all visible patterns
+  std::list<pattern*> patlist = collectpatterns();
+
   //for each pattern
-  pattern* p = patterns->next;
+  std::list<pattern*>::iterator p = patlist.begin();
   mevent* e;
   int P = 0;
-  while(p){
+  while(p != patlist.end()){
     file << "pattern " << endl;
-    file << p->h << " " << p->s << " " << p->v << endl;
-    e = p->events->next;
+    file << (*p)->h << " " << (*p)->s << " " << (*p)->v << endl;
+    e = (*p)->events->next;
     mevent* eoff;
     int n = 0;
     int m = n;
@@ -169,24 +231,12 @@ int save(const char* filename){
       file << e->value1 << " ";
       file << e->value2 << " ";
       file << e->dur << endl;
-      /*if(e->off){
-        eoff = p->events->next;
-        m = 0;
-        while(eoff != e->off){
-          m++;
-          eoff = eoff->next;
-        }
-        file << m << endl;
-      }
-      else{
-        file << -1 << endl;
-      }*/
       n++;
       e = e->next;
     }
     P++;
     file << -1 << endl << endl;
-    p = p->next;
+    p++;
   }
 
   seqpat* s;
@@ -209,13 +259,34 @@ int save(const char* filename){
       file << endl << endl << "seqpat " << endl;
       file << s->tick << " " << s->dur << endl;
       file << s->scrollx << " " << s->scrolly << endl;
-      p = patterns->next;
-      int q = 0;
-      while(p != s->p){
-        q++;
-        p = p->next;
+
+      if(s->layers){
+        file << s->layers->total << " ";
+        for(int j=0; j<s->layers->total; j++){
+
+          int index = findpatternindex(s->layers->array[j],patlist);
+          if(index < 0){
+            printf("save: pattern not found, cannot save\n");
+            file.close();
+            return -1;
+          }
+          file << index << " ";
+
+        }
+        file << s->layers->index;
       }
-      file << q << endl;
+      else{
+          file << 1 << " ";
+          int index = findpatternindex(s->p,patlist);
+          if(index < 0){
+            printf("save: pattern not found, cannot save\n");
+            file.close();
+            return -1;
+          }
+        file << index;
+      }
+
+      file << endl;
       m++;
       s = s->next;
     }
@@ -231,55 +302,9 @@ int save(const char* filename){
 
 
 
-//noteoff pointers are broken after loading, fix them
-void repair(){
-  seqpat* s;
-  mevent* e1;
-  mevent* e2;
-  mevent* prev;
-
-  pattern* p = patterns->next;
-
-  int n,m;
-
-  while(p){
-    e1 = p->events;
-    prev = e1;
-    n=-1;
-    while(e1){
-      prev = e1;
-      /*if(e1->type == MIDI_NOTE_ON){
-        e2 = e1;
-        for(m=n; m < e1->off_index; m++){
-          e2 = e2->next;
-        }
-        e1->off = e2;
-      }*/
-      n++;
-      e1 = e1->next;
-      if(e1){
-        e1->prev = prev;
-      }
-    }
-    p = p->next;
-  }
-
-  seqpat* sprev;
-  for(int i=0; i<tracks.size(); i++){
-    s = tracks[i]->head;
-    while(s){
-      sprev = s;
-      s = s->next;
-      if(s){
-        s->prev = sprev;
-      }
-    }
-  }
-
-}
-
 
 int load(const char* filename){
+
 
   if(filename == NULL){
     return -1;
@@ -300,7 +325,48 @@ int load(const char* filename){
   last_filename = filename;
   set_last_dir(filename);
 
-  pattern* pend = patterns;
+  //pattern* pend = patterns;
+  std::list<pattern*> patlist;
+
+
+  //sanity check
+  file >> str;
+  if(str != "J2ULJwCgwHA"){
+    printf("load: this is definitely not a valid file (missing magic)\n");
+    file.close();
+    return -1;
+  }
+  file >> str;
+  if(str != "epichord"){
+    printf("load: this is definitely not a valid file (missing magic)\n");
+    file.close();
+    return -1;
+  }
+  file >> str;
+  if(str != "fileversion"){
+    printf("load: this is definitely not a valid file\n");
+    file.close();
+    return -1;
+  }
+  int M;
+  file >> M;
+  if(M!=FILE_VERSION){
+    printf("load: file has wrong version %d (need %d).\n",M,FILE_VERSION);
+  }
+  file >> str;
+  if(str != "ticksperbeat"){
+    printf("load: file is broken. (missing ticks per beat)\n");
+    file.close();
+    return -1;
+  }
+  int file_tpb;
+  file >> file_tpb;
+  if(file_tpb < 1){
+    printf("load: file is broken. (bad ticks per beat %d)\n",file_tpb);
+    file.close();
+    return -1;
+  }
+
 
   file >> str;
   while(!file.eof()){
@@ -378,12 +444,11 @@ int load(const char* filename){
         file >> e->value1;
         file >> e->value2;
         file >> e->dur;
-        //file >> e->off_index;
+        e->prev = eend;
         eend->next = e;
         eend = e;
       }
-      pend->next = p;
-      pend = p;
+      patlist.push_back(p);
     }
     else if(str == "track"){
       int track_number;
@@ -417,22 +482,42 @@ int load(const char* filename){
           s->track = tracks.size();
           file >> s->tick;
           file >> s->dur;
-          int C;
+          int total_layers;
+          int index;
+          pattern* p;
 
           file >> s->scrollx >> s->scrolly;
-          file >> pattern_number;
-          pattern* p = patterns->next;
-          int n = 0;
-          while(n++ < pattern_number){
-            if(p == NULL){
-              printf("load: error opening file, bad pattern reference\n");
-              file.close();
-              clear();
-              return -1;
-            }
-            p = p->next;
+          file >> total_layers;
+
+          if(total_layers == 1){
+            file >> index;
+            p = findpatternbyindex(index, patlist);
+            s->p = p;
+            s->layers = NULL;
           }
-          s->p = p;
+          else if(total_layers > 1){
+            file >> index;
+            p = findpatternbyindex(index, patlist);
+            layerstack* layers = new layerstack(p);
+
+            for(int j=1; j<total_layers; j++){
+              file >> index;
+              p = findpatternbyindex(index,patlist);
+              layers->push_new(p);
+            }
+
+            file >> layers->index;
+            s->p = layers->array[layers->index];
+            s->layers = layers;
+            layers->ref_c = 1;
+          }
+          else{
+            printf("load: bad number of layers\n");
+            file.close();
+            return -1;
+          }
+
+          s->prev = send;
           send->next = s;
           send = s;
         }
@@ -446,8 +531,6 @@ int load(const char* filename){
 
     file >> str;
   }
-
-  repair();
 
   ui->track_info->update();
 

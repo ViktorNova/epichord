@@ -110,3 +110,16 @@ void TrackInfo::set_rec(int t){
   }
 }
 
+
+
+void TrackInfo::clear(){
+
+}
+
+void TrackInfo::add_track(int n){
+
+}
+
+void TrackInfo::del_track(int n){
+
+}

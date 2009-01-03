@@ -74,4 +74,6 @@ void show_song_edit();
 void show_pattern_edit();
 
 void toggle_tool();
+
+void reset_song();
 #endif

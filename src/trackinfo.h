@@ -39,7 +39,11 @@ class TrackInfo : public fltk::Group {
     void set_rec(int t);
 
     void update();
-  
+
+    void clear();
+    void add_track(int n);
+    void del_track(int n);
+
 };
 
 #endif

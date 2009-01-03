@@ -64,7 +64,7 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {
@@ -113,7 +113,7 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {open
+        {fltk::Group} pattern_edit {
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -203,7 +203,7 @@ ui->event_edit->redraw();}
             xywh {0 0 45 445} horizontal
           } {
             {fltk::Button} {} {
-              label {@line} selected
+              label {@line}
               xywh {0 0 45 15}
             }
             {fltk::Group} {} {open
@@ -352,24 +352,27 @@ o->state(1);}
         }
         {fltk::Button} config_button {
           label conf
-          callback {ui->config_window->show();}
+          callback {ui->config_window->hide();
+ui->config_window->show();}
           tooltip configuration
           xywh {520 5 25 25}
         }
         {fltk::Button} scope_button {
-          callback {ui->scope_window->show();}
+          callback {ui->scope_window->hide();
+ui->scope_window->show();} selected
           tooltip scope
           xywh {550 5 25 25}
         }
         {fltk::Button} file_button {
-          callback {//load(fltk::file_chooser("save file",NULL,"~"));
+          callback {ui->action_window->hide();
 ui->action_window->show();}
           tooltip disk
           xywh {580 5 25 25}
           extra_code {\#include "saveload.h"}
         }
         {fltk::Button} help_button {
-          callback {help_window->show();}
+          callback {help_window->hide();
+help_window->show();}
           tooltip help
           xywh {610 5 25 25}
         }
@@ -464,6 +467,15 @@ set_measures_until_record((int)o->value());}
             tooltip {Auto scroll horizontally when play head leaves viewing area.}
             xywh {5 179 25 26} horizontal align 4 value 1
           }
+          {fltk::ValueInput} default_velocity {
+            label {default velocity}
+            callback {if(o->value() > o->maximum())
+  o->value(o->maximum());
+if(o->value() < o->minimum())
+  o->value(o->minimum());
+set_defaultvelocity((int)o->value());}
+            xywh {120 180 45 20} maximum 127 step 1 value 96
+          }
           {fltk::Choice} menu_recordmode {
             label {record mode} open
             xywh {5 210 160 25}
@@ -497,15 +509,6 @@ set_measures_until_record((int)o->value());}
               label {extend block}
               callback {set_robmode(2);}
               }
-          }
-          {fltk::ValueInput} default_velocity {
-            label {default velocity}
-            callback {if(o->value() > o->maximum())
-  o->value(o->maximum());
-if(o->value() < o->minimum())
-  o->value(o->minimum());
-set_defaultvelocity(o->value());}
-            xywh {120 180 45 20} maximum 127 step 1 value 96
           }
         }
         {fltk::Group} {} {
@@ -794,10 +797,7 @@ set_defaultvelocity(o->value());}
     } {
       {fltk::Button} {} {
         label new
-        callback {clear();
-init_seq();
-track_info->update();
-action_window->hide();}
+        callback {reset_song();}
         xywh {5 5 90 20}
       }
       {fltk::Button} {} {
@@ -815,13 +815,17 @@ save(fltk::file_chooser("save file",NULL,get_last_dir()));}
       {fltk::Button} {} {
         label load
         callback {action_window->hide();
-load(fltk::file_chooser("open file",NULL,get_last_dir()));}
+if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
+  reset_song();
+}}
         xywh {5 65 90 20}
       }
       {fltk::Button} {} {
         label import
         callback {action_window->hide();
-loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()));}
+if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
+  reset_song();
+}}
         xywh {5 85 90 20}
       }
       {fltk::Button} {} {

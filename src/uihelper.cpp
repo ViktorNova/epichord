@@ -688,5 +688,10 @@ void toggle_tool(){
 }
 
 
-
+void reset_song(){
+  clear();
+  init_seq();
+  ui->track_info->update();
+  ui->action_window->hide();
+}
 

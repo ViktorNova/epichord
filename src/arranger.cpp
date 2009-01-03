@@ -793,9 +793,6 @@ void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fl
 
 
 void Arranger::apply_insert(){
-  if(insert_track > tracks.size()-1){
-    return;
-  }
 
   if(!check_insert_safety()){
     return;
@@ -1083,6 +1080,12 @@ int Arranger::check_insert_safety(){
   if(T1>T2){SWAP(T1,T2);}
 
   if(T1 < 0){
+    return 0;
+  }
+  if(insert_track > tracks.size()-1){
+    return 0;
+  }
+  if(tracks[insert_track]==NULL){
     return 0;
   }
 
