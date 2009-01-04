@@ -1179,7 +1179,9 @@ int loadsmf(const char* filename){
                 scope_print(tbuf);
                 free(tbuf);
 
-                set_beats_per_minute(60000000/micros);
+                if(time==0){
+                  set_beats_per_minute(60000000/micros);
+                }
 
                 break;
               case 84://smpte offset
