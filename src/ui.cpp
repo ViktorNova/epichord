@@ -193,34 +193,50 @@ void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
-inline void UI::cb_config_button_i(fltk::Button*, void*) {
-  ui->config_window->hide();
-  ui->config_window->show();
-}
+inline void UI::cb_config_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->config_window->show();
+  }
+  else{
+    ui->config_window->hide();
+  }
+;}
 void UI::cb_config_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_config_button_i(o,v);
 }
 
-inline void UI::cb_scope_button_i(fltk::Button*, void*) {
-  ui->scope_window->hide();
-  ui->scope_window->show();
-}
+inline void UI::cb_scope_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->scope_window->show();
+  }
+  else{
+    ui->scope_window->hide();
+  }
+;}
 void UI::cb_scope_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_scope_button_i(o,v);
 }
 
-inline void UI::cb_file_button_i(fltk::Button*, void*) {
-  ui->action_window->hide();
-  ui->action_window->show();
-}
+inline void UI::cb_file_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->action_window->show();
+  }
+  else{
+    ui->action_window->hide();
+  }
+;}
 void UI::cb_file_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_file_button_i(o,v);
 }
 
-inline void UI::cb_help_button_i(fltk::Button*, void*) {
-  help_window->hide();
-  help_window->show();
-}
+inline void UI::cb_help_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->help_window->show();
+  }
+  else{
+    ui->help_window->hide();
+  }
+;}
 void UI::cb_help_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_help_button_i(o,v);
 }
@@ -670,18 +686,22 @@ UI::UI() {
        {fltk::Button* o = config_button = new fltk::Button(520, 5, 25, 25, "conf");
         o->callback((fltk::Callback*)cb_config_button);
         o->tooltip("configuration");
+        o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = scope_button = new fltk::Button(550, 5, 25, 25);
         o->callback((fltk::Callback*)cb_scope_button);
         o->tooltip("scope");
+        o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = file_button = new fltk::Button(580, 5, 25, 25);
         o->callback((fltk::Callback*)cb_file_button);
         o->tooltip("disk");
+        o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = help_button = new fltk::Button(610, 5, 25, 25);
         o->callback((fltk::Callback*)cb_help_button);
         o->tooltip("help");
+        o->type(fltk::Button::TOGGLE);
       }
       o->end();
     }

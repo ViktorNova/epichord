@@ -29,7 +29,7 @@ decl {/*
    Boston, MA  02110-1301, USA
 */} {} 
 
-decl {\#include <stdlib.h>} {}
+decl {\#include <stdlib.h>} {} 
 
 decl {\#include <fltk/events.h>} {} 
 
@@ -57,7 +57,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open selected
+save_config();} open
       xywh {31 41 640 480} resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
@@ -238,7 +238,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -354,29 +354,49 @@ o->state(1);}
         }
         {fltk::Button} config_button {
           label conf
-          callback {ui->config_window->hide();
-ui->config_window->show();}
+          callback {if(o->state()){
+  ui->config_window->show();
+}
+else{
+  ui->config_window->hide();
+}}
           tooltip configuration
           xywh {520 5 25 25}
+          extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} scope_button {
-          callback {ui->scope_window->hide();
-ui->scope_window->show();}
+          callback {if(o->state()){
+  ui->scope_window->show();
+}
+else{
+  ui->scope_window->hide();
+}}
           tooltip scope
           xywh {550 5 25 25}
+          extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} file_button {
-          callback {ui->action_window->hide();
-ui->action_window->show();}
+          callback {if(o->state()){
+  ui->action_window->show();
+}
+else{
+  ui->action_window->hide();
+}}
           tooltip disk
           xywh {580 5 25 25}
-          extra_code {\#include "saveload.h"}
+          extra_code {\#include "saveload.h"
+o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} help_button {
-          callback {help_window->hide();
-help_window->show();}
+          callback {if(o->state()){
+  ui->help_window->show();
+}
+else{
+  ui->help_window->hide();
+}} selected
           tooltip help
           xywh {610 5 25 25}
+          extra_code {o->type(fltk::Button::TOGGLE);}
         }
       }
     }
