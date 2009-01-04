@@ -20,7 +20,7 @@
    Boston, MA  02110-1301, USA
 */
 
-#include <unistd.h>
+#include <stdlib.h>
 
 #include <fltk/run.h>
 #include <fltk/Group.h>
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
 
   load_config();
 
-  init_seq();
+  reset_song();
   if(init_backend(&argc, &argv) < 0){
     return 1;
   }

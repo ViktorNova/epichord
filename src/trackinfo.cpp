@@ -34,25 +34,22 @@
 
 extern UI* ui;
 
-static std::vector<TrackModule*> modules;
-
 extern std::vector<track*> tracks;
 
 TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label = 0) : fltk::Group(x, y, w, h, label)
 {
-  begin();
+  //begin();
 
-  TrackModule* mod;
-  for(int i=0; i<16; i++){
-    mod = new TrackModule(0,30*i,255,30,i);
-    mod->box(fltk::UP_BOX);
-    mod->index = i;
-    mod->set_channel(i);
-    modules.push_back(mod);
-    add(mod);
-  }
+  //TrackModule* mod;
+  //for(int i=0; i<16; i++){
+    //mod = new TrackModule(0,30*i,255,30,i);
+    //mod->box(fltk::UP_BOX);
+    //mod->index = i;
+    //mod->set_channel(i);
+    //add(mod);
+ // }
 
-  end();
+  //end();
 }
 
 int TrackInfo::handle(int event){
@@ -79,10 +76,9 @@ void TrackInfo::layout(){
 }
 
 void TrackInfo::toggle_controls(){
-  for(int i=0; i<modules.size(); i++){
-    modules[i]->toggle();
+  for(int i=0; i<children(); i++){
+    ((TrackModule*)child(i))->toggle();
   }
-  //fltk::Group::redraw();
 }
 
 
@@ -110,3 +106,23 @@ void TrackInfo::set_rec(int t){
   }
 }
 
+
+
+void TrackInfo::clear_tracks(){
+  clear();
+}
+
+void TrackInfo::add_track(){
+  int i = tracks.size()-1;
+  TrackModule* mod = new TrackModule(0,30*i,255,30,i);
+
+  mod->box(fltk::UP_BOX);
+  mod->index = i;
+  mod->set_channel(i%16);
+
+  add(mod);
+}
+
+void TrackInfo::del_track(int n){
+
+}

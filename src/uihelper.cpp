@@ -137,6 +137,9 @@ void update_config_gui(){
   ui->measures_per_phrase->value(config.measures_per_phrase);
   ui->measures_until_record->value(config.measures_until_record);
 
+  ui->bpm_wheel->value(config.beats_per_minute);
+  ui->bpm_output->value(config.beats_per_minute);
+
   ui->check_alwayscopy->state(config.alwayscopy);
   ui->check_autotrackname->state(config.autotrackname);
   ui->check_passthru->state(config.passthru);
@@ -577,6 +580,11 @@ void set_measures_per_phrase(int n){
   ui->pattern_timeline->redraw();
 }
 
+void set_beats_per_minute(int n){
+  config.beats_per_minute = n;
+  set_bpm(n);
+}
+
 void set_measures_until_record(int n){
   config.measures_until_record = n;
 }
@@ -691,4 +699,30 @@ void toggle_tool(){
 
 
 
+void reset_song(){
+  clear();
 
+  track* t;
+  for(int i=0; i<16; i++){
+    t = new track();
+    t->head->track = i;
+    t->chan = i;
+    add_track(t);
+  }
+
+  set_rec_track(0);
+  ui->track_info->set_rec(0);
+  ui->track_info->update();
+  ui->action_window->hide();
+}
+
+
+
+void add_track(track* t){
+  tracks.push_back(t);
+  ui->track_info->add_track();
+}
+
+void remove_track(int n){
+
+}

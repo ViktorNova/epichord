@@ -356,6 +356,7 @@ int Arranger::handle(int event){
           }
         }
         delete_flag=0;
+        //last_handle==NULL;
       }
 
 
@@ -793,9 +794,6 @@ void Arranger::get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fl
 
 
 void Arranger::apply_insert(){
-  if(insert_track > tracks.size()-1){
-    return;
-  }
 
   if(!check_insert_safety()){
     return;
@@ -822,6 +820,8 @@ void Arranger::apply_box(){
   int K2 = box_k2;
   if(T1>T2){SWAP(T1,T2);}
   if(K1>K2){SWAP(K1,K2);}
+  if(K1 < 0){K1 = 0;}
+  if(K2 > tracks.size()-1){K2 = tracks.size()-1;}
   for(int i=K1; i<=K2; i++){
     s = tracks[i]->head->next;
     while(s){
@@ -1083,6 +1083,12 @@ int Arranger::check_insert_safety(){
   if(T1>T2){SWAP(T1,T2);}
 
   if(T1 < 0){
+    return 0;
+  }
+  if(insert_track > tracks.size()-1){
+    return 0;
+  }
+  if(tracks[insert_track]==NULL){
     return 0;
   }
 

@@ -33,7 +33,6 @@
 #include "backend.h"
 
 std::vector<track*> tracks;
-pattern* patterns;
 
 std::list<Command*> undo_stack;
 std::list<int> undo_number;
@@ -45,56 +44,6 @@ int rec_track = 0;
 
 static float default_hsv_value = 0.8;
 
-int init_seq(){
-
-  patterns = new pattern();
-
-  track* t;
-  for(int i=0; i<16; i++){
-    t = new track();
-    t->head->track = i;
-    t->chan = i;
-    tracks.push_back(t);
-  }
-
-
-
-}
-
-
-void pattern_add(pattern* p){
-  //printf("pattern_add: adding pattern %p\n",p);
-  pattern* ptr = patterns;
-  while(ptr->next){
-    ptr = ptr->next;
-  }
-  ptr->next = p;
-}
-
-
-void pattern_remove(pattern* p){
-  //printf("pattern_remove: %p removing\n",p);
-  pattern* ptr = patterns;
-  pattern* prev = patterns;
-  while(ptr){
-    if(ptr==p){
-      if(ptr!=patterns){
-        prev->next = ptr->next;
-      }
-      return;
-    }
-    prev=ptr;
-    ptr=ptr->next;
-  }
-  printf("pattern_remove: pattern %p not found. not good.\n",p);
-}
-
-
-void pattern_clear(){
-  while(patterns->next){
-    delete patterns->next;
-  }
-}
 
 
 
@@ -590,6 +539,10 @@ mevent* find_off(mevent* e){
 
 
 
+
+
+
+
 pattern::pattern(){
   events = new mevent();//dummy
   events->tick = 0;
@@ -600,9 +553,6 @@ pattern::pattern(){
   v=0.8;
   regen_colors();
 
-  if(patterns){
-    pattern_add(this);
-  }
 }
 
 pattern::~pattern(){
@@ -614,9 +564,6 @@ pattern::~pattern(){
     e = next;
   }
 
-  if(this != patterns){
-    pattern_remove(this);
-  }
 }
 
 pattern::pattern(pattern* p){
@@ -640,7 +587,6 @@ pattern::pattern(pattern* p){
     v = p->v;
     regen_colors();
 
-    pattern_add(this);
 }
 
 void pattern::regen_colors(){
@@ -663,6 +609,45 @@ void pattern::regen_colors(){
   }
 
 }
+
+void pattern::append(mevent* ze){
+  mevent* e = events;
+  while(e->next){
+    e = e->next;
+  }
+  e->next = ze;
+  ze->prev = e;
+}
+
+void pattern::insert(mevent* ze, int tick){
+  mevent* ptr = events;
+  while(ptr->next){
+    if(ptr->next->tick > tick){
+      ze->next = ptr->next;
+      ze->next->prev = ze;
+      ptr->next = ze;
+      ze->prev = ptr;
+      return;
+    }
+    ptr=ptr->next;
+  }
+  ptr->next = ze;
+  ze->prev = ptr;
+}
+
+
+void pattern::fixdur(){
+  mevent* e = events;
+  mevent* f;
+  while(e->next){
+    if(e->type == MIDI_NOTE_ON){
+      f = find_off(e);
+      if(f){e->dur = f->tick - e->tick;}
+    }
+    e = e->next;
+  }
+}
+
 
 
 //used when the sequence is changed in such a way 
@@ -837,6 +822,9 @@ void seqpat::autocomplete(){
     e = e->next;
   }
 }
+
+
+
 
 
 

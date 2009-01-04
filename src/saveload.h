@@ -20,6 +20,8 @@
    Boston, MA  02110-1301, USA
 */
 
+#define FILE_VERSION 0
+
 int clear();
 
 const char* get_last_dir();

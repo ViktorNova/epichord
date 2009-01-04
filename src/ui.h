@@ -32,6 +32,7 @@
 #include <fltk/Input.h>
 #include <fltk/TextEditor.h>
 #include <fltk/TextDisplay.h>
+#include <fltk/InvisibleBox.h>
 
 class UI  {
 public:
@@ -226,6 +227,11 @@ private:
         inline void cb_check_follow_i(fltk::CheckButton*, void*);
         static void cb_check_follow(fltk::CheckButton*, void*);
 public:
+        fltk::ValueInput *default_velocity;
+private:
+        inline void cb_default_velocity_i(fltk::ValueInput*, void*);
+        static void cb_default_velocity(fltk::ValueInput*, void*);
+public:
         fltk::Choice *menu_recordmode;
 private:
           inline void cb_merge_i(fltk::Item*, void*);
@@ -243,11 +249,6 @@ private:
           static void cb_new(fltk::Item*, void*);
           inline void cb_extend_i(fltk::Item*, void*);
           static void cb_extend(fltk::Item*, void*);
-public:
-        fltk::ValueInput *default_velocity;
-private:
-        inline void cb_default_velocity_i(fltk::ValueInput*, void*);
-        static void cb_default_velocity(fltk::ValueInput*, void*);
 public:
         KeyGrabber *kg_l0;
         KeyGrabber *kg_l1;
@@ -316,5 +317,8 @@ private:
 public:
   fltk::Window *scope_window;
     fltk::TextDisplay *scope;
+private:
+      inline void cb_on_i(fltk::Button*, void*);
+      static void cb_on(fltk::Button*, void*);
 };
 #endif

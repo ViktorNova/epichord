@@ -547,10 +547,13 @@ void PianoRoll::layout(){
   ui->pattern_timeline->zoom = zoom;
   ui->event_edit->zoom = zoom;
 
+
   if(cur_seqpat){
     int W = tick2xpix(cur_seqpat->dur);
     resize(W+300,h());
   }
+
+
 
   int wp = ui->pattern_scroll->w();
   if(wp > w()){
@@ -562,8 +565,10 @@ void PianoRoll::layout(){
     h(hp+120);
   }
 
+
   int xp = ui->pattern_scroll->xposition();
   int yp = ui->pattern_scroll->yposition();
+
 
   if(xp > w() - wp){
     xp = w() - wp;
@@ -594,6 +599,9 @@ void PianoRoll::layout(){
 
 
 void PianoRoll::load(seqpat* s){
+
+  ui->pattern_scroll->scrollTo(0,300);
+
   cur_seqpat = s;
   cur_track = tracks[s->track];
   int W = tick2xpix(s->dur);
@@ -601,6 +609,8 @@ void PianoRoll::load(seqpat* s){
 
   ui->pattern_timeline->ticks_offset = s->tick;
 }
+
+
 
 int PianoRoll::note2ypix(int note){
   int udy = 6*(note + (note+7)/12 + note/12) + 12;

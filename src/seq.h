@@ -31,8 +31,7 @@
 #define MIDI_CHANNEL_PRESSURE 0xD0
 #define MIDI_PITCH_WHEEL 0xE0
 
-#define MAX_TRACK_NAME 256
-
+#include <stdlib.h>
 #include <stdio.h>
 struct mevent {
 
@@ -109,13 +108,15 @@ struct pattern {
   pattern();
   pattern(pattern* p);
   ~pattern();
+  void append(mevent* ze);
+  void insert(mevent* ze, int tick);
+  void fixdur();
 };
 
 
 
 struct layerstack {
   pattern** array;
-  pattern* ptr;
 
   int index;
   int total;
@@ -165,6 +166,7 @@ struct seqpat {
   void record_check(int mode);
   void autocomplete();
 
+
   seqpat(){
     p = NULL;
     skip = NULL;
@@ -177,6 +179,8 @@ struct seqpat {
     lhandle=0;
     record_flag=1;
     layers = NULL;
+    scrollx = 0;
+    scrolly = 300;
   }
 
   seqpat(int ztrack, int ztick, int zdur, pattern* zp){
@@ -194,6 +198,8 @@ struct seqpat {
     lhandle = 0;
     record_flag = 1;
     layers = NULL;
+    scrollx = 0;
+    scrolly = 300;
   }
 
   seqpat(seqpat* zs){
@@ -275,7 +281,7 @@ struct track {
   int solo;
   int vol;
   int pan;
-  char name[MAX_TRACK_NAME];
+  char* name;
   int alive;
   seqpat* head;
   seqpat* skip;
@@ -293,6 +299,7 @@ struct track {
     solo = 0;
     vol = 127;
     pan = 64;
+    name = (char*)malloc(8);
     name[0] = '\0';
     alive = 1;
     head = new seqpat(0,0,0,new pattern());
@@ -302,6 +309,7 @@ struct track {
   }
 
   ~track(){
+    free(name);
     seqpat* s = head;
     seqpat* next;
     while(s){
@@ -670,8 +678,6 @@ class ChangeEvent : public Command {
 
 
 
-int init_seq();
-
 int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick));
 int set_seq_pos(int new_tick);
 
@@ -685,7 +691,7 @@ void undo_push(int n);
 void do_undo();
 void do_redo();
 
-void pattern_clear();
+
 void reset_record_flags();
 
 

@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <list>
 
 #include <limits>
 
@@ -48,7 +49,7 @@
 extern UI* ui;
 
 extern std::vector<track*> tracks;
-extern pattern* patterns;
+
 
 extern struct conf config;
 
@@ -65,6 +66,58 @@ void nextline(ifstream& f){
 }
 
 
+std::list<pattern*> collectpatterns(){
+  std::list<pattern*> patlist;
+
+  for(int i=0; i<tracks.size(); i++){
+    seqpat* s = tracks[i]->head->next;
+    while(s){
+      if(s->layers){
+        for(int j=0; j<s->layers->total; j++){
+          pattern* p = s->layers->array[j];
+          patlist.push_back(p);
+        }
+      }
+      else{
+        patlist.push_back(s->p);
+      }
+      s=s->next;
+    }
+  }
+
+  patlist.sort();
+  patlist.unique();
+
+  return patlist;
+}
+
+int findpatternindex(pattern* p, std::list<pattern*>& patlist){
+  std::list<pattern*>::iterator i = patlist.begin();
+  int q = 0;
+  while(i != patlist.end()){
+    if(*i==p){
+      return q;
+    }
+    q++;
+    i++;
+  }
+  return -1;
+}
+
+pattern* findpatternbyindex(int index, std::list<pattern*>& patlist){
+  std::list<pattern*>::iterator i = patlist.begin();
+  int q = 0;
+  while(i != patlist.end()){
+    if(q==index){
+      return *i;
+    }
+    q++;
+    i++;
+  }
+  return NULL;
+}
+
+
 int clear(){
 
   pause_backend();
@@ -78,13 +131,12 @@ int clear(){
 
   track* t;
   int total = tracks.size();
+
   for(int i=0; i<total; i++){
     t = tracks[tracks.size()-1];
     tracks.pop_back();
     delete t;
   }
-
-  pattern_clear();
 
   set_bpm(120);
 
@@ -93,6 +145,8 @@ int clear(){
 
   fltk::TextBuffer* tb = ui->info_text->buffer();
   tb->text("");
+
+  ui->track_info->clear_tracks();
 
   ui->main_window->redraw();
 
@@ -138,6 +192,12 @@ int save(const char* filename){
   last_filename = filename;
   set_last_dir(filename);
 
+  //header to protect against accidentally opening wrong file
+  file << "J2ULJwCgwHA" << endl;
+  file << "epichord" << endl;
+  file << "fileversion " << FILE_VERSION << endl;
+  file << "ticksperbeat " << TICKS_PER_BEAT << endl << endl;
+
   //write song info
   file << "title " << ui->title_text->size() << " "
                    << ui->title_text->text() << endl;
@@ -155,41 +215,37 @@ int save(const char* filename){
 
   file << endl;
 
+
+  //collect all visible patterns
+  std::list<pattern*> patlist = collectpatterns();
+
   //for each pattern
-  pattern* p = patterns->next;
+  std::list<pattern*>::iterator p = patlist.begin();
   mevent* e;
   int P = 0;
-  while(p){
+  while(p != patlist.end()){
     file << "pattern " << endl;
-    file << p->h << " " << p->s << " " << p->v << endl;
-    e = p->events->next;
+    file << (*p)->h << " " << (*p)->s << " " << (*p)->v << endl;
+    e = (*p)->events->next;
     mevent* eoff;
     int n = 0;
     int m = n;
+    int last_tick = 0;
+    int delta;
     while(e){
+      delta = e->tick - last_tick;
+      last_tick = e->tick;
+      file << delta << " ";
       file << e->type << " ";
-      file << e->tick << " ";
       file << e->value1 << " ";
-      file << e->value2 << " ";
-      file << e->dur << endl;
-      /*if(e->off){
-        eoff = p->events->next;
-        m = 0;
-        while(eoff != e->off){
-          m++;
-          eoff = eoff->next;
-        }
-        file << m << endl;
-      }
-      else{
-        file << -1 << endl;
-      }*/
+      file << e->value2 << endl;
+      //file << e->dur << endl;
       n++;
       e = e->next;
     }
     P++;
     file << -1 << endl << endl;
-    p = p->next;
+    p++;
   }
 
   seqpat* s;
@@ -203,7 +259,7 @@ int save(const char* filename){
     file << "solo " << tracks[i]->solo << endl;
     file << "vol " << tracks[i]->vol << endl;
     file << "pan " << tracks[i]->pan << endl;
-    file << "name " << strlen(tracks[i]->name) << " " 
+    file << "name " << strlen(tracks[i]->name) << " "
                     << tracks[i]->name << endl;
     file << "alive " << tracks[i]->alive << endl;
     s = tracks[i]->head->next;
@@ -212,13 +268,34 @@ int save(const char* filename){
       file << endl << endl << "seqpat " << endl;
       file << s->tick << " " << s->dur << endl;
       file << s->scrollx << " " << s->scrolly << endl;
-      p = patterns->next;
-      int q = 0;
-      while(p != s->p){
-        q++;
-        p = p->next;
+
+      if(s->layers){
+        file << s->layers->total << " ";
+        for(int j=0; j<s->layers->total; j++){
+
+          int index = findpatternindex(s->layers->array[j],patlist);
+          if(index < 0){
+            printf("save: pattern not found, cannot save\n");
+            file.close();
+            return -1;
+          }
+          file << index << " ";
+
+        }
+        file << s->layers->index;
       }
-      file << q << endl;
+      else{
+          file << 1 << " ";
+          int index = findpatternindex(s->p,patlist);
+          if(index < 0){
+            printf("save: pattern not found, cannot save\n");
+            file.close();
+            return -1;
+          }
+        file << index;
+      }
+
+      file << endl;
       m++;
       s = s->next;
     }
@@ -234,55 +311,9 @@ int save(const char* filename){
 
 
 
-//noteoff pointers are broken after loading, fix them
-void repair(){
-  seqpat* s;
-  mevent* e1;
-  mevent* e2;
-  mevent* prev;
-
-  pattern* p = patterns->next;
-
-  int n,m;
-
-  while(p){
-    e1 = p->events;
-    prev = e1;
-    n=-1;
-    while(e1){
-      prev = e1;
-      /*if(e1->type == MIDI_NOTE_ON){
-        e2 = e1;
-        for(m=n; m < e1->off_index; m++){
-          e2 = e2->next;
-        }
-        e1->off = e2;
-      }*/
-      n++;
-      e1 = e1->next;
-      if(e1){
-        e1->prev = prev;
-      }
-    }
-    p = p->next;
-  }
-
-  seqpat* sprev;
-  for(int i=0; i<tracks.size(); i++){
-    s = tracks[i]->head;
-    while(s){
-      sprev = s;
-      s = s->next;
-      if(s){
-        s->prev = sprev;
-      }
-    }
-  }
-
-}
-
 
 int load(const char* filename){
+
 
   if(filename == NULL){
     return -1;
@@ -303,7 +334,48 @@ int load(const char* filename){
   last_filename = filename;
   set_last_dir(filename);
 
-  pattern* pend = patterns;
+  //pattern* pend = patterns;
+  std::list<pattern*> patlist;
+
+
+  //sanity check
+  file >> str;
+  if(str != "J2ULJwCgwHA"){
+    printf("load: this is definitely not a valid file (missing magic)\n");
+    file.close();
+    return -1;
+  }
+  file >> str;
+  if(str != "epichord"){
+    printf("load: this is definitely not a valid file (missing magic)\n");
+    file.close();
+    return -1;
+  }
+  file >> str;
+  if(str != "fileversion"){
+    printf("load: this is definitely not a valid file\n");
+    file.close();
+    return -1;
+  }
+  int M;
+  file >> M;
+  if(M!=FILE_VERSION){
+    printf("load: file has wrong version %d (need %d).\n",M,FILE_VERSION);
+  }
+  file >> str;
+  if(str != "ticksperbeat"){
+    printf("load: file is broken. (missing ticks per beat)\n");
+    file.close();
+    return -1;
+  }
+  int file_tpb;
+  file >> file_tpb;
+  if(file_tpb < 1){
+    printf("load: file is broken. (bad ticks per beat %d)\n",file_tpb);
+    file.close();
+    return -1;
+  }
+
 
   file >> str;
   while(!file.eof()){
@@ -372,21 +444,26 @@ int load(const char* filename){
       int off_index;
       int type;
       mevent* e;
+      int tick = 0;
+      int delta;
       while(1){
-        file >> type;
-        if(type == -1){break;}
         e = new mevent();
-        e->type = type;
-        file >> e->tick;
+
+        file >> delta;
+        if(delta == -1){delete e; break;}
+        tick += delta;
+        e->tick = tick;
+
+        file >> e->type;
         file >> e->value1;
         file >> e->value2;
-        file >> e->dur;
-        //file >> e->off_index;
+        //file >> e->dur;
+        e->prev = eend;
         eend->next = e;
         eend = e;
       }
-      pend->next = p;
-      pend = p;
+      p->fixdur();
+      patlist.push_back(p);
     }
     else if(str == "track"){
       int track_number;
@@ -408,10 +485,10 @@ int load(const char* filename){
         else if(key == "name"){
           file >> n;
           file.get();
-          char buf[256];
+          char* buf = (char*)malloc(n+1);
           file.read(buf,n);
           buf[n] = '\0';
-          strncpy(t->name,buf,256);
+          t->name = buf;
         }
         else if(key == "alive"){ file >> t->alive; }
         else if(key == "seqpat"){
@@ -420,28 +497,49 @@ int load(const char* filename){
           s->track = tracks.size();
           file >> s->tick;
           file >> s->dur;
-          int C;
+          int total_layers;
+          int index;
+          pattern* p;
 
           file >> s->scrollx >> s->scrolly;
-          file >> pattern_number;
-          pattern* p = patterns->next;
-          int n = 0;
-          while(n++ < pattern_number){
-            if(p == NULL){
-              printf("load: error opening file, bad pattern reference\n");
-              file.close();
-              clear();
-              return -1;
-            }
-            p = p->next;
+          file >> total_layers;
+
+          if(total_layers == 1){
+            file >> index;
+            p = findpatternbyindex(index, patlist);
+            s->p = p;
+            s->layers = NULL;
           }
-          s->p = p;
+          else if(total_layers > 1){
+            file >> index;
+            p = findpatternbyindex(index, patlist);
+            layerstack* layers = new layerstack(p);
+
+            for(int j=1; j<total_layers; j++){
+              file >> index;
+              p = findpatternbyindex(index,patlist);
+              layers->push_new(p);
+            }
+
+            file >> layers->index;
+            s->p = layers->array[layers->index];
+            s->layers = layers;
+            layers->ref_c = 1;
+          }
+          else{
+            printf("load: bad number of layers\n");
+            file.close();
+            return -1;
+          }
+
+          s->prev = send;
           send->next = s;
           send = s;
         }
         file >> key;
       }
       tracks.push_back(t);
+      ui->track_info->add_track();
     }
     else{
       file.ignore(std::numeric_limits<streamsize>::max(),'\n');
@@ -450,10 +548,11 @@ int load(const char* filename){
     file >> str;
   }
 
-  repair();
-
+  set_rec_track(0);
+  ui->track_info->set_rec(0);
   ui->track_info->update();
 
+  ui->arranger->reset_handle();
   ui->arranger->redraw();
 
   reset_backend(0);
@@ -735,6 +834,23 @@ int loadsmf(const char* filename){
   char* tbuf;
   uint32_t size;
   uint32_t micros;
+  int N = 0;
+  int tempo_flag = 0;
+
+  std::list<pattern*> patlist;
+  std::vector<int> chanlist;
+  std::vector<int> proglist;
+  std::vector<int> banklist;
+
+  std::vector<track*> extratracks;
+
+  std::vector<char*> tracknames;
+
+  int maxblockdur = 0;
+
+  for(int i=0; i<16; i++){
+    extratracks.push_back(NULL);
+  }
 
   while(!file.eof()){
 
@@ -823,6 +939,9 @@ int loadsmf(const char* filename){
         return -1;
       }
 
+      pattern* p = new pattern();
+      mevent* e;
+
       trackindex++;
       snprintf(sbuf,256," track %d\n",trackindex);
       scope_print(sbuf);
@@ -839,6 +958,12 @@ int loadsmf(const char* filename){
       int tick = 0;
       int endtrack=0;
 
+      chanlist.push_back(-1);
+      banklist.push_back(-1);
+      proglist.push_back(-1);
+
+      tracknames.push_back(NULL);
+
       /***read events***/
       while(!endtrack){
 
@@ -849,8 +974,11 @@ int loadsmf(const char* filename){
           return -1;
         }
         time += delta;
-        tick = time*128/tpb;
+        tick = time*TICKS_PER_BEAT/tpb;
 
+        if(tick > maxblockdur){
+          maxblockdur = tick;
+        }
 
         int last_byte0;
         file.read((char*)buf,1);
@@ -868,52 +996,78 @@ int loadsmf(const char* filename){
           int type = byte0&0xf0;
           int chan = byte0&0x0f;
 
+          if(chanlist[N]==-1){
+            chanlist[N]=chan;
+          }
+
           if(byte1<0){//didnt read byte1 yet
             file.read((char*)buf,1);
             byte1 = buf[0];
           }
 
+
+
           int val1 = byte1;
           int val2;
-          switch(type){
-            case 0xC0:
-            case 0xD0:
-              break;
-            default:
+
+          if(!(type == 0xC0 || type == 0xD0)){
               file.read((char*)buf,1);
               val2 = buf[0];
-              break;
           }
 
-          Command* c;
+          e = new mevent(type,tick,val1);
+
+
           switch(type){
-            case 0x80://note off
-              //c = new CreateNoteOff(p,value1,value2,tick);
-              //set_undo(c);
-              //U++;
-              break;
             case 0x90://note on
-if(val2==0){/*consider this a note off*/}
+              if(val2==0){//fake note off
+                e->type = 0x80;
+              }
+              e->value2 = val2;
               break;
+            case 0x80://note off
             case 0xA0://aftertouch
-
-              break;
             case 0xB0://controller change
-
+            case 0xE0://pitchbend
+              if(type==0xB0 && val1==0x00 && banklist[N]==-1){
+                banklist[N]=val2;
+              }
+              e->value2 = val2;
               break;
-            case 0xC0://program change
 
+            case 0xC0://program change
+              if(proglist[N]==-1){
+                proglist[N]=val1;
+              }
               break;
             case 0xD0://channel pressure
-
-              break;
-            case 0xE0://pitchbend
-
               break;
             default:
               printf("unrecognized channel event %d\n",type);
               file.close();
               return -1;
+          }
+
+          if(chan!=chanlist[N]){//put event in the a misfit track
+            //printf("mistfit N=%d chan=%d type=%d\n",chanlist[N],chan,type);
+            if(extratracks[chan] == NULL){
+              track* t = new track();
+              t->chan = chan;
+              t->prog = -1;
+              t->port = 0;
+              t->bank = -1;
+
+              extratracks[chan] = t;
+              seqpat* s = new seqpat();
+              t->head->next = s;
+              s->prev = t->head;
+              s->p = new pattern();
+              //more track setup
+            }
+            extratracks[chan]->head->next->p->insert(e,tick);
+          }
+          else{//put it in a normal track
+            p->append(e);
           }
 
         }
@@ -955,6 +1109,10 @@ if(val2==0){/*consider this a note off*/}
                 asprintf(&tbuf,"  %d text: \"%s\"\n",time,abuf);
                 scope_print(tbuf);
                 free(tbuf);
+
+                ui->info_text->buffer()->append(abuf);
+                ui->info_text->buffer()->append("\n");
+
                 break;
               case 2://copyright notice
                 file.read((char*)abuf,size);
@@ -969,6 +1127,10 @@ if(val2==0){/*consider this a note off*/}
                 asprintf(&tbuf,"  %d track name: \"%s\"\n",time,abuf);
                 scope_print(tbuf);
                 free(tbuf);
+
+                tracknames[N] = (char*)malloc(sizeof(char)*(size+1));
+                strncpy(tracknames[N],abuf,size+1);
+
                 break;
               case 4://instrument name
                 file.read((char*)abuf,size);
@@ -1024,11 +1186,24 @@ if(val2==0){/*consider this a note off*/}
                   return -1;
                 }
                 file.read((char*)buf,3);
-                buf[3]=0;
-                micros = ntohl(*(unsigned*)buf);
+
+                buf[3] = buf[2];
+                buf[2] = buf[1];
+                buf[1] = buf[0];
+                buf[0] = 0;
+
+                micros = *(unsigned*)buf;
+                micros = ntohl(micros);
+
                 asprintf(&tbuf,"  %d set tempo: %d us/quarter\n",time,micros);
                 scope_print(tbuf);
                 free(tbuf);
+
+                if(time==0){
+                  tempo_flag = 1;
+                  set_beats_per_minute(60000000/micros);
+                }
+
                 break;
               case 84://smpte offset
                 if(size!=5){
@@ -1133,9 +1308,26 @@ if(val2==0){/*consider this a note off*/}
             file.close();
             return -1;
           }
+
         }
 
       }
+
+      if(proglist[N]==-1){
+        proglist[N]=0;
+      }
+      if(banklist[N]==-1){
+        banklist[N]=0;
+      }
+      if(chanlist[N]==-1){
+        chanlist[N]=0;
+      }
+      N++;
+
+
+      p->fixdur();
+
+      patlist.push_back(p);
 
       file.read((char*)buf,4);//read first byte of next track or EOF
     }
@@ -1143,6 +1335,57 @@ if(val2==0){/*consider this a note off*/}
   }
 
   scope_print("End Of File\n\n");
+  file.close();
+
+  //TODO set up track settings using data remembered from the reading
+  std::list<pattern*>::iterator p = patlist.begin();
+  int i=0;
+  while(p!=patlist.end()){
+    track* t = new track();
+    seqpat* s = new seqpat(i,0,128*64,*p);
+    int Q = TICKS_PER_BEAT;
+    s->dur = maxblockdur / Q * Q + Q;
+    t->head->next = s;
+    s->prev = t->head;
+    t->skip = s;
+
+    s->p->h = 360*i / 16;
+    s->p->v = 0.8;
+    while(s->p->h > 360){s->p->h -= 360;}
+    s->p->regen_colors();
+
+    t->chan = chanlist[i];
+    t->prog = proglist[i];
+    t->bank = banklist[i];
+    t->port = 0;
+
+    if(tracknames[i]){
+      t->name = tracknames[i];
+    }
+    else{
+      t->name = (char*)malloc(8);
+      t->name[0] = '\0';
+    }
+
+    add_track(t);
+    p++;
+    i++;
+  }
+
+  if(tempo_flag == 0){
+    set_beats_per_minute(120);
+  }
+
+  set_rec_track(0);
+  ui->track_info->set_rec(0);
+  ui->track_info->update();
+
+  ui->arranger->reset_handle();
+  ui->arranger->redraw();
+
+  update_config_gui();
+
+  reset_backend(0);
 
   return 0;
 }

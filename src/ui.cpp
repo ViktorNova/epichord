@@ -22,6 +22,7 @@
    51 Franklin Street, Fifth Floor
    Boston, MA  02110-1301, USA
 */
+#include <stdlib.h>
 #include <fltk/events.h>
 #include <fltk/file_chooser.h>
 #include "backend.h"
@@ -192,31 +193,50 @@ void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
-inline void UI::cb_config_button_i(fltk::Button*, void*) {
-  ui->config_window->show();
-}
+inline void UI::cb_config_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->config_window->show();
+  }
+  else{
+    ui->config_window->hide();
+  }
+;}
 void UI::cb_config_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_config_button_i(o,v);
 }
 
-inline void UI::cb_scope_button_i(fltk::Button*, void*) {
-  ui->scope_window->show();
-}
+inline void UI::cb_scope_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->scope_window->show();
+  }
+  else{
+    ui->scope_window->hide();
+  }
+;}
 void UI::cb_scope_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_scope_button_i(o,v);
 }
 
-inline void UI::cb_file_button_i(fltk::Button*, void*) {
-  //load(fltk::file_chooser("save file",NULL,"~"));
-  ui->action_window->show();
-}
+inline void UI::cb_file_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->action_window->show();
+  }
+  else{
+    ui->action_window->hide();
+  }
+;}
 void UI::cb_file_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_file_button_i(o,v);
 }
 
-inline void UI::cb_help_button_i(fltk::Button*, void*) {
-  help_window->show();
-}
+inline void UI::cb_help_button_i(fltk::Button* o, void*) {
+  if(o->state()){
+    ui->help_window->show();
+  }
+  else{
+    ui->help_window->hide();
+  }
+;}
 void UI::cb_help_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_help_button_i(o,v);
 }
@@ -311,6 +331,17 @@ void UI::cb_check_follow(fltk::CheckButton* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_check_follow_i(o,v);
 }
 
+inline void UI::cb_default_velocity_i(fltk::ValueInput* o, void*) {
+  if(o->value() > o->maximum())
+    o->value(o->maximum());
+  if(o->value() < o->minimum())
+    o->value(o->minimum());
+  set_defaultvelocity((int)o->value());
+}
+void UI::cb_default_velocity(fltk::ValueInput* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_default_velocity_i(o,v);
+}
+
 inline void UI::cb_merge_i(fltk::Item*, void*) {
   set_recordmode(0);
 }
@@ -353,17 +384,6 @@ void UI::cb_extend(fltk::Item* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_extend_i(o,v);
 }
 
-inline void UI::cb_default_velocity_i(fltk::ValueInput* o, void*) {
-  if(o->value() > o->maximum())
-    o->value(o->maximum());
-  if(o->value() < o->minimum())
-    o->value(o->minimum());
-  set_defaultvelocity(o->value());
-}
-void UI::cb_default_velocity(fltk::ValueInput* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_default_velocity_i(o,v);
-}
-
 inline void UI::cb_kg_l10_i(KeyGrabber*, void*) {
   ;
 }
@@ -372,10 +392,7 @@ void UI::cb_kg_l10(KeyGrabber* o, void* v) {
 }
 
 inline void UI::cb_new1_i(fltk::Button*, void*) {
-  clear();
-  init_seq();
-  track_info->update();
-  action_window->hide();
+  reset_song();
 }
 void UI::cb_new1(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_new1_i(o,v);
@@ -399,16 +416,20 @@ void UI::cb_save1(fltk::Button* o, void* v) {
 
 inline void UI::cb_load_i(fltk::Button*, void*) {
   action_window->hide();
-  load(fltk::file_chooser("open file",NULL,get_last_dir()));
-}
+  if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
+    reset_song();
+  }
+;}
 void UI::cb_load(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_load_i(o,v);
 }
 
 inline void UI::cb_import_i(fltk::Button*, void*) {
   action_window->hide();
-  loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()));
-}
+  if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
+    reset_song();
+  }
+;}
 void UI::cb_import(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_import_i(o,v);
 }
@@ -419,6 +440,18 @@ inline void UI::cb_export_i(fltk::Button*, void*) {
 }
 void UI::cb_export(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_export_i(o,v);
+}
+
+inline void UI::cb_on_i(fltk::Button* o, void*) {
+  if(o->state()){
+    turnonscope();
+  }
+  else{
+    turnoffscope();
+  }
+;}
+void UI::cb_on(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_on_i(o,v);
 }
 
 UI::UI() {
@@ -653,18 +686,22 @@ UI::UI() {
        {fltk::Button* o = config_button = new fltk::Button(520, 5, 25, 25, "conf");
         o->callback((fltk::Callback*)cb_config_button);
         o->tooltip("configuration");
+        o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = scope_button = new fltk::Button(550, 5, 25, 25);
         o->callback((fltk::Callback*)cb_scope_button);
         o->tooltip("scope");
+        o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = file_button = new fltk::Button(580, 5, 25, 25);
         o->callback((fltk::Callback*)cb_file_button);
         o->tooltip("disk");
+        o->type(fltk::Button::TOGGLE);
       }
        {fltk::Button* o = help_button = new fltk::Button(610, 5, 25, 25);
         o->callback((fltk::Callback*)cb_help_button);
         o->tooltip("help");
+        o->type(fltk::Button::TOGGLE);
       }
       o->end();
     }
@@ -753,6 +790,12 @@ track.");
           o->align(fltk::ALIGN_LEFT);
           o->tooltip("Auto scroll horizontally when play head leaves viewing area.");
         }
+         {fltk::ValueInput* o = default_velocity = new fltk::ValueInput(120, 180, 45, 20, "default velocity");
+          o->maximum(127);
+          o->step(1);
+          o->value(96);
+          o->callback((fltk::Callback*)cb_default_velocity);
+        }
          {fltk::Choice* o = menu_recordmode = new fltk::Choice(5, 210, 160, 25, "record mode");
           o->begin();
            {fltk::Item* o = new fltk::Item("merge");
@@ -778,12 +821,6 @@ track.");
             o->callback((fltk::Callback*)cb_extend);
           }
           o->end();
-        }
-         {fltk::ValueInput* o = default_velocity = new fltk::ValueInput(120, 180, 45, 20, "default velocity");
-          o->maximum(127);
-          o->step(1);
-          o->value(96);
-          o->callback((fltk::Callback*)cb_default_velocity);
         }
         o->end();
       }
@@ -1035,6 +1072,17 @@ track.");
       o->textcolor((fltk::Color)0xff0000);
       fltk::Group::current()->resizable(o);
       o->wrap_mode(1);
+    }
+     {fltk::Group* o = new fltk::Group(5, 255, 410, 20);
+      o->begin();
+       {fltk::Button* o = new fltk::Button(0, 0, 40, 20, "on");
+        o->callback((fltk::Callback*)cb_on);
+        o->type(fltk::Button::TOGGLE);
+      }
+       {fltk::InvisibleBox* o = new fltk::InvisibleBox(45, 0, 95, 20);
+        fltk::Group::current()->resizable(o);
+      }
+      o->end();
     }
     o->end();
   }
