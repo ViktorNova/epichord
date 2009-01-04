@@ -252,7 +252,7 @@ int save(const char* filename){
     file << "solo " << tracks[i]->solo << endl;
     file << "vol " << tracks[i]->vol << endl;
     file << "pan " << tracks[i]->pan << endl;
-    file << "name " << strlen(tracks[i]->name) << " " 
+    file << "name " << strlen(tracks[i]->name) << " "
                     << tracks[i]->name << endl;
     file << "alive " << tracks[i]->alive << endl;
     s = tracks[i]->head->next;
@@ -1343,7 +1343,13 @@ int loadsmf(const char* filename){
     t->bank = banklist[i];
     t->port = 0;
 
-    t->name = tracknames[i];
+    if(tracknames[i]){
+      t->name = tracknames[i];
+    }
+    else{
+      t->name = (char*)malloc(8);
+      t->name[0] = '\0';
+    }
 
     add_track(t);
     p++;
