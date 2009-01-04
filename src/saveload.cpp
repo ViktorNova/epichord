@@ -1094,6 +1094,10 @@ int loadsmf(const char* filename){
                 asprintf(&tbuf,"  %d text: \"%s\"\n",time,abuf);
                 scope_print(tbuf);
                 free(tbuf);
+
+                ui->info_text->buffer()->append(abuf);
+                ui->info_text->buffer()->append("\n");
+
                 break;
               case 2://copyright notice
                 file.read((char*)abuf,size);
