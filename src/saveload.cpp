@@ -24,8 +24,11 @@
 #include <fstream>
 #include <vector>
 
+#include <limits>
+
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <fltk/file_chooser.h>
 #include <fltk/filename.h>

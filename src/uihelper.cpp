@@ -26,6 +26,8 @@
 #include <string.h>
 #include <math.h>
 
+#include <limits>
+
 #include <fltk/run.h>
 
 #include "seq.h"
