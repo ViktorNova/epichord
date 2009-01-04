@@ -1333,6 +1333,11 @@ int loadsmf(const char* filename){
     s->prev = t->head;
     t->skip = s;
 
+    s->p->h = 360*i / 16;
+    s->p->v = 0.8;
+    while(s->p->h > 360){s->p->h -= 360;}
+    s->p->regen_colors();
+
     t->chan = chanlist[i];
     t->prog = proglist[i];
     t->bank = banklist[i];
