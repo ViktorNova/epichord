@@ -231,8 +231,8 @@ int save(const char* filename){
       file << e->type << " ";
       file << e->tick << " ";
       file << e->value1 << " ";
-      file << e->value2 << " ";
-      file << e->dur << endl;
+      file << e->value2 << endl;
+      //file << e->dur << endl;
       n++;
       e = e->next;
     }
@@ -445,11 +445,12 @@ int load(const char* filename){
         file >> e->tick;
         file >> e->value1;
         file >> e->value2;
-        file >> e->dur;
+        //file >> e->dur;
         e->prev = eend;
         eend->next = e;
         eend = e;
       }
+      p->fixdur();
       patlist.push_back(p);
     }
     else if(str == "track"){
