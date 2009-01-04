@@ -820,7 +820,7 @@ int loadsmf(const char* filename){
   uint32_t size;
   uint32_t micros;
   int N = 0;
-
+  int tempo_flag = 0;
 
   std::list<pattern*> patlist;
   std::vector<int> chanlist;
@@ -1185,6 +1185,7 @@ int loadsmf(const char* filename){
                 free(tbuf);
 
                 if(time==0){
+                  tempo_flag = 1;
                   set_beats_per_minute(60000000/micros);
                 }
 
@@ -1354,6 +1355,10 @@ int loadsmf(const char* filename){
     add_track(t);
     p++;
     i++;
+  }
+
+  if(tempo_flag == 0){
+    set_beats_per_minute(120);
   }
 
   ui->track_info->update();
