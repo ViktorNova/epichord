@@ -228,8 +228,8 @@ int save(const char* filename){
     int n = 0;
     int m = n;
     while(e){
-      file << e->type << " ";
       file << e->tick << " ";
+      file << e->type << " ";
       file << e->value1 << " ";
       file << e->value2 << endl;
       //file << e->dur << endl;
@@ -438,11 +438,12 @@ int load(const char* filename){
       int type;
       mevent* e;
       while(1){
-        file >> type;
-        if(type == -1){break;}
         e = new mevent();
-        e->type = type;
+
         file >> e->tick;
+        if(e->tick == -1){delete e; break;}
+        file >> e->type;
+
         file >> e->value1;
         file >> e->value2;
         //file >> e->dur;
