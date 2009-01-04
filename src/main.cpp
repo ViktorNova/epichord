@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
 
   load_config();
 
-  init_seq();
+  reset_song();
   if(init_backend(&argc, &argv) < 0){
     return 1;
   }

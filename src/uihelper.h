@@ -76,4 +76,9 @@ void show_pattern_edit();
 void toggle_tool();
 
 void reset_song();
+
+
+void add_track(track* t);
+void remove_track(int n);
+
 #endif

@@ -177,6 +177,8 @@ struct seqpat {
     lhandle=0;
     record_flag=1;
     layers = NULL;
+    scrollx = 0;
+    scrolly = 300;
   }
 
   seqpat(int ztrack, int ztick, int zdur, pattern* zp){
@@ -194,6 +196,8 @@ struct seqpat {
     lhandle = 0;
     record_flag = 1;
     layers = NULL;
+    scrollx = 0;
+    scrolly = 300;
   }
 
   seqpat(seqpat* zs){
@@ -669,8 +673,6 @@ class ChangeEvent : public Command {
 };
 
 
-
-int init_seq();
 
 int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick));
 int set_seq_pos(int new_tick);

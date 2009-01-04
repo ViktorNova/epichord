@@ -819,6 +819,8 @@ void Arranger::apply_box(){
   int K2 = box_k2;
   if(T1>T2){SWAP(T1,T2);}
   if(K1>K2){SWAP(K1,K2);}
+  if(K1 < 0){K1 = 0;}
+  if(K2 > tracks.size()-1){K2 = tracks.size()-1;}
   for(int i=K1; i<=K2; i++){
     s = tracks[i]->head->next;
     while(s){

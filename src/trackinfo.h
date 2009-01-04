@@ -40,8 +40,8 @@ class TrackInfo : public fltk::Group {
 
     void update();
 
-    void clear();
-    void add_track(int n);
+    void clear_tracks();
+    void add_track();
     void del_track(int n);
 
 };

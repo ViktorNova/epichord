@@ -44,19 +44,7 @@ int rec_track = 0;
 
 static float default_hsv_value = 0.8;
 
-int init_seq(){
 
-  track* t;
-  for(int i=0; i<16; i++){
-    t = new track();
-    t->head->track = i;
-    t->chan = i;
-    tracks.push_back(t);
-  }
-
-
-
-}
 
 
 

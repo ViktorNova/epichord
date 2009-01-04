@@ -143,7 +143,7 @@ int clear(){
   fltk::TextBuffer* tb = ui->info_text->buffer();
   tb->text("");
 
-  ui->track_info->clear();
+  ui->track_info->clear_tracks();
 
   ui->main_window->redraw();
 
@@ -817,8 +817,12 @@ int loadsmf(const char* filename){
   char* tbuf;
   uint32_t size;
   uint32_t micros;
+  int N = 0;
 
   std::list<pattern*> patlist;
+  std::vector<int> chanlist;
+  std::vector<int> proglist;
+  std::vector<int> banklist;
 
   while(!file.eof()){
 
@@ -926,6 +930,10 @@ int loadsmf(const char* filename){
       int tick = 0;
       int endtrack=0;
 
+      chanlist.push_back(-1);
+      banklist.push_back(-1);
+      proglist.push_back(-1);
+
       /***read events***/
       while(!endtrack){
 
@@ -937,7 +945,6 @@ int loadsmf(const char* filename){
         }
         time += delta;
         tick = time*128/tpb;
-
 
         int last_byte0;
         file.read((char*)buf,1);
@@ -954,6 +961,10 @@ int loadsmf(const char* filename){
 
           int type = byte0&0xf0;
           int chan = byte0&0x0f;
+
+          if(chanlist[N]==-1){
+            chanlist[N]=chan;
+          }
 
           if(byte1<0){//didnt read byte1 yet
             file.read((char*)buf,1);
@@ -984,9 +995,19 @@ int loadsmf(const char* filename){
             case 0xA0://aftertouch
             case 0xB0://controller change
             case 0xE0://pitchbend
+              if(type==0xB0 && val1==0x00 && banklist[N]==-1){
+                printf("bankselect. N=%d chan=%d\n",N,chan);
+                banklist[N]=val2;
+              }
               e->value2 = val2;
               break;
+
             case 0xC0://program change
+              if(proglist[N]==-1){
+                printf("progselect. N=%d chan=%d\n",N,chan);
+                proglist[N]=val1;
+              }
+              break;
             case 0xD0://channel pressure
               break;
             default:
@@ -1218,6 +1239,16 @@ int loadsmf(const char* filename){
 
       }
 
+      if(proglist[N]==-1){
+        proglist[N]=0;
+      }
+      if(banklist[N]==-1){
+        banklist[N]=0;
+      }
+      if(chanlist[N]==-1){
+        chanlist[N]=0;
+      }
+      N++;
 
       patlist.push_back(p);
 
@@ -1238,12 +1269,18 @@ int loadsmf(const char* filename){
     t->head->next = s;
     s->prev = t->head;
     t->skip = s;
-    tracks.push_back(t);
+
+    t->chan = chanlist[i];
+    t->prog = proglist[i];
+    t->bank = banklist[i];
+    t->port = 0;
+
+    add_track(t);
     p++;
     i++;
   }
 
-  //ui->track_info->update();
+  ui->track_info->update();
 
   ui->arranger->redraw();
 

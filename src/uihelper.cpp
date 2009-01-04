@@ -688,10 +688,29 @@ void toggle_tool(){
 }
 
 
+
 void reset_song(){
   clear();
-  init_seq();
+
+  track* t;
+  for(int i=0; i<16; i++){
+    t = new track();
+    t->head->track = i;
+    t->chan = i;
+    add_track(t);
+  }
+
   ui->track_info->update();
   ui->action_window->hide();
 }
 
+
+
+void add_track(track* t){
+  tracks.push_back(t);
+  ui->track_info->add_track();
+}
+
+void remove_track(int n){
+
+}
