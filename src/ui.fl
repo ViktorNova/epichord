@@ -29,6 +29,8 @@ decl {/*
    Boston, MA  02110-1301, USA
 */} {} 
 
+decl {\#include <stdlib.h>} {}
+
 decl {\#include <fltk/events.h>} {} 
 
 decl {\#include <fltk/file_chooser.h>} {} 

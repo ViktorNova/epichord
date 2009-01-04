@@ -472,10 +472,10 @@ int load(const char* filename){
         else if(key == "name"){
           file >> n;
           file.get();
-          char buf[256];
+          char* buf = (char*)malloc(n+1);
           file.read(buf,n);
           buf[n] = '\0';
-          strncpy(t->name,buf,256);
+          t->name = buf;
         }
         else if(key == "alive"){ file >> t->alive; }
         else if(key == "seqpat"){
@@ -526,6 +526,7 @@ int load(const char* filename){
         file >> key;
       }
       tracks.push_back(t);
+      ui->track_info->add_track();
     }
     else{
       file.ignore(std::numeric_limits<streamsize>::max(),'\n');
@@ -1108,8 +1109,8 @@ int loadsmf(const char* filename){
                 scope_print(tbuf);
                 free(tbuf);
 
-                //tracknames[N] = new char[size+1];
-                //strcpy(tracknames[N],abuf);
+                tracknames[N] = (char*)malloc(sizeof(char)*(size+1));
+                strncpy(tracknames[N],abuf,size+1);
 
                 break;
               case 4://instrument name
@@ -1333,7 +1334,7 @@ int loadsmf(const char* filename){
     t->bank = banklist[i];
     t->port = 0;
 
-    //strncpy(t->name,tracknames[i],MAX_TRACK_NAME);
+    t->name = tracknames[i];
 
     add_track(t);
     p++;

@@ -31,8 +31,7 @@
 #define MIDI_CHANNEL_PRESSURE 0xD0
 #define MIDI_PITCH_WHEEL 0xE0
 
-#define MAX_TRACK_NAME 256
-
+#include <stdlib.h>
 #include <stdio.h>
 struct mevent {
 
@@ -282,7 +281,7 @@ struct track {
   int solo;
   int vol;
   int pan;
-  char name[MAX_TRACK_NAME];
+  char* name;
   int alive;
   seqpat* head;
   seqpat* skip;
@@ -300,6 +299,7 @@ struct track {
     solo = 0;
     vol = 127;
     pan = 64;
+    name = (char*)malloc(8);
     name[0] = '\0';
     alive = 1;
     head = new seqpat(0,0,0,new pattern());
@@ -309,6 +309,7 @@ struct track {
   }
 
   ~track(){
+    free(name);
     seqpat* s = head;
     seqpat* next;
     while(s){
