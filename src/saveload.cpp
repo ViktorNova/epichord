@@ -535,6 +535,8 @@ int load(const char* filename){
     file >> str;
   }
 
+  set_rec_track(0);
+  ui->track_info->set_rec(0);
   ui->track_info->update();
 
   ui->arranger->reset_handle();
@@ -1361,6 +1363,8 @@ int loadsmf(const char* filename){
     set_beats_per_minute(120);
   }
 
+  set_rec_track(0);
+  ui->track_info->set_rec(0);
   ui->track_info->update();
 
   ui->arranger->reset_handle();

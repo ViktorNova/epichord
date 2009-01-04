@@ -708,6 +708,8 @@ void reset_song(){
     add_track(t);
   }
 
+  set_rec_track(0);
+  ui->track_info->set_rec(0);
   ui->track_info->update();
   ui->action_window->hide();
 }
