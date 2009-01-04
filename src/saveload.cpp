@@ -227,8 +227,12 @@ int save(const char* filename){
     mevent* eoff;
     int n = 0;
     int m = n;
+    int last_tick = 0;
+    int delta;
     while(e){
-      file << e->tick << " ";
+      delta = e->tick - last_tick;
+      last_tick = e->tick;
+      file << delta << " ";
       file << e->type << " ";
       file << e->value1 << " ";
       file << e->value2 << endl;
@@ -437,13 +441,17 @@ int load(const char* filename){
       int off_index;
       int type;
       mevent* e;
+      int tick = 0;
+      int delta;
       while(1){
         e = new mevent();
 
-        file >> e->tick;
-        if(e->tick == -1){delete e; break;}
-        file >> e->type;
+        file >> delta;
+        if(delta == -1){delete e; break;}
+        tick += delta;
+        e->tick = tick;
 
+        file >> e->type;
         file >> e->value1;
         file >> e->value2;
         //file >> e->dur;
