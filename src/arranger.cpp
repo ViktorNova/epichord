@@ -356,6 +356,7 @@ int Arranger::handle(int event){
           }
         }
         delete_flag=0;
+        //last_handle==NULL;
       }
 
 

@@ -24,6 +24,7 @@
 */
 
 struct conf{
+  int beats_per_minute;
   int beats_per_measure;
   int measures_per_phrase;
   int measures_until_record;
@@ -59,6 +60,7 @@ void set_beats_per_measure(int n);
 void set_measures_per_phrase(int n);
 void set_measures_until_record(int n);
 
+void set_beats_per_minute(int n);
 void set_alwayscopy(int v);
 void set_autotrackname(int v);
 void set_passthru(int v);

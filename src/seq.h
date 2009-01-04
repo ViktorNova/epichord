@@ -110,6 +110,8 @@ struct pattern {
   pattern(pattern* p);
   ~pattern();
   void append(mevent* ze);
+  void insert(mevent* ze, int tick);
+  void fixdur();
 };
 
 
@@ -164,6 +166,7 @@ struct seqpat {
   int layer_total();
   void record_check(int mode);
   void autocomplete();
+
 
   seqpat(){
     p = NULL;

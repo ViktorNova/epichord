@@ -127,6 +127,8 @@ class Arranger : public fltk::Widget {
 
     void layout();
 
+    void reset_handle(){last_handle==NULL;}
+
 };
 
 #endif

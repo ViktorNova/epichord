@@ -38,7 +38,7 @@ extern std::vector<track*> tracks;
 
 TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label = 0) : fltk::Group(x, y, w, h, label)
 {
-  begin();
+  //begin();
 
   //TrackModule* mod;
   //for(int i=0; i<16; i++){
@@ -49,7 +49,7 @@ TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label = 0) : fltk::
     //add(mod);
  // }
 
-  end();
+  //end();
 }
 
 int TrackInfo::handle(int event){

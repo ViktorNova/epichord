@@ -536,6 +536,7 @@ int load(const char* filename){
 
   ui->track_info->update();
 
+  ui->arranger->reset_handle();
   ui->arranger->redraw();
 
   reset_backend(0);
@@ -819,10 +820,21 @@ int loadsmf(const char* filename){
   uint32_t micros;
   int N = 0;
 
+
   std::list<pattern*> patlist;
   std::vector<int> chanlist;
   std::vector<int> proglist;
   std::vector<int> banklist;
+
+  std::vector<track*> extratracks;
+
+  std::vector<char*> tracknames;
+
+  int maxblockdur = 0;
+
+  for(int i=0; i<16; i++){
+    extratracks.push_back(NULL);
+  }
 
   while(!file.eof()){
 
@@ -934,6 +946,8 @@ int loadsmf(const char* filename){
       banklist.push_back(-1);
       proglist.push_back(-1);
 
+      tracknames.push_back(NULL);
+
       /***read events***/
       while(!endtrack){
 
@@ -944,7 +958,11 @@ int loadsmf(const char* filename){
           return -1;
         }
         time += delta;
-        tick = time*128/tpb;
+        tick = time*TICKS_PER_BEAT/tpb;
+
+        if(tick > maxblockdur){
+          maxblockdur = tick;
+        }
 
         int last_byte0;
         file.read((char*)buf,1);
@@ -971,19 +989,19 @@ int loadsmf(const char* filename){
             byte1 = buf[0];
           }
 
+
+
           int val1 = byte1;
           int val2;
-          switch(type){
-            case 0xC0:
-            case 0xD0:
-              break;
-            default:
+
+          if(!(type == 0xC0 || type == 0xD0)){
               file.read((char*)buf,1);
               val2 = buf[0];
-              break;
           }
 
           e = new mevent(type,tick,val1);
+
+
           switch(type){
             case 0x90://note on
               if(val2==0){//fake note off
@@ -996,7 +1014,6 @@ int loadsmf(const char* filename){
             case 0xB0://controller change
             case 0xE0://pitchbend
               if(type==0xB0 && val1==0x00 && banklist[N]==-1){
-                printf("bankselect. N=%d chan=%d\n",N,chan);
                 banklist[N]=val2;
               }
               e->value2 = val2;
@@ -1004,7 +1021,6 @@ int loadsmf(const char* filename){
 
             case 0xC0://program change
               if(proglist[N]==-1){
-                printf("progselect. N=%d chan=%d\n",N,chan);
                 proglist[N]=val1;
               }
               break;
@@ -1015,7 +1031,28 @@ int loadsmf(const char* filename){
               file.close();
               return -1;
           }
-          p->append(e);
+
+          if(chan!=chanlist[N]){//put event in the a misfit track
+            //printf("mistfit N=%d chan=%d type=%d\n",chanlist[N],chan,type);
+            if(extratracks[chan] == NULL){
+              track* t = new track();
+              t->chan = chan;
+              t->prog = -1;
+              t->port = 0;
+              t->bank = -1;
+
+              extratracks[chan] = t;
+              seqpat* s = new seqpat();
+              t->head->next = s;
+              s->prev = t->head;
+              s->p = new pattern();
+              //more track setup
+            }
+            extratracks[chan]->head->next->p->insert(e,tick);
+          }
+          else{//put it in a normal track
+            p->append(e);
+          }
 
         }
         else{/*** not a channel event ***/
@@ -1070,6 +1107,10 @@ int loadsmf(const char* filename){
                 asprintf(&tbuf,"  %d track name: \"%s\"\n",time,abuf);
                 scope_print(tbuf);
                 free(tbuf);
+
+                //tracknames[N] = new char[size+1];
+                //strcpy(tracknames[N],abuf);
+
                 break;
               case 4://instrument name
                 file.read((char*)abuf,size);
@@ -1125,11 +1166,21 @@ int loadsmf(const char* filename){
                   return -1;
                 }
                 file.read((char*)buf,3);
-                buf[3]=0;
-                micros = ntohl(*(unsigned*)buf);
+
+                buf[3] = buf[2];
+                buf[2] = buf[1];
+                buf[1] = buf[0];
+                buf[0] = 0;
+
+                micros = *(unsigned*)buf;
+                micros = ntohl(micros);
+
                 asprintf(&tbuf,"  %d set tempo: %d us/quarter\n",time,micros);
                 scope_print(tbuf);
                 free(tbuf);
+
+                set_beats_per_minute(60000000/micros);
+
                 break;
               case 84://smpte offset
                 if(size!=5){
@@ -1250,6 +1301,9 @@ int loadsmf(const char* filename){
       }
       N++;
 
+
+      p->fixdur();
+
       patlist.push_back(p);
 
       file.read((char*)buf,4);//read first byte of next track or EOF
@@ -1266,6 +1320,8 @@ int loadsmf(const char* filename){
   while(p!=patlist.end()){
     track* t = new track();
     seqpat* s = new seqpat(i,0,128*64,*p);
+    int Q = TICKS_PER_BEAT;
+    s->dur = maxblockdur / Q * Q + Q;
     t->head->next = s;
     s->prev = t->head;
     t->skip = s;
@@ -1275,6 +1331,8 @@ int loadsmf(const char* filename){
     t->bank = banklist[i];
     t->port = 0;
 
+    //strncpy(t->name,tracknames[i],MAX_TRACK_NAME);
+
     add_track(t);
     p++;
     i++;
@@ -1282,7 +1340,10 @@ int loadsmf(const char* filename){
 
   ui->track_info->update();
 
+  ui->arranger->reset_handle();
   ui->arranger->redraw();
+
+  update_config_gui();
 
   reset_backend(0);
 

@@ -539,6 +539,10 @@ mevent* find_off(mevent* e){
 
 
 
+
+
+
+
 pattern::pattern(){
   events = new mevent();//dummy
   events->tick = 0;
@@ -614,6 +618,36 @@ void pattern::append(mevent* ze){
   e->next = ze;
   ze->prev = e;
 }
+
+void pattern::insert(mevent* ze, int tick){
+  mevent* ptr = events;
+  while(ptr->next){
+    if(ptr->next->tick > tick){
+      ze->next = ptr->next;
+      ze->next->prev = ze;
+      ptr->next = ze;
+      ze->prev = ptr;
+      return;
+    }
+    ptr=ptr->next;
+  }
+  ptr->next = ze;
+  ze->prev = ptr;
+}
+
+
+void pattern::fixdur(){
+  mevent* e = events;
+  mevent* f;
+  while(e->next){
+    if(e->type == MIDI_NOTE_ON){
+      f = find_off(e);
+      if(f){e->dur = f->tick - e->tick;}
+    }
+    e = e->next;
+  }
+}
+
 
 
 //used when the sequence is changed in such a way 
@@ -788,6 +822,9 @@ void seqpat::autocomplete(){
     e = e->next;
   }
 }
+
+
+
 
 
 
