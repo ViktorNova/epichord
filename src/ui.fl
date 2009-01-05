@@ -98,7 +98,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::Group} song_scrollgroup {open
+          {fltk::Group} song_scrollgroup {
             xywh {255 15 385 430} resizable
           } {
             {fltk::Widget} arranger {
@@ -111,8 +111,8 @@ o->label_scale=4;}
             {fltk::Scrollbar} song_vscroll {
               xywh {370 0 15 415}
             }
-            {fltk::Scrollbar} song_hscroll {
-              xywh {0 415 370 15}
+            {fltk::ThumbWheel} song_hscroll {
+              xywh {0 415 370 15} maximum 10000 step 10
             }
           }
         }
@@ -137,16 +137,16 @@ o->edit_flag = 1;}
               xywh {0 15 595 355} resizable
             } {
               {fltk::Widget} piano_roll {
-                label pianoroll selected
+                label pianoroll
                 xywh {0 0 580 340} resizable box FLAT_BOX
                 extra_code {\#include "pianoroll.h"}
                 class PianoRoll
               }
-              {fltk::Scrollbar} {} {
-                xywh {0 340 580 15}
-              }
-              {fltk::Scrollbar} {} {
+              {fltk::Scrollbar} pattern_vscroll {
                 xywh {580 0 15 340}
+              }
+              {fltk::ThumbWheel} pattern_hscroll {selected
+                xywh {0 340 580 15}
               }
             }
             {fltk::Group} {} {

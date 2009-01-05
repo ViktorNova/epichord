@@ -12,6 +12,7 @@
 #include <fltk/Button.h>
 #include "arranger.h"
 #include <fltk/Scrollbar.h>
+#include <fltk/ThumbWheel.h>
 #include "timeline.h"
 #include "pianoroll.h"
 #include "eventedit.h"
@@ -24,7 +25,6 @@
 #include <fltk/TabGroup.h>
 #include <fltk/ValueInput.h>
 #include <fltk/ValueOutput.h>
-#include <fltk/ThumbWheel.h>
 #include <fltk/CheckButton.h>
 #include <fltk/Choice.h>
 #include <fltk/Item.h>
@@ -51,11 +51,13 @@ public:
         fltk::Group *song_scrollgroup;
           Arranger *arranger;
           fltk::Scrollbar *song_vscroll;
-          fltk::Scrollbar *song_hscroll;
+          fltk::ThumbWheel *song_hscroll;
       fltk::Group *pattern_edit;
             Timeline *pattern_timeline;
           fltk::Group *pattern_scrollgroup;
             PianoRoll *piano_roll;
+            fltk::Scrollbar *pattern_vscroll;
+            fltk::ThumbWheel *pattern_hscroll;
             EventEdit *event_edit;
             EventMenu *event_menu;
             fltk::Button *event_menu_button;

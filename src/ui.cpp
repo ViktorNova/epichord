@@ -497,7 +497,10 @@ UI::UI() {
            {fltk::Scrollbar* o = song_vscroll = new fltk::Scrollbar(370, 0, 15, 415);
             o->set_vertical();
           }
-          song_hscroll = new fltk::Scrollbar(0, 415, 370, 15);
+           {fltk::ThumbWheel* o = song_hscroll = new fltk::ThumbWheel(0, 415, 370, 15);
+            o->maximum(10000);
+            o->step(10);
+          }
           o->end();
           fltk::Group::current()->resizable(o);
         }
@@ -523,10 +526,10 @@ UI::UI() {
               o->box(fltk::FLAT_BOX);
               fltk::Group::current()->resizable(o);
             }
-            new fltk::Scrollbar(0, 340, 580, 15);
-             {fltk::Scrollbar* o = new fltk::Scrollbar(580, 0, 15, 340);
+             {fltk::Scrollbar* o = pattern_vscroll = new fltk::Scrollbar(580, 0, 15, 340);
               o->set_vertical();
             }
+            pattern_hscroll = new fltk::ThumbWheel(0, 340, 580, 15);
             o->end();
             fltk::Group::current()->resizable(o);
           }
