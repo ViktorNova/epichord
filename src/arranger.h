@@ -75,8 +75,8 @@ class Arranger : public fltk::Widget {
     int sel_timer;
 
     seqpat* over_seqpat();
-    int over_rhandle(seqpat* s, int X, int Y);
-    int over_lhandle(seqpat* s, int X, int Y);
+    int over_rhandle(seqpat* s);
+    int over_lhandle(seqpat* s);
 
     int tick2xpix(int tick);
     int xpix2tick(int xpix);
