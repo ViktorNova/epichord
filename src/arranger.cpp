@@ -56,9 +56,6 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   q_tick = 128*4;
 
-  xp_last = 0;
-  yp_last = 0;
-
   insert_flag = 0;
   box_flag = 0;
   rresize_flag = 0;
@@ -69,6 +66,10 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   color_flag = 0;
 
   maxt = 0;
+
+
+  int fakew = 1000;
+  int fakeh = 16*30;
 
 }
 
@@ -394,6 +395,8 @@ int Arranger::handle(int event){
 
 void Arranger::draw(){
 
+  fltk::push_clip(0,0,w(),h());
+
   fltk::setfont(fltk::HELVETICA,8);
 
   fltk::setcolor(fltk::GRAY05);
@@ -597,81 +600,19 @@ void Arranger::draw(){
       s=s->next;
     }
   }
+
+  fltk::pop_clip();
+
 }
 
-static int kludge = 4;//see the same kludge in pianoroll.cpp
-void Arranger::layout(){
-  if(kludge > 0){
-    kludge--;
-    return;
-  }
-
-/* this function has given some trouble so i will
-document what it is supposed to do
-
-it is called, ideally, when the scroller is dragged,
-when zoom changes, the window is resized or when 
-something changes in the arranger that means it needs 
-to be resized.
-
-this function is supposed to tell the timeline and
-track info widgets to update their scroll state and
-redraw to simulate being controlled by the scroller.
-
-the arranger widget itself needs to resize itself
-so that it covers
-
-vertically, all track modules and scroll area, whichever is bigger
-horizontally, all blocks (plus some) and scroll area, whichever is bigger
-
-*/
-
-
-
-  maxt = 0;
-  for(int i=0; i<tracks.size(); i++){
-    seqpat* s = tracks[i]->head->next;
-    while(s){
-      if(s->tick+s->dur > maxt){maxt=s->tick+s->dur;}
-      s=s->next;
-    }
-  }
-
-
-
-
-  int wp1 = ui->song_scroll->w();
-  int wp2 = tick2xpix(maxt)+500;
-  int hp1 = ui->song_scroll->h();
-  int hp2 = tracks.size() * 30;
-  int xp = ui->song_scroll->xposition();
-  int yp = ui->song_scroll->yposition();
-
-
-  ui->song_timeline->scroll = xp;
-  ui->track_info->scroll = yp;
-
-  int hp = hp1>hp2 ? hp1 : hp2;
-  if(h() < hp){
-    h(hp);
-  }
-
-  ui->track_info->scroll = yp;
-  ui->track_info->redraw();
-
-  int wp = wp1>wp2 ? wp1 : wp2;
-  if(w() < wp){
-    w(wp);
-  }
-
-//printf("relayout arranger %d %d\n",w(),h());
-
-  ui->song_timeline->scroll = xp;
+void Arranger::scrollTo(int X, int Y){
+  scrollx = X;
+  scrolly = Y;
+  redraw();
+  ui->song_timeline->scroll = X;
   ui->song_timeline->redraw();
-
-//  yp_last = yp;
-//  xp_last = xp;
-
+  ui->track_info->scroll = Y;
+  ui->track_info->redraw();
 }
 
 
@@ -738,19 +679,17 @@ void Arranger::update(int pos){
   if(!is_backend_playing()){
     return;
   }
-  int wp = ui->song_scroll->w();
-  int xp = ui->song_scroll->xposition();
-  int yp = ui->song_scroll->yposition();
+  //int wp = ui->song_scroll->w();
   int X1 = tick2xpix(pos);
-  int X2 = X1 - xp;
+  int X2 = X1 - scrollx;
   if(X1 > w()-40){
     return;
   }
   if(X2 < 0){
-    ui->song_scroll->scrollTo(X1-50<0?0:X1-50,yp);
+    scrollTo(X1-50<0?0:X1-50,scrolly);
   }
-  if(X2 > wp-30){
-    ui->song_scroll->scrollTo(X1-50,yp);
+  if(X2 > w()-30){
+    scrollTo(X1-50,scrolly);
   }
 }
 

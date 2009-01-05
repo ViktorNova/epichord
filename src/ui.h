@@ -10,10 +10,10 @@
 #include <fltk/Group.h>
 #include "trackinfo.h"
 #include <fltk/Button.h>
-#include <fltk/ScrollGroup.h>
-#include "customscroll.h"
 #include "arranger.h"
+#include <fltk/Scrollbar.h>
 #include "timeline.h"
+#include <fltk/ScrollGroup.h>
 #include "pianoroll.h"
 #include "eventedit.h"
 #include "eventmenu.h"
@@ -49,8 +49,10 @@ private:
           static void cb_line(fltk::Button*, void*);
 public:
           Timeline *song_timeline;
-        CustomScroll *song_scroll;
+        fltk::Group *song_scrollgroup;
           Arranger *arranger;
+          fltk::Scrollbar *song_vscroll;
+          fltk::Scrollbar *song_hscroll;
       fltk::Group *pattern_edit;
             Timeline *pattern_timeline;
           fltk::ScrollGroup *pattern_scroll;

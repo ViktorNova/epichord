@@ -69,7 +69,7 @@ o->resize(640,455);} visible
       {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {
@@ -98,20 +98,21 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::ScrollGroup} song_scroll {
+          {fltk::Group} song_scrollgroup {open
             xywh {255 15 385 430} resizable
-            extra_code {\#include <fltk/ScrollGroup.h>
-\#include "customscroll.h"
-o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
-            class CustomScroll
           } {
             {fltk::Widget} arranger {
-              label arranger
-              xywh {0 0 245 220} box FLAT_BOX
+              label arranger selected
+              xywh {0 0 370 415} resizable box FLAT_BOX
               extra_code {\#include "seq.h"
-\#include "arranger.h"
-o->resize(1000,30*16);}
+\#include "arranger.h"}
               class Arranger
+            }
+            {fltk::Scrollbar} song_vscroll {
+              xywh {370 0 15 415}
+            }
+            {fltk::Scrollbar} song_hscroll {
+              xywh {0 415 370 15}
             }
           }
         }
@@ -148,7 +149,7 @@ o->resize(960,900);}
               xywh {0 370 595 75}
             } {
               {fltk::Widget} event_edit {
-                label {event editor} selected
+                label {event editor}
                 xywh {0 0 580 75} resizable box FLAT_BOX
                 extra_code {\#include "eventedit.h"}
                 class EventEdit

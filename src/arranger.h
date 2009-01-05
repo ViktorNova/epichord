@@ -27,8 +27,8 @@ class Arranger : public fltk::Widget {
 
     int maxt;
 
-    int xp_last;
-    int yp_last;
+    int fakeh;
+    int fakew;
 
     int insert_flag;
     int insert_torig;
@@ -110,6 +110,9 @@ class Arranger : public fltk::Widget {
     int check_resize_safety();
     int check_paste_safety();
 
+    int scrollx;
+    int scrolly;
+
   public:
 
     int zoom;
@@ -125,9 +128,11 @@ class Arranger : public fltk::Widget {
 
     void update(int pos);
 
-    void layout();
+    //void layout();
 
     void reset_handle(){last_handle==NULL;}
+
+    void scrollTo(int X, int Y);
 
 };
 

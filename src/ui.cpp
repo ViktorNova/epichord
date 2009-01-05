@@ -486,15 +486,19 @@ UI::UI() {
           }
           o->end();
         }
-         {CustomScroll* o = song_scroll = new CustomScroll(255, 15, 385, 430);
+         {fltk::Group* o = song_scrollgroup = new fltk::Group(255, 15, 385, 430);
           o->set_vertical();
           o->begin();
-           {Arranger* o = arranger = new Arranger(0, 0, 245, 220, "arranger");
+           {Arranger* o = arranger = new Arranger(0, 0, 370, 415, "arranger");
+            o->set_vertical();
             o->box(fltk::FLAT_BOX);
-            o->resize(1000,30*16);
+            fltk::Group::current()->resizable(o);
           }
+           {fltk::Scrollbar* o = song_vscroll = new fltk::Scrollbar(370, 0, 15, 415);
+            o->set_vertical();
+          }
+          song_hscroll = new fltk::Scrollbar(0, 415, 370, 15);
           o->end();
-          o->type(fltk::ScrollGroup::BOTH_ALWAYS);
           fltk::Group::current()->resizable(o);
         }
         o->end();
