@@ -20,8 +20,8 @@ remaining tools
 
 undo and redo
 
-midi files
-  import smf
+//midi files
+  //import smf
   //export smf
 
 jack transport
