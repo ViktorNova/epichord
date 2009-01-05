@@ -54,9 +54,6 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   q_tick = 32;
 
-  xp_last = 0;
-  yp_last = 0;
-
   box_flag = 0;
 
   move_toffset = 0;
@@ -532,75 +529,24 @@ void PianoRoll::draw(){
 }
 
 
-static int kludge = 4; //very powerful magic
-void PianoRoll::layout(){
 
-  /* the kludge is used so the fltk::ScrollGroup can update
-     widgets not contained within it. Better solution, the
-     scrollgroup could do its callback if it scrolls.
-     Subclassing fltk::ScrollGroup to add this behavior failed. */
-  if(kludge != 0){
-    kludge--;
-    return;
-  }
-
-  ui->pattern_timeline->zoom = zoom;
-  ui->event_edit->zoom = zoom;
-
-
-  if(cur_seqpat){
-    int W = tick2xpix(cur_seqpat->dur);
-    resize(W+300,h());
-  }
-
-
-
-  int wp = ui->pattern_scroll->w();
-  if(wp > w()){
-    w(wp+120);
-  }
-
-  int hp = ui->pattern_scroll->h();
-  if(hp > h()){
-    h(hp+120);
-  }
-
-
-  int xp = ui->pattern_scroll->xposition();
-  int yp = ui->pattern_scroll->yposition();
-
-
-  if(xp > w() - wp){
-    xp = w() - wp;
-    ui->pattern_scroll->scrollTo(xp,yp);
-  }
-
-  ui->pattern_timeline->scroll = xp;
-  ui->event_edit->scroll = xp;
-  ui->keyboard->scroll = yp;
-
-  if(cur_seqpat){
-    cur_seqpat->scrolly = yp;
-    cur_seqpat->scrollx = xp;
-  }
-
-  if(xp_last != xp){
-    ui->pattern_timeline->redraw();
-    ui->event_edit->redraw();
-  }
-  if(yp_last != yp){
-    ui->keyboard->redraw();
-  }
-
-  yp_last = yp;
-  xp_last = xp;
+void PianoRoll::scrollTo(int X, int Y){
+  scrollx = X;
+  scrolly = Y;
+  redraw();
+  ui->pattern_timeline->scroll = X;
+  ui->pattern_timeline->redraw();
+  ui->event_edit->scroll = X;
+  ui->event_edit->redraw();
+  ui->keyboard->scroll = Y;
+  ui->keyboard->redraw();
 }
 
 
 
 void PianoRoll::load(seqpat* s){
 
-  ui->pattern_scroll->scrollTo(0,300);
+  //ui->pattern_scroll->scrollTo(0,300);
 
   cur_seqpat = s;
   cur_track = tracks[s->track];
@@ -664,19 +610,16 @@ void PianoRoll::update(int pos){
   if(!is_backend_playing() || !cur_seqpat){
     return;
   }
-  int wp = ui->pattern_scroll->w();
-  int xp = ui->pattern_scroll->xposition();
-  int yp = ui->pattern_scroll->yposition();
+  //int wp = ui->pattern_scroll->w();
+  //int xp = ui->pattern_scroll->xposition();
+  //int yp = ui->pattern_scroll->yposition();
   int X1 = tick2xpix(pos-cur_seqpat->tick);
-  int X2 = X1 - xp;
-  if(X1 > w()-40){
-    return;
-  }
+  int X2 = X1 - scrollx;
   if(X2 < 0){
-    ui->pattern_scroll->scrollTo(X1-50<0?0:X1-50,yp);
+    scrollTo(X1-50<0?0:X1-50,scrolly);
   }
-  if(X2 > wp-30){
-    ui->pattern_scroll->scrollTo(X1-50,yp);
+  if(X2 > fakew-30){
+    scrollTo(X1-50,scrolly);
   }
 }
 

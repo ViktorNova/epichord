@@ -69,7 +69,7 @@ o->resize(640,455);} visible
       {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {
@@ -102,7 +102,7 @@ o->label_scale=4;}
             xywh {255 15 385 430} resizable
           } {
             {fltk::Widget} arranger {
-              label arranger selected
+              label arranger
               xywh {0 0 370 415} resizable box FLAT_BOX
               extra_code {\#include "seq.h"
 \#include "arranger.h"}
@@ -133,19 +133,23 @@ o->edit_flag = 1;}
                 class Timeline
               }
             }
-            {fltk::ScrollGroup} pattern_scroll {open
-              xywh {0 15 595 355} when CHANGED resizable box FLAT_BOX shortcut 0xff1b
-              extra_code {o->type(fltk::ScrollGroup::BOTH_ALWAYS);}
+            {fltk::Group} pattern_scrollgroup {open
+              xywh {0 15 595 355} resizable
             } {
               {fltk::Widget} piano_roll {
-                label pianoroll
-                xywh {0 0 595 355} resizable box FLAT_BOX
-                extra_code {\#include "pianoroll.h"
-o->resize(960,900);}
+                label pianoroll selected
+                xywh {0 0 580 340} resizable box FLAT_BOX
+                extra_code {\#include "pianoroll.h"}
                 class PianoRoll
               }
+              {fltk::Scrollbar} {} {
+                xywh {0 340 580 15}
+              }
+              {fltk::Scrollbar} {} {
+                xywh {580 0 15 340}
+              }
             }
-            {fltk::Group} {} {open
+            {fltk::Group} {} {
               xywh {0 370 595 75}
             } {
               {fltk::Widget} event_edit {
@@ -202,7 +206,7 @@ ui->event_edit->redraw();}
               }
             }
           }
-          {fltk::Group} {} {
+          {fltk::Group} {} {open
             xywh {0 0 45 445} horizontal
           } {
             {fltk::Button} {} {

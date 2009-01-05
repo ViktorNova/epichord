@@ -517,18 +517,17 @@ UI::UI() {
             }
             o->end();
           }
-           {fltk::ScrollGroup* o = pattern_scroll = new fltk::ScrollGroup(0, 15, 595, 355);
-            o->box(fltk::FLAT_BOX);
-            o->shortcut(0xff1b);
-            o->when(fltk::WHEN_CHANGED);
+           {fltk::Group* o = pattern_scrollgroup = new fltk::Group(0, 15, 595, 355);
             o->begin();
-             {PianoRoll* o = piano_roll = new PianoRoll(0, 0, 595, 355, "pianoroll");
+             {PianoRoll* o = piano_roll = new PianoRoll(0, 0, 580, 340, "pianoroll");
               o->box(fltk::FLAT_BOX);
               fltk::Group::current()->resizable(o);
-              o->resize(960,900);
+            }
+            new fltk::Scrollbar(0, 340, 580, 15);
+             {fltk::Scrollbar* o = new fltk::Scrollbar(580, 0, 15, 340);
+              o->set_vertical();
             }
             o->end();
-            o->type(fltk::ScrollGroup::BOTH_ALWAYS);
             fltk::Group::current()->resizable(o);
           }
            {fltk::Group* o = new fltk::Group(0, 370, 595, 75);

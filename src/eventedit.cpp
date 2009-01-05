@@ -50,7 +50,7 @@ using namespace fltk;
 
 EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
 
-  zoom = 30;
+  zoom = 15;
 
   event_type = MIDI_NOTE_ON;
   controller_type = 0;

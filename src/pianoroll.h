@@ -26,8 +26,7 @@
 
 class PianoRoll : public fltk::Widget {
 
-  int xp_last;
-  int yp_last;
+
 
   int wkeyh;
   int bkeyh;
@@ -113,7 +112,6 @@ class PianoRoll : public fltk::Widget {
     PianoRoll(int x, int y, int w, int h, const char* label);
     int handle(int event);
     void draw();
-    void layout();
 
     void load(seqpat* s);
 
@@ -124,6 +122,14 @@ class PianoRoll : public fltk::Widget {
     void set_qtick(int q){q_tick=q;}
 
     void update(int pos);
+
+
+    int fakew;
+    int fakeh;
+    int scrollx;
+    int scrolly;
+
+    void scrollTo(int X, int Y);
 };
 
 #endif

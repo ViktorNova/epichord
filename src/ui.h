@@ -13,7 +13,6 @@
 #include "arranger.h"
 #include <fltk/Scrollbar.h>
 #include "timeline.h"
-#include <fltk/ScrollGroup.h>
 #include "pianoroll.h"
 #include "eventedit.h"
 #include "eventmenu.h"
@@ -55,7 +54,7 @@ public:
           fltk::Scrollbar *song_hscroll;
       fltk::Group *pattern_edit;
             Timeline *pattern_timeline;
-          fltk::ScrollGroup *pattern_scroll;
+          fltk::Group *pattern_scrollgroup;
             PianoRoll *piano_roll;
             EventEdit *event_edit;
             EventMenu *event_menu;
