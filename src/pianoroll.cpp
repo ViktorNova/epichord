@@ -65,6 +65,10 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   resize_arrow = 0;
   resize_e = NULL;
   resize_handle_width = 4;
+
+  fakeh = wkeyh*75;
+  fakehmin = wkeyh*75;
+  if(fakeh < h){fakeh = h;}
 }
 
 int PianoRoll::handle(int event){
@@ -131,17 +135,17 @@ int PianoRoll::handle(int event){
             box_x2=X;
             box_y1=Y;
             box_y2=Y;
-            box_t1=xpix2tick(X);
+            box_t1=xpix2tick(X+scrollx);
             box_t2=box_t1;
-            box_n1=ypix2note(Y,1);
+            box_n1=ypix2note(Y+scrolly,1);
             box_n2=box_n1;
           }
           else{//begin insert
             insert_flag = 1;
-            insert_torig = quantize(xpix2tick(event_x()));
+            insert_torig = quantize(xpix2tick(X+scrollx));
             insert_toffset = q_tick;
             //new_orig_t = new_left_t;
-            insert_note = ypix2note(event_y(),1);
+            insert_note = ypix2note(Y+scrolly,1);
 
             last_note = insert_note;
             if(config.playinsert){
@@ -158,12 +162,12 @@ int PianoRoll::handle(int event){
           e->selected = 1;
           resize_arrow_color = fltk::color(128,128,0);
 
-          if(over_rhandle(e,X,Y)){//resize
+          if(over_rhandle(e)){//resize
             rresize_flag = 1;
             rresize_torig = e->tick+e->dur;
             rresize_toffset = 0;
           }
-          else if(over_lhandle(e,X,Y)){//resize move
+          else if(over_lhandle(e)){//resize move
             lresize_flag = 1;
             lresize_torig = e->tick;
             lresize_toffset = 0;
@@ -179,7 +183,7 @@ int PianoRoll::handle(int event){
             //move_offset = quantize(xpix2tick(X)) - move_torig - move_qoffset;
             //move_toffset = 0;
             move_offset = X - tick2xpix(e->tick);
-            move_norig = ypix2note(event_y(),1);
+            move_norig = ypix2note(Y+scrolly,1);
             move_noffset = 0;
 
             last_note = move_norig;
@@ -215,15 +219,15 @@ int PianoRoll::handle(int event){
       if(box_flag){
         box_x2 = X;
         box_y2 = Y;
-        box_t2 = xpix2tick(X);
-        box_n2 = ypix2note(Y,1);
+        box_t2 = xpix2tick(X+scrollx);
+        box_n2 = ypix2note(Y+scrolly,1);
       }
       else if(insert_flag){
-        insert_toffset = quantize(xpix2tick(X)+q_tick) - insert_torig;
+        insert_toffset = quantize(xpix2tick(X+scrollx)+q_tick) - insert_torig;
         if(insert_toffset<=0){
           insert_toffset -= q_tick;
         }
-        insert_note = ypix2note(Y,1);
+        insert_note = ypix2note(Y+scrolly,1);
         if(insert_note != last_note){
           if(config.playinsert){//play on insert
             ui->keyboard->release_note(last_note,0);
@@ -234,7 +238,7 @@ int PianoRoll::handle(int event){
       }
       else if(move_flag){
         move_toffset = quantize(xpix2tick(X - move_offset)) - move_torig;
-        move_noffset = ypix2note(Y,1) - move_norig;
+        move_noffset = ypix2note(Y+scrolly,1) - move_norig;
         int N = move_norig+move_noffset;
         if(N != last_note){
           if(config.playmove){//play on move
@@ -245,10 +249,10 @@ int PianoRoll::handle(int event){
         }
       }
       else if(rresize_flag){
-        rresize_toffset = quantize(xpix2tick(X)) + q_tick - rresize_torig;
+        rresize_toffset = quantize(xpix2tick(X+scrollx))+q_tick-rresize_torig;
       }
       else if(lresize_flag){
-        lresize_toffset = quantize(xpix2tick(X)) - lresize_torig;
+        lresize_toffset = quantize(xpix2tick(X+scrollx)) - lresize_torig;
       }
       redraw();
       return 1;
@@ -316,25 +320,25 @@ int PianoRoll::handle(int event){
     case fltk::MOVE:
       e = over_note();
       if(e){
-        if(over_rhandle(e,X,Y)){
+        if(over_rhandle(e)){
           if(resize_e != e || resize_arrow != 1){
             if(e->selected){resize_arrow_color = fltk::color(128,128,0);}
             else{resize_arrow_color = fltk::color(95,58,119);}
             resize_e = e;
             resize_arrow = 1;
-            resize_x = tick2xpix(e->tick + e->dur) - resize_handle_width;
-            resize_y = note2ypix(e->value1);
+            resize_x = tick2xpix(e->tick + e->dur)-scrollx-resize_handle_width;
+            resize_y = note2ypix(e->value1)-scrolly;
             redraw();
           }
         }
-        else if(over_lhandle(e,X,Y)){
+        else if(over_lhandle(e)){
           if(resize_e != e || resize_arrow != 1){
             if(e->selected){resize_arrow_color = fltk::color(128,128,0);}
             else{resize_arrow_color = fltk::color(95,58,119);}
             resize_e = e;
             resize_arrow = -1;
-            resize_x = tick2xpix(e->tick)+1;
-            resize_y = note2ypix(e->value1);
+            resize_x = tick2xpix(e->tick)+1 - scrollx;
+            resize_y = note2ypix(e->value1) - scrolly;
             redraw();
           }
         }
@@ -360,39 +364,53 @@ int PianoRoll::handle(int event){
 
 void PianoRoll::draw(){
 
+  fltk::push_clip(0,0,w(),h());
+
   fltk::setcolor(fltk::GRAY05);
   fltk::fillrect(0,0,w(),h());
 
   fltk::setcolor(fltk::GRAY20);
-  for(int i=12; i<h(); i+=12){
-    fltk::drawline(0,i,w(),i);
+  for(int i=12-scrolly; i<h(); i+=12){
+    if(i>=0){
+      fltk::fillrect(0,i,w(),1);
+    }
   }
-  for(int i=zoom; i<w(); i+=zoom){
-    fltk::drawline(i,0,i,h());
+  for(int i=zoom-scrollx; i<w(); i+=zoom){
+    if(i>=0){
+      fltk::fillrect(i,0,1,h());
+    }
   }
 
   fltk::setcolor(fltk::GRAY30);
-  for(int i=12*5; i<h(); i+=12*7){
-    fltk::drawline(0,i,w(),i);
+  for(int i=12*5-scrolly; i<h(); i+=12*7){
+    if(i>=0){
+      fltk::fillrect(0,i,w(),1);
+    }
   }
 
   fltk::setcolor(fltk::GRAY50);
-  for(int i=zoom*4; i<w(); i+=zoom*4){
-    fltk::drawline(i,0,i,h());
+  for(int i=zoom*4-scrollx; i<w(); i+=zoom*4){
+    if(i>=0){
+      fltk::fillrect(i,0,1,h());
+    }
   }
 
   fltk::setcolor(fltk::WHITE);
   int M = config.beats_per_measure;
-  for(int i=zoom*4*M; i<w(); i+=zoom*4*M){
-    fltk::fillrect(i,0,1,h());
+  for(int i=zoom*4*M-scrollx; i<w(); i+=zoom*4*M){
+    if(i>=0){
+      fltk::fillrect(i,0,1,h());
+    }
   }
 
   fltk::setcolor(fltk::color(128,0,0));
-  int rightend = tick2xpix(cur_seqpat->dur);
-  fltk::fillrect(rightend,0,1,h());
+  int rightend = tick2xpix(cur_seqpat->dur)-scrollx;
+  if(rightend >=0 && rightend < w()){
+    fltk::fillrect(rightend,0,1,h());
+  }
 
   fltk::setcolor(fltk::color(128,128,0));
-  fltk::drawline(0,12*40,w(),12*40);
+  fltk::fillrect(0,12*40-scrolly,w(),1);
 
   int tmp;
   if(insert_flag){
@@ -400,9 +418,9 @@ void PianoRoll::draw(){
     int T1 = insert_torig;
     int T2 = T1 + insert_toffset;
     if(T1>T2){SWAP(T1,T2);}
-    int X = tick2xpix(T1)+1;
-    int Y = note2ypix(insert_note);
-    int W = tick2xpix(T2) - X;
+    int X = tick2xpix(T1)+1 - scrollx;
+    int Y = note2ypix(insert_note) - scrolly;
+    int W = tick2xpix(T2)-scrollx - X;
     fltk::fillrect(X,Y,W,11);
   }
 
@@ -411,8 +429,8 @@ void PianoRoll::draw(){
     mevent* ptr = cur_seqpat->p->events->next;
     while(ptr){
       if(ptr->type == MIDI_NOTE_ON && ptr->selected){
-        int X = tick2xpix(ptr->tick+move_toffset)+1;
-        int Y = note2ypix(ptr->value1+move_noffset);
+        int X = tick2xpix(ptr->tick+move_toffset)+1-scrollx;
+        int Y = note2ypix(ptr->value1+move_noffset)-scrolly;
         int W = tick2xpix(ptr->dur);
         fltk::fillrect(X,Y,W-1,1);
         fltk::fillrect(X,Y+11,W-1,1);
@@ -451,9 +469,10 @@ void PianoRoll::draw(){
         }
       }
 
-      int X = tick2xpix(T1) + 1;
-      int Y = note2ypix(e->value1);
-      int W = tick2xpix(T2) - X;
+      int X = tick2xpix(T1) + 1 - scrollx;
+      int Y = note2ypix(e->value1) - scrolly;
+
+      int W = tick2xpix(T2)-scrollx - X;
       get_event_color(e,&c1,&c2,&c3);
 
       fltk::setcolor(c1);
@@ -526,6 +545,8 @@ void PianoRoll::draw(){
     fltk::fillrect(X1,Y2,X2-X1,1);
   }
 
+  fltk::pop_clip();
+
 }
 
 
@@ -560,7 +581,7 @@ void PianoRoll::load(seqpat* s){
 
 int PianoRoll::note2ypix(int note){
   int udy = 6*(note + (note+7)/12 + note/12) + 12;
-  return h() - udy + 1;
+  return 900 - udy + 1;
 }
 
 int PianoRoll::tick2xpix(int tick){
@@ -587,14 +608,17 @@ void PianoRoll::set_zoom(int z){
 mevent* PianoRoll::over_note(){
   mevent* e = cur_seqpat->p->events->next;
 
+  int X = event_x()+scrollx;
+  int Y = event_y()+scrolly;
+
   int cy, lx, rx;
   while(e){
     if(e->type == MIDI_NOTE_ON){
       cy = note2ypix(e->value1);
       lx = tick2xpix(e->tick);
       rx = tick2xpix(e->tick+e->dur);
-      if(event_x() > lx && event_x() < rx &&
-         event_y() < cy+12 && event_y() > cy){
+      if(X > lx && X < rx &&
+         Y < cy+12 && Y > cy){
         return e;
       }
     }
@@ -610,15 +634,12 @@ void PianoRoll::update(int pos){
   if(!is_backend_playing() || !cur_seqpat){
     return;
   }
-  //int wp = ui->pattern_scroll->w();
-  //int xp = ui->pattern_scroll->xposition();
-  //int yp = ui->pattern_scroll->yposition();
   int X1 = tick2xpix(pos-cur_seqpat->tick);
   int X2 = X1 - scrollx;
   if(X2 < 0){
     scrollTo(X1-50<0?0:X1-50,scrolly);
   }
-  if(X2 > fakew-30){
+  if(X2 > w()-30){
     scrollTo(X1-50,scrolly);
   }
 }
@@ -902,7 +923,9 @@ void PianoRoll::apply_lresize(){
 
 
 
-int PianoRoll::over_rhandle(mevent* e, int X, int Y){
+int PianoRoll::over_rhandle(mevent* e){
+  int X = event_x()+scrollx;
+  int Y = event_y()+scrolly;
   int X1 = tick2xpix(e->tick);
   int X2 = X1 + tick2xpix(e->dur);
   int Y1 = note2ypix(e->value1);
@@ -915,7 +938,9 @@ int PianoRoll::over_rhandle(mevent* e, int X, int Y){
   return (Y > Y1 && Y < Y2 && X < X2 && X > X2 - resize_handle_width);
 }
 
-int PianoRoll::over_lhandle(mevent* e, int X, int Y){
+int PianoRoll::over_lhandle(mevent* e){
+  int X = event_x()+scrollx;
+  int Y = event_y()+scrolly;
   int X1 = tick2xpix(e->tick);
   int X2 = X1 + tick2xpix(e->dur);
   int Y1 = note2ypix(e->value1);

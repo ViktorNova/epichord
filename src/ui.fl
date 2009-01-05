@@ -111,7 +111,7 @@ o->label_scale=4;}
             {fltk::Scrollbar} song_vscroll {
               callback {int target = (int)o->value();
 int dummy = ui->arranger->scrollx;
-ui->arranger->scrollTo(dummy,target);} selected
+ui->arranger->scrollTo(dummy,target);}
               xywh {370 0 15 415} slider_size 60
             }
             {fltk::ThumbWheel} song_hscroll {
@@ -147,10 +147,14 @@ o->edit_flag = 1;}
                 class PianoRoll
               }
               {fltk::Scrollbar} pattern_vscroll {
+                callback {int target = (int)o->value();
+int dummy = ui->piano_roll->scrollx;
+ui->piano_roll->scrollTo(dummy,target);}
                 xywh {580 0 15 340}
               }
               {fltk::ThumbWheel} pattern_hscroll {
-                xywh {0 340 580 15}
+                callback {ui->piano_roll->scrollTo((int)o->value(),ui->piano_roll->scrolly);} selected
+                xywh {0 340 580 15} step 10
               }
             }
             {fltk::Group} {} {

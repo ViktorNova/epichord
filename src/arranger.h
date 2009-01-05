@@ -113,7 +113,6 @@ class Arranger : public fltk::Widget {
   public:
 
     int fakeh;
-    int fakew;
     int scrollx;
     int scrolly;
 

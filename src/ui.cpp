@@ -67,6 +67,22 @@ void UI::cb_song_hscroll(fltk::ThumbWheel* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_song_hscroll_i(o,v);
 }
 
+inline void UI::cb_pattern_vscroll_i(fltk::Scrollbar* o, void*) {
+  int target = (int)o->value();
+  int dummy = ui->piano_roll->scrollx;
+  ui->piano_roll->scrollTo(dummy,target);
+}
+void UI::cb_pattern_vscroll(fltk::Scrollbar* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_pattern_vscroll_i(o,v);
+}
+
+inline void UI::cb_pattern_hscroll_i(fltk::ThumbWheel* o, void*) {
+  ui->piano_roll->scrollTo((int)o->value(),ui->piano_roll->scrolly);
+}
+void UI::cb_pattern_hscroll(fltk::ThumbWheel* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_pattern_hscroll_i(o,v);
+}
+
 inline void UI::cb_event_menu_button_i(fltk::Button* o, void*) {
   if(o->state()==0){
     ui->event_menu->hide();
@@ -547,8 +563,12 @@ UI::UI() {
             }
              {fltk::Scrollbar* o = pattern_vscroll = new fltk::Scrollbar(580, 0, 15, 340);
               o->set_vertical();
+              o->callback((fltk::Callback*)cb_pattern_vscroll);
             }
-            pattern_hscroll = new fltk::ThumbWheel(0, 340, 580, 15);
+             {fltk::ThumbWheel* o = pattern_hscroll = new fltk::ThumbWheel(0, 340, 580, 15);
+              o->step(10);
+              o->callback((fltk::Callback*)cb_pattern_hscroll);
+            }
             o->end();
             fltk::Group::current()->resizable(o);
           }

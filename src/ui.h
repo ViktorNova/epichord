@@ -65,7 +65,15 @@ public:
           fltk::Group *pattern_scrollgroup;
             PianoRoll *piano_roll;
             fltk::Scrollbar *pattern_vscroll;
+private:
+            inline void cb_pattern_vscroll_i(fltk::Scrollbar*, void*);
+            static void cb_pattern_vscroll(fltk::Scrollbar*, void*);
+public:
             fltk::ThumbWheel *pattern_hscroll;
+private:
+            inline void cb_pattern_hscroll_i(fltk::ThumbWheel*, void*);
+            static void cb_pattern_hscroll(fltk::ThumbWheel*, void*);
+public:
             EventEdit *event_edit;
             EventMenu *event_menu;
             fltk::Button *event_menu_button;

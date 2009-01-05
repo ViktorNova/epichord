@@ -273,6 +273,9 @@ int Keyboard::handle(int event){
     case fltk::PUSH:
       take_focus();
       note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
+      if(note < 0 || note > 127){
+        return 1;
+      }
       cur_note = note;
       helds[note] = 1;
       play_note(note,1);
@@ -288,10 +291,10 @@ int Keyboard::handle(int event){
       }
       return 1;
     case fltk::DRAG:
-      if(event_y() > h() || event_y() < 12){
+      note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
+      if(note < 0 || note > 127){
         return 1;
       }
-      note = ypix2note(event_y()+scroll, event_x() < w()/2 ? 1 : 0);
       if(cur_note != note){
         helds[cur_note]=0;
         cur_note = note;
@@ -408,8 +411,8 @@ void Keyboard::draw(){
   }
 
   fltk::setcolor(fltk::BLACK);
-  for(int i=-scroll; i<h(); i+=12){
-    fltk::drawline(0,i,w(),i);
+  for(int i=1; i<=75; i++){
+    fltk::fillrect(0,i*12-scroll,w(),1);
   }
 
   int j;

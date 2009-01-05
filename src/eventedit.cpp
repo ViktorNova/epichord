@@ -222,12 +222,16 @@ void EventEdit::draw(){
   fltk::setcolor(fltk::GRAY20);
   fltk::fillrect(0,h()-3,w(),1);
   for(int i=zoom - scroll; i<w(); i+=zoom){
-    fltk::drawline(i,0,i,h()-1);
+    if(i>=0){
+      fltk::drawline(i,0,i,h()-1);
+    }
   }
 
   fltk::setcolor(fltk::GRAY50);
   for(int i=zoom*4-scroll; i<w(); i+=zoom*4){
-    fltk::drawline(i,0,i,h()-1);
+    if(i>=0){
+      fltk::drawline(i,0,i,h()-1);
+    }
   }
 
   fltk::setcolor(fltk::WHITE);
@@ -235,12 +239,16 @@ void EventEdit::draw(){
   int I = 0;
   for(int i=1; I<w(); i++){
     I = i*zoom*4*M - scroll;
-    fltk::fillrect(I,0,1,h());
+    if(I>=0){
+      fltk::fillrect(I,0,1,h());
+    }
   }
 
   fltk::setcolor(fltk::color(128,0,0));
   int rightend = tick2xpix(cur_seqpat->dur)-scroll;
-  fltk::fillrect(rightend,0,1,h());
+  if(rightend >=0 && rightend < w()){
+    fltk::fillrect(rightend,0,1,h());
+  }
 
   mevent* e = cur_seqpat->p->events->next;
 

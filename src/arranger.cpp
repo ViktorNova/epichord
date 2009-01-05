@@ -68,7 +68,6 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   maxt = 0;
 
 
-  fakew = 1000;
   fakeh = 16*30;
   if(fakeh < h){fakeh = h;}
 
@@ -706,7 +705,6 @@ void Arranger::update(int pos){
   if(!is_backend_playing()){
     return;
   }
-  //int wp = ui->song_scroll->w();
   int X1 = tick2xpix(pos);
   int X2 = X1 - scrollx;
   if(X2 < 0){
@@ -734,7 +732,11 @@ void Arranger::layout(){
   ui->song_vscroll->maximum(0);
   ui->song_vscroll->minimum(fakeh-h());
   int M = ui->song_vscroll->h() - 30;
-  ui->song_vscroll->slider_size(M - (fakeh-h()));
+  int newsize = M-(fakeh-h());
+  if(newsize<20){
+    newsize=20;
+  }
+  ui->song_vscroll->slider_size(newsize);
 }
 
 

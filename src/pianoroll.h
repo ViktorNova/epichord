@@ -96,8 +96,8 @@ class PianoRoll : public fltk::Widget {
   void apply_lresize();
   void apply_insert();
 
-  int over_lhandle(mevent* e, int X, int Y);
-  int over_rhandle(mevent* e, int X, int Y);
+  int over_lhandle(mevent* e);
+  int over_rhandle(mevent* e);
 
   public:
 
@@ -124,10 +124,11 @@ class PianoRoll : public fltk::Widget {
     void update(int pos);
 
 
-    int fakew;
     int fakeh;
     int scrollx;
     int scrolly;
+
+    int fakehmin;
 
     void scrollTo(int X, int Y);
 };

@@ -45,7 +45,7 @@ using namespace fltk;
 Timeline::Timeline(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   hand = fltk::SharedImage::get(ROOT_DATA_DIR"gfx/hand.gif");
   if(!hand){
-    printf("gfx files not found, installed correctly?\n");
+    printf("Timeline: gfx files not found, installed correctly?\n");
   }
   scale = 1;
   label_scale = 1;
