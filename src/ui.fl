@@ -66,7 +66,7 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {
@@ -115,10 +115,10 @@ o->resize(1000,30*16);}
             }
           }
         }
-        {fltk::Group} pattern_edit {
+        {fltk::Group} pattern_edit {open
           xywh {0 0 640 445} hide
         } {
-          {fltk::Group} {} {
+          {fltk::Group} {} {open
             xywh {45 0 595 445} resizable
           } {
             {fltk::Group} {} {
@@ -148,8 +148,8 @@ o->resize(960,900);}
               xywh {0 370 595 75}
             } {
               {fltk::Widget} event_edit {
-                label {event editor}
-                xywh {0 0 580 75} box FLAT_BOX
+                label {event editor} selected
+                xywh {0 0 580 75} resizable box FLAT_BOX
                 extra_code {\#include "eventedit.h"}
                 class EventEdit
               }
@@ -201,7 +201,7 @@ ui->event_edit->redraw();}
               }
             }
           }
-          {fltk::Group} {} {open
+          {fltk::Group} {} {
             xywh {0 0 45 445} horizontal
           } {
             {fltk::Button} {} {
@@ -263,8 +263,8 @@ ui->event_edit->redraw();}
           extra_code {\#include <metronome.h>}
           class Metronome
         }
-        {fltk::Group} {} {
-          xywh {200 0 20 35} resizable
+        {fltk::Group} {} {open
+          xywh {125 0 20 35} resizable
         } {}
         {fltk::Group} pattern_buttons {
           xywh {145 5 310 25} hide
@@ -881,7 +881,7 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       }
     }
     {fltk::Window} scope_window {
-      label scope open selected
+      label scope
       xywh {647 310 425 280} hide resizable
     } {
       {fltk::TextDisplay} scope {

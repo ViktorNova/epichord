@@ -606,6 +606,28 @@ void Arranger::layout(){
     return;
   }
 
+/* this function has given some trouble so i will
+document what it is supposed to do
+
+it is called, ideally, when the scroller is dragged,
+when zoom changes, the window is resized or when 
+something changes in the arranger that means it needs 
+to be resized.
+
+this function is supposed to tell the timeline and
+track info widgets to update their scroll state and
+redraw to simulate being controlled by the scroller.
+
+the arranger widget itself needs to resize itself
+so that it covers
+
+vertically, all track modules and scroll area, whichever is bigger
+horizontally, all blocks (plus some) and scroll area, whichever is bigger
+
+*/
+
+
+
   maxt = 0;
   for(int i=0; i<tracks.size(); i++){
     seqpat* s = tracks[i]->head->next;
@@ -614,41 +636,41 @@ void Arranger::layout(){
       s=s->next;
     }
   }
-  int ws = tick2xpix(maxt);
-  if(ws > w()-120){
-    w(ws+500);
-  }
-  if(ws < w()-120){
-    w(ws+500);
-  }
 
-  int wp = ui->song_scroll->w();
-  if(wp > w()){
-    w(wp+500);
-  }
 
-  int hp = ui->song_scroll->h();
-  if(hp > h()){
-    h(hp);
-  }
-  else{
-    h(16*30);
-  }
 
+
+  int wp1 = ui->song_scroll->w();
+  int wp2 = tick2xpix(maxt)+500;
+  int hp1 = ui->song_scroll->h();
+  int hp2 = tracks.size() * 30;
   int xp = ui->song_scroll->xposition();
   int yp = ui->song_scroll->yposition();
+
+
   ui->song_timeline->scroll = xp;
   ui->track_info->scroll = yp;
 
-  if(xp_last != xp){
-    ui->song_timeline->redraw();
-  }
-  if(yp_last != yp){
-    ui->track_info->redraw();
+  int hp = hp1>hp2 ? hp1 : hp2;
+  if(h() < hp){
+    h(hp);
   }
 
-  yp_last = yp;
-  xp_last = xp;
+  ui->track_info->scroll = yp;
+  ui->track_info->redraw();
+
+  int wp = wp1>wp2 ? wp1 : wp2;
+  if(w() < wp){
+    w(wp);
+  }
+
+//printf("relayout arranger %d %d\n",w(),h());
+
+  ui->song_timeline->scroll = xp;
+  ui->song_timeline->redraw();
+
+//  yp_last = yp;
+//  xp_last = xp;
 
 }
 

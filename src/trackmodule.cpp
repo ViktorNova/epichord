@@ -68,6 +68,8 @@ void progcb(fltk::Widget* w, long i){
   t->prog = prog;
   program_change(i, prog);
   if(config.autotrackname){
+    free(t->name);
+    t->name = (char*)malloc(64);
     strncpy(t->name,gm_names[prog],64);
     ui->track_info->update();
   }

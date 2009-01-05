@@ -206,3 +206,4 @@ int Timeline::xpix2tick(int xpix){
 int Timeline::quantize(int tick){
   return tick/128 * 128;
 }
+

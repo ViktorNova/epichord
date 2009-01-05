@@ -55,6 +55,7 @@ class Timeline : public fltk::Widget {
     void update(int ticks);
 
     void set_zoom(int level);
+
 };
 
 

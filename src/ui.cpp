@@ -531,6 +531,7 @@ UI::UI() {
             o->begin();
              {EventEdit* o = event_edit = new EventEdit(0, 0, 580, 75, "event editor");
               o->box(fltk::FLAT_BOX);
+              fltk::Group::current()->resizable(o);
             }
              {EventMenu* o = event_menu = new EventMenu(0, 0, 580, 75);
               o->box(fltk::FLAT_BOX);
@@ -613,7 +614,7 @@ UI::UI() {
         o->color((fltk::Color)56);
         o->labelcolor((fltk::Color)0xffffff00);
       }
-       {fltk::Group* o = new fltk::Group(200, 0, 20, 35);
+       {fltk::Group* o = new fltk::Group(125, 0, 20, 35);
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }
