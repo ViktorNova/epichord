@@ -27,7 +27,7 @@ class Arranger : public fltk::Widget {
 
     int maxt;
 
-
+    int scrollbuffer;
 
     int insert_flag;
     int insert_torig;
@@ -108,7 +108,6 @@ class Arranger : public fltk::Widget {
     int check_insert_safety();
     int check_resize_safety();
     int check_paste_safety();
-
 
 
   public:

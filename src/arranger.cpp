@@ -72,6 +72,8 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   fakeh = 16*30;
   if(fakeh < h){fakeh = h;}
 
+  scrollbuffer = 30;
+
 }
 
 int Arranger::handle(int event){
@@ -607,7 +609,20 @@ void Arranger::draw(){
 }
 
 void Arranger::scrollTo(int X, int Y){
+
+  if(is_backend_playing() && config.follow){
+    int pos = tick2xpix(get_play_position());
+    if(pos < X || pos > X + w() - scrollbuffer - 30){
+      ui->song_hscroll->value(scrollx);
+      return;
+    }
+
+    //and the other one
+  }
+
   scrollx = X;
+  ui->song_hscroll->value(scrollx);
+  //and the other one
   scrolly = Y;
   redraw();
   ui->song_timeline->scroll = X;
@@ -683,14 +698,15 @@ void Arranger::update(int pos){
   //int wp = ui->song_scroll->w();
   int X1 = tick2xpix(pos);
   int X2 = X1 - scrollx;
-  if(X1 > w()-40){
-    return;
-  }
   if(X2 < 0){
-    scrollTo(X1-50<0?0:X1-50,scrolly);
+    int target = X1-50<0?0:X1-50;
+    scrollTo(target,scrolly);
+   // ui->song_hscroll->value(target);
   }
-  if(X2 > w()-30){
-    scrollTo(X1-50,scrolly);
+  if(X2 > w()-scrollbuffer){
+    int target = X1-50;
+    scrollTo(target,scrolly);
+    //ui->song_hscroll->value(target);
   }
 }
 
