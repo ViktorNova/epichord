@@ -556,6 +556,10 @@ void PianoRoll::draw(){
 
 void PianoRoll::scrollTo(int X, int Y){
 
+  if(!cur_seqpat){
+    return;
+  }
+
   if(is_backend_playing() && config.follow){
     int pos = tick2xpix(get_play_position()) - cur_seqpat->tick;
     if(pos < X || pos > X + w() - 30 - 30){
@@ -566,10 +570,9 @@ void PianoRoll::scrollTo(int X, int Y){
 
   scrollx = X;
   scrolly = Y;
-  if(cur_seqpat){
-    cur_seqpat->scrollx = X;
-    cur_seqpat->scrolly = Y;
-  }
+  cur_seqpat->scrollx = X;
+  cur_seqpat->scrolly = Y;
+
   redraw();
   ui->pattern_hscroll->value(X);
   ui->pattern_hscroll->redraw();
