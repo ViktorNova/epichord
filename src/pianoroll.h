@@ -123,6 +123,7 @@ class PianoRoll : public fltk::Widget {
 
     void update(int pos);
 
+    void layout();
 
     int fakeh;
     int scrollx;

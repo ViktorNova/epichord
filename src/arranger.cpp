@@ -195,7 +195,6 @@ int Arranger::handle(int event){
           if(fltk::event_clicks() > 0){//'double click'
             ui->piano_roll->load(s);
             ui->event_edit->load(s);
-            ui->piano_roll->scrollTo(s->scrollx,s->scrolly);
             ui->pattern_timeline->update(get_play_position());
             ui->keyboard->cur_port = tracks[s->track]->port;
             ui->keyboard->cur_chan = tracks[s->track]->chan;
@@ -619,13 +618,10 @@ void Arranger::scrollTo(int X, int Y){
       ui->song_hscroll->value(scrollx);
       return;
     }
-
-    //and the other one
   }
 
   scrollx = X;
   ui->song_hscroll->value(scrollx);
-  //and the other one
   scrolly = Y;
   redraw();
   ui->song_timeline->scroll = X;
@@ -719,7 +715,7 @@ void Arranger::update(int pos){
   }
 }
 
-int kludge=2;
+static int kludge=2;
 void Arranger::layout(){
   if(kludge!=0){
     kludge--;
@@ -731,7 +727,7 @@ void Arranger::layout(){
   }
   ui->song_vscroll->maximum(0);
   ui->song_vscroll->minimum(fakeh-h());
-  int M = ui->song_vscroll->h() - 30;
+  int M = h() - 30;
   int newsize = M-(fakeh-h());
   if(newsize<20){
     newsize=20;

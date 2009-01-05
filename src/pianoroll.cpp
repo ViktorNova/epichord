@@ -23,6 +23,9 @@
 #include <vector>
 #include <fltk/Group.h>
 #include <fltk/Widget.h>
+
+#include <fltk/Scrollbar.h>
+
 #include <fltk/events.h>
 
 #include <stdio.h>
@@ -552,9 +555,25 @@ void PianoRoll::draw(){
 
 
 void PianoRoll::scrollTo(int X, int Y){
+
+  if(is_backend_playing() && config.follow){
+    int pos = tick2xpix(get_play_position()) - cur_seqpat->tick;
+    if(pos < X || pos > X + w() - 30 - 30){
+      ui->pattern_hscroll->value(scrollx);
+      return;
+    }
+  }
+
   scrollx = X;
   scrolly = Y;
+  if(cur_seqpat){
+    cur_seqpat->scrollx = X;
+    cur_seqpat->scrolly = Y;
+  }
   redraw();
+  ui->pattern_hscroll->value(X);
+  ui->pattern_hscroll->redraw();
+  ui->pattern_vscroll->value(Y);
   ui->pattern_timeline->scroll = X;
   ui->pattern_timeline->redraw();
   ui->event_edit->scroll = X;
@@ -563,17 +582,37 @@ void PianoRoll::scrollTo(int X, int Y){
   ui->keyboard->redraw();
 }
 
+static int kludge=2;
+void PianoRoll::layout(){
+   if(kludge!=0){
+    kludge--;
+    return;
+  }
+  fakeh = 900;
+  if(fakeh<h()){
+    fakeh = h();
+  }
 
+  fltk::Scrollbar* sb = ui->pattern_vscroll;
+
+  sb->maximum(0);
+  sb->minimum(fakeh-h());
+
+  if(sb->value() > sb->minimum()){
+    scrollTo(scrollx,900-h());
+  }
+  int M = h() - 30;
+  int newsize = M-(fakeh-h());
+  if(newsize<20){
+    newsize=20;
+  }
+  ui->song_vscroll->slider_size(60);
+}
 
 void PianoRoll::load(seqpat* s){
-
-  //ui->pattern_scroll->scrollTo(0,300);
-
   cur_seqpat = s;
+  scrollTo(s->scrollx,s->scrolly);
   cur_track = tracks[s->track];
-  int W = tick2xpix(s->dur);
-  resize(W+300,h());
-
   ui->pattern_timeline->ticks_offset = s->tick;
 }
 
@@ -600,8 +639,6 @@ int PianoRoll::quantize(int tick){
 void PianoRoll::set_zoom(int z){
   zoom = z;
   relayout();
-  //int W = tick2xpix(cur_seqpat->dur);
-  //resize(W+300,h());
 }
 
 
