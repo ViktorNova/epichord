@@ -38,6 +38,9 @@ UI* ui;
 int main(int argc, char* argv[]){
 
   ui = new UI();
+
+  init_gui();
+
   ui->arranger->take_focus();
 
   load_config();

@@ -131,7 +131,7 @@ class Arranger : public fltk::Widget {
 
     void update(int pos);
 
-    //void layout();
+    void layout();
 
     void reset_handle(){last_handle==NULL;}
 

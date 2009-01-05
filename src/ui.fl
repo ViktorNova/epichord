@@ -69,7 +69,7 @@ o->resize(640,455);} visible
       {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {
@@ -98,7 +98,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::Group} song_scrollgroup {
+          {fltk::Group} song_scrollgroup {open
             xywh {255 15 385 430} resizable
           } {
             {fltk::Widget} arranger {
@@ -109,9 +109,13 @@ o->label_scale=4;}
               class Arranger
             }
             {fltk::Scrollbar} song_vscroll {
-              xywh {370 0 15 415}
+              callback {int target = (int)o->value();
+int dummy = ui->arranger->scrollx;
+ui->arranger->scrollTo(dummy,target);} selected
+              xywh {370 0 15 415} slider_size 60
             }
             {fltk::ThumbWheel} song_hscroll {
+              callback {ui->arranger->scrollTo((int)o->value(),ui->arranger->scrolly);}
               xywh {0 415 370 15} maximum 10000 step 10
             }
           }
@@ -145,7 +149,7 @@ o->edit_flag = 1;}
               {fltk::Scrollbar} pattern_vscroll {
                 xywh {580 0 15 340}
               }
-              {fltk::ThumbWheel} pattern_hscroll {selected
+              {fltk::ThumbWheel} pattern_hscroll {
                 xywh {0 340 580 15}
               }
             }

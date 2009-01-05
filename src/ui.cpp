@@ -51,6 +51,22 @@ void UI::cb_line(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_line_i(o,v);
 }
 
+inline void UI::cb_song_vscroll_i(fltk::Scrollbar* o, void*) {
+  int target = (int)o->value();
+  int dummy = ui->arranger->scrollx;
+  ui->arranger->scrollTo(dummy,target);
+}
+void UI::cb_song_vscroll(fltk::Scrollbar* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_song_vscroll_i(o,v);
+}
+
+inline void UI::cb_song_hscroll_i(fltk::ThumbWheel* o, void*) {
+  ui->arranger->scrollTo((int)o->value(),ui->arranger->scrolly);
+}
+void UI::cb_song_hscroll(fltk::ThumbWheel* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_song_hscroll_i(o,v);
+}
+
 inline void UI::cb_event_menu_button_i(fltk::Button* o, void*) {
   if(o->state()==0){
     ui->event_menu->hide();
@@ -496,10 +512,13 @@ UI::UI() {
           }
            {fltk::Scrollbar* o = song_vscroll = new fltk::Scrollbar(370, 0, 15, 415);
             o->set_vertical();
+            o->slider_size(60);
+            o->callback((fltk::Callback*)cb_song_vscroll);
           }
            {fltk::ThumbWheel* o = song_hscroll = new fltk::ThumbWheel(0, 415, 370, 15);
             o->maximum(10000);
             o->step(10);
+            o->callback((fltk::Callback*)cb_song_hscroll);
           }
           o->end();
           fltk::Group::current()->resizable(o);

@@ -726,3 +726,14 @@ void add_track(track* t){
 void remove_track(int n){
 
 }
+
+
+
+void init_gui(){
+  ui->arranger->layout();
+  ui->song_vscroll->value(0);
+
+  ui->song_hscroll->minimum(0);
+  ui->song_hscroll->maximum(1<<20);
+}
+

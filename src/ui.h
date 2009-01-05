@@ -51,7 +51,15 @@ public:
         fltk::Group *song_scrollgroup;
           Arranger *arranger;
           fltk::Scrollbar *song_vscroll;
+private:
+          inline void cb_song_vscroll_i(fltk::Scrollbar*, void*);
+          static void cb_song_vscroll(fltk::Scrollbar*, void*);
+public:
           fltk::ThumbWheel *song_hscroll;
+private:
+          inline void cb_song_hscroll_i(fltk::ThumbWheel*, void*);
+          static void cb_song_hscroll(fltk::ThumbWheel*, void*);
+public:
       fltk::Group *pattern_edit;
             Timeline *pattern_timeline;
           fltk::Group *pattern_scrollgroup;
