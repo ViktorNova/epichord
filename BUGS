@@ -1,48 +1,15 @@
- copying layered blocks
+arranger generally has drawing problems related to follow playback
+zero measures per phrase causes division by zero
+occasional bug on switching layers
 
-its not acting the way i want. neither is 'always hard copy'
+pop up window toggles need to be reset if window closes
 
- quickly switching layers
+import midi doesnt handle misfit events
 
-causes a sequencing error. this is likely caused by the changing of the
-block's pattern from the gui thread while the audio dispatch thread is
-busy inside of it.
+zoom all the way in draws wrong in piano roll
 
- overlapping notes bug
-
-the algorithm to find the note off will currently fail is it finds the noteoff
-of an overlapping note.
-
-
-
- event on end of frame bug
-
-there is a 1 frame error caused by a kludge in the sequencer mechanism.
-there are cases where a midi event is to be dispatched on the first
-frame of the buffer, but also on the frame right after the last, i.e.
-index 1024 in a frame buffer of 1024 frames. When a event appears to be
-destined for 1024, i dispatch at 1023 rather than waiting until next
-process. a real solution would check the sequencer play mechanism and
-its interation with the backend's real time to see why its considering
-playing these notes.
-
-
-
- out of order dispatch bug
-
-if events are dispatched out of order, they are put in order by playing the
-rest of the notes after the first-out-of-order at the end of the buffer, causing
-an error on the order of nframes/samplerate = 21 ms on my system. to fix it, 
-the events must be dispatched in time order. solution is to enqueue and sort 
-before dispatch. the above workaround was done because if you try to dispatch 
-them out of order jack crashes. this occurs when events occur near each other 
-but not exactly at the same time, or at high bpm.
-
-
-
-  zoom range bug in arranger
-
-zooming has no effect on the possible range of scrolling.
+end of frame sequencing bug
+out of order dispatch bug
 
 
 

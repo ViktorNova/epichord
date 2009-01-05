@@ -127,6 +127,9 @@ int clear(){
 
   set_beats_per_measure(4);
   set_measures_per_phrase(4);
+
+  set_bpm(120);
+  set_beats_per_minute(120);
   update_config_gui();
 
   track* t;
@@ -138,7 +141,8 @@ int clear(){
     delete t;
   }
 
-  set_bpm(120);
+
+
 
   ui->title_text->text("");
   ui->author_text->text("");

@@ -238,7 +238,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -393,7 +393,7 @@ o->type(fltk::Button::TOGGLE);}
 }
 else{
   ui->help_window->hide();
-}} selected
+}}
           tooltip help
           xywh {610 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
@@ -401,14 +401,14 @@ else{
       }
     }
     {fltk::Window} config_window {
-      label controls open
-      xywh {52 125 320 285} hide resizable
+      label controls
+      xywh {52 125 320 285} hide
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
       } {
         {fltk::Group} {} {
-          label options selected
+          label options
           xywh {145 15 170 265} horizontal
         } {
           {fltk::ValueInput} beats_per_measure {
@@ -881,11 +881,11 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
       }
     }
     {fltk::Window} scope_window {
-      label scope open
+      label scope open selected
       xywh {647 310 425 280} hide resizable
     } {
       {fltk::TextDisplay} scope {
-        xywh {5 5 415 245} resizable textfont 4 color 0x280000 textcolor 0xff0000
+        xywh {5 5 415 245} textfont 4 color 0x280000 textcolor 0xff0000
         extra_code {o->wrap_mode(1);}
       }
       {fltk::Group} {} {

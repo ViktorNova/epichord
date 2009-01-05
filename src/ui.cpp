@@ -972,7 +972,6 @@ track.");
       o->end();
     }
     o->end();
-    o->resizable(o);
   }
    {fltk::Window* o = help_window = new fltk::Window(580, 370, "help");
     o->shortcut(0xff1b);
@@ -1070,7 +1069,6 @@ track.");
       o->textfont(fltk::COURIER);
       o->color((fltk::Color)0x280000);
       o->textcolor((fltk::Color)0xff0000);
-      fltk::Group::current()->resizable(o);
       o->wrap_mode(1);
     }
      {fltk::Group* o = new fltk::Group(5, 255, 410, 20);
@@ -1085,6 +1083,7 @@ track.");
       o->end();
     }
     o->end();
+    o->resizable(o);
   }
   loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
   color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
