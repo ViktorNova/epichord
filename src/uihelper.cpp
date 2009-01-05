@@ -166,7 +166,13 @@ seqpat* rob_check(seqpat* s){
   }
   else if(config.robmode == 1 || prev == NULL){
     int pos = get_play_position();
-    int M = config.measures_per_phrase*config.beats_per_measure*128;
+    int M = config.measures_per_phrase;
+    if(M!=0){
+      M = M*config.beats_per_measure*128;
+    }
+    else{
+      M = 4*config.beats_per_measure*128;
+    }
     int P1 = pos/M*M;
     int P2 = P1 + M;
     int T = P1;
@@ -188,7 +194,13 @@ seqpat* rob_check(seqpat* s){
   }
   else if(config.robmode == 2){
     int pos = get_play_position();
-    int M = config.measures_per_phrase*config.beats_per_measure*128;
+    int M = config.measures_per_phrase;
+    if(M!=0){
+      M = M*config.beats_per_measure*128;
+    }
+    else{
+      M = 4*config.beats_per_measure*128;
+    }
     int P = pos/M*M + M;//tick at next phrase boundary
     int W = P - s->tick;
     if(s->next){
