@@ -696,13 +696,11 @@ void Arranger::update(int pos){
 
 int kludge=2;
 void Arranger::layout(){
-printf("ok\n");
   if(kludge!=0){
     kludge--;
     return;
   }
   fakeh = tracks.size()*30;
-printf("%d\n",tracks.size());
   if(fakeh<h()){
     fakeh = h();
   }

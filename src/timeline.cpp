@@ -114,7 +114,9 @@ void Timeline::draw(){
     int I=0;
     for(int i=0; I<w(); i++){
       I = i*zoom - scroll;
-      fltk::fillrect(I,h()/2,1,h()/2);
+      if(I>=0){
+        fltk::fillrect(I,h()/2,1,h()/2);
+      }
     }
 
     fltk::setcolor(fltk::BLACK);
@@ -125,9 +127,11 @@ void Timeline::draw(){
     I=0;
     for(int i=0; I<w(); i++){
       I = i*zoom*4 - scroll;
-      fltk::fillrect(I,0,1,h()/2);
-      sprintf(buf,"%u",j*label_scale);
-      fltk::drawtext(buf,I+3,h()-3);
+      if(I>=0){
+        fltk::fillrect(I,0,1,h()/2);
+        sprintf(buf,"%u",j*label_scale);
+        fltk::drawtext(buf,I+3,h()-3);
+      }
       j++;
     }
 
@@ -139,7 +143,9 @@ void Timeline::draw(){
     int I=0;
     for(int i=0; I<w(); i++){
       I = i*zoom*M/4 - scroll;
-      fltk::fillrect(I,h()/2,1,h()/2);
+      if(I>=0){
+        fltk::fillrect(I,h()/2,1,h()/2);
+      }
     }
 
     fltk::setcolor(fltk::BLACK);
@@ -151,31 +157,37 @@ void Timeline::draw(){
     I=0;
     for(int i=0; I<w(); i++){
       I = i*zoom*4*p*M/4/4 - scroll;
-      fltk::fillrect(I,0,1,h()/2);
-      sprintf(buf,"%u",j*label_scale*p/4);
-      fltk::drawtext(buf,I+3,h()-3);
+      if(I>=0){
+        fltk::fillrect(I,0,1,h()/2);
+        sprintf(buf,"%u",j*label_scale*p/4);
+        fltk::drawtext(buf,I+3,h()-3);
+      }
       j++;
     }
 
   }
 
   int X = tick2xpix(get_loop_start()*4/scale);
-  fltk::setcolor(fltk::color(0,0,255));
-  fillrect(X+0,0,1,h()-1);
-  fltk::setcolor(fltk::color(85,85,255));
-  fillrect(X+1,0,1,h()-1);
-  fltk::setcolor(fltk::color(170,170,255));
-  fillrect(X+2,0,1,h()-1);
+  if(X >= -10){
+    fltk::setcolor(fltk::color(0,0,255));
+    fillrect(X+0,0,1,h()-1);
+    fltk::setcolor(fltk::color(85,85,255));
+    fillrect(X+1,0,1,h()-1);
+    fltk::setcolor(fltk::color(170,170,255));
+    fillrect(X+2,0,1,h()-1);
+  }
 
   X = tick2xpix(get_loop_end()*4/scale);
-  fltk::setcolor(fltk::color(128,0,0));
-  fillrect(X+0,0,1,h()-1);
-  fltk::setcolor(fltk::color(170,42,42));
-  fillrect(X-1,0,1,h()-1);
-  fltk::setcolor(fltk::color(255,170,170));
-  fillrect(X-2,0,1,h()-1);
+  if(X >= -10){
+    fltk::setcolor(fltk::color(128,0,0));
+    fillrect(X+0,0,1,h()-1);
+    fltk::setcolor(fltk::color(170,42,42));
+    fillrect(X-1,0,1,h()-1);
+    fltk::setcolor(fltk::color(255,170,170));
+    fillrect(X-2,0,1,h()-1);
+  }
 
-  if(hand){
+  if(hand && pointer_x*4/scale-scroll-10 >= -20){
     hand->draw(pointer_x*4/scale-scroll-10,h()-19);
   }
 
