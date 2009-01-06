@@ -48,6 +48,10 @@ using namespace fltk;
 
 extern struct conf config;
 
+
+#define MOD_MASK (fltk::SHIFT|fltk::CTRL|fltk::ALT|fltk::META|fltk::OPTION)
+
+
 Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
   sustain = 0;
   cur_note = -1;
@@ -69,7 +73,7 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
 
 int keyboard_handler(int e, fltk::Window* w){
-  combo E = combo(event_key(),event_state()&(fltk::SHIFT|fltk::CTRL|fltk::ALT|fltk::META|fltk::OPTION));
+  combo E = combo(event_key(),event_state()&MOD_MASK);
   switch(e){
     case fltk::SHORTCUT:
       if(fltk::event_key_repeated()){
@@ -529,7 +533,7 @@ void KeyGrabber::draw(){
 
 int KeyGrabber::set_key(int zkey, int zmod){
   key = zkey;
-  mod = zmod&(fltk::SHIFT|fltk::CTRL|fltk::ALT|fltk::META|fltk::OPTION);
+  mod = zmod&MOD_MASK;
   strncpy(str,get_keystring(key,mod),32);
   redraw();
 }
@@ -778,12 +782,12 @@ void load_default_keymap(){
 
 
 int zoom_out_key(unsigned key,unsigned mod){
-  if(ui->kg_zo->cmp(combo(key,mod))){return 1;}
+  if(ui->kg_zo->cmp(combo(key,mod&MOD_MASK))){return 1;}
   return 0;
 }
 
 int zoom_in_key(unsigned key,unsigned mod){
-  if(ui->kg_zi->cmp(combo(key,mod))){return 1;}
+  if(ui->kg_zi->cmp(combo(key,mod&MOD_MASK))){return 1;}
   return 0;
 }
 
