@@ -301,30 +301,31 @@ void EventEdit::draw(){
       int X = tick2xpix(e->tick) - scroll;
       int Y = mag2ypix(M);
       int H = h()-Y;
+      if(!(X<0 || X>w())){
+        fltk::Color c1,c2,c3;
+        c1 = fltk::BLACK;
+        c2 = fltk::BLACK;
+        c3 = fltk::BLACK;
+        get_event_color(e,&c1,&c2,&c3);
 
-      fltk::Color c1,c2,c3;
-      c1 = fltk::BLACK;
-      c2 = fltk::BLACK;
-      c3 = fltk::BLACK;
-      get_event_color(e,&c1,&c2,&c3);
-
-      fltk::setcolor(c1);
-      fltk::fillrect(X,Y+1,1,H);
-      fltk::fillrect(X+1,Y,1,1);
-      fltk::setcolor(c2);
-      fltk::fillrect(X+1,Y+1,1,H);
-      fltk::setcolor(c3);
-      fltk::fillrect(X,Y,1,1);
-      if(label_flag){
         fltk::setcolor(c1);
-        char buf[16];
-        if(e->type == MIDI_PITCH_WHEEL){
-          snprintf(buf,16,"%d",M);
+        fltk::fillrect(X,Y+1,1,H);
+        fltk::fillrect(X+1,Y,1,1);
+        fltk::setcolor(c2);
+        fltk::fillrect(X+1,Y+1,1,H);
+        fltk::setcolor(c3);
+        fltk::fillrect(X,Y,1,1);
+        if(label_flag){
+          fltk::setcolor(c1);
+          char buf[16];
+          if(e->type == MIDI_PITCH_WHEEL){
+            snprintf(buf,16,"%d",M);
+          }
+          else{
+            snprintf(buf,16,"%d",mag2val(M));
+          }
+          fltk::drawtext(buf,X+2,Y+12<h()-3?Y+12:h()-3);
         }
-        else{
-          snprintf(buf,16,"%d",mag2val(M));
-        }
-        fltk::drawtext(buf,X-fltk::getwidth(buf),Y+12<h()-3?Y+12:h()-3);
       }
     }
     e = e->next;

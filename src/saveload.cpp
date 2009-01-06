@@ -556,7 +556,6 @@ int load(const char* filename){
   ui->track_info->set_rec(0);
   ui->track_info->update();
 
-  ui->arranger->reset_handle();
   ui->arranger->redraw();
 
   reset_backend(0);
@@ -1384,7 +1383,6 @@ int loadsmf(const char* filename){
   ui->track_info->set_rec(0);
   ui->track_info->update();
 
-  ui->arranger->reset_handle();
   ui->arranger->redraw();
 
   update_config_gui();

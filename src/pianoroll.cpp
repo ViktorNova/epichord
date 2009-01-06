@@ -72,6 +72,9 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   fakeh = wkeyh*75;
   fakehmin = wkeyh*75;
   if(fakeh < h){fakeh = h;}
+
+  scrollx=0;
+  scrolly=0;
 }
 
 int PianoRoll::handle(int event){
@@ -478,16 +481,19 @@ void PianoRoll::draw(){
       int W = tick2xpix(T2)-scrollx - X;
       get_event_color(e,&c1,&c2,&c3);
 
-      fltk::setcolor(c1);
-      fltk::fillrect(X+1,Y+1,W-1,10);
+      if(!(X+W<0 || X > w())){
 
-      fltk::setcolor(c2);
-      fltk::fillrect(X,Y+11,W,1);
-      fltk::fillrect(X+W-1,Y+1,1,11);
+        fltk::setcolor(c1);
+        fltk::fillrect(X+1,Y+1,W-1,10);
 
-      fltk::setcolor(c3);
-      fltk::fillrect(X,Y,W,1);
-      fltk::fillrect(X,Y,1,11);
+        fltk::setcolor(c2);
+        fltk::fillrect(X,Y+11,W,1);
+        fltk::fillrect(X+W-1,Y+1,1,11);
+
+        fltk::setcolor(c3);
+        fltk::fillrect(X,Y,W,1);
+        fltk::fillrect(X,Y,1,11);
+      }
     }
     e=e->next;
   }

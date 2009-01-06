@@ -61,8 +61,6 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   rresize_flag = 0;
   lresize_flag = 0;
 
-  last_handle == NULL;
-
   color_flag = 0;
 
   maxt = 0;
@@ -72,6 +70,9 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   if(fakeh < h){fakeh = h;}
 
   scrollbuffer = 30;
+
+  scrollx=0;
+  scrolly=0;
 
 }
 
@@ -327,18 +328,10 @@ int Arranger::handle(int event){
         else if(rresize_flag){
           apply_rresize();
           rresize_flag = 0;
-          if(last_handle){
-            last_handle->lhandle = 0;
-            last_handle->rhandle = 0;
-          }
         }
         else if(lresize_flag){
           apply_lresize();
           lresize_flag = 0;
-          if(last_handle){
-            last_handle->lhandle = 0;
-            last_handle->rhandle = 0;
-          }
         }
 
         insert_flag=0;
@@ -373,19 +366,6 @@ int Arranger::handle(int event){
         else{s->rhandle = 0;}
         if(over_lhandle(s)){s->lhandle = 1;}
         else{s->lhandle = 0;}
-        if(s != last_handle){
-          if(last_handle){
-            last_handle->rhandle = 0;
-            last_handle->lhandle = 0;
-          }
-          last_handle = s;
-        }
-        redraw();
-      }
-      else if(last_handle){
-        last_handle->rhandle = 0;
-        last_handle->lhandle = 0;
-        last_handle = NULL;
         redraw();
       }
       return 1;
@@ -412,6 +392,7 @@ void Arranger::draw(){
       fltk::fillrect(I,0,1,h());
     }
   }
+
   fltk::setcolor(fltk::GRAY50);
   int P = config.measures_per_phrase;
   if(P){
@@ -423,7 +404,6 @@ void Arranger::draw(){
       }
     }
   }
-
 
   if(insert_flag){
     fltk::setcolor(fltk::BLUE);
@@ -546,10 +526,10 @@ void Arranger::draw(){
           setcolor(fltk::color(128,0,0));
         }
 
-        W = 5;
-        X = tick2xpix(s->tick+s->dur) - W - 1 - scrollx;
+        int W2 = 5;
+        X = tick2xpix(s->tick+s->dur) - W2 - 1 - scrollx;
         Y = s->track*30 - scrolly;
-        addvertex(X+W,Y+28/2);
+        addvertex(X+W2,Y+28/2);
         addvertex(X,Y);
         addvertex(X,Y+28);
         fillpath();
@@ -560,12 +540,12 @@ void Arranger::draw(){
         if(delete_flag){
           setcolor(fltk::color(128,0,0));
         }
-        W = 5;
+        int W2 = 5;
         X = tick2xpix(s->tick)+1-scrollx;
         Y = s->track*30 - scrolly;
         addvertex(X,Y+28/2);
-        addvertex(X+W,Y);
-        addvertex(X+W,Y+28);
+        addvertex(X+W2,Y);
+        addvertex(X+W2,Y+28);
         fillpath();
       }
 
@@ -580,9 +560,11 @@ void Arranger::draw(){
         if(e->type == MIDI_NOTE_ON){
           X = tick2xpix(e->tick) + tick2xpix(s->tick)+2 - scrollx;
           Y = s->track*30 + 27 - e->value1*27/127 - scrolly;
-          W = tick2xpix(e->dur);
-          if(W==0){W=1;}
-          fillrect(X,Y,W,1);
+          int W2 = tick2xpix(e->dur);
+          if(W2==0){W2=1;}
+          if(!(X+W2<0 || X>W )){
+            fillrect(X,Y,W2,1);
+          }
         }
         e=e->next;
       }
@@ -732,7 +714,7 @@ void Arranger::layout(){
   if(newsize<20){
     newsize=20;
   }
-  ui->song_vscroll->slider_size(newsize);
+  //ui->song_vscroll->slider_size(379);
 }
 
 

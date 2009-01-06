@@ -1,15 +1,11 @@
-arranger generally has drawing problems related to follow playback
-zero measures per phrase causes division by zero
-occasional bug on switching layers
+occasional bug on switching layers - check sequencer/backend details
+pop up window toggles need to be reset if window closes - simple fix
+import midi doesnt handle misfit events - see 'extratracks' in loadsmf
+scroll bar size does not indicate scroll range
 
-pop up window toggles need to be reset if window closes
 
-import midi doesnt handle misfit events
-
-zoom all the way in draws wrong in piano roll
-
-end of frame sequencing bug
-out of order dispatch bug
+end of frame sequencing bug - unknown cause
+out of order dispatch bug - sequencer needs to sort dispatched events
 
 
 

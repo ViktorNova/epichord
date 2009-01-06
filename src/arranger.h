@@ -55,7 +55,6 @@ class Arranger : public fltk::Widget {
     int move_w;
     int move_offset;
 
-    seqpat* last_handle;
     int rresize_flag;
     int rresize_torig;
     int rresize_toffset;
@@ -130,8 +129,6 @@ class Arranger : public fltk::Widget {
     void update(int pos);
 
     void layout();
-
-    void reset_handle(){last_handle==NULL;}
 
     void scrollTo(int X, int Y);
 

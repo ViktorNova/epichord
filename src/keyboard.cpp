@@ -63,6 +63,7 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   octave = 4;
 
+  scroll = 0;
 }
 
 
