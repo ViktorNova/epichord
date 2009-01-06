@@ -147,3 +147,20 @@ int unmodify_and_unstick_tracks(){
     }
   }
 }
+
+
+float randf(float l, float r){
+  float L,R;
+  if(l > r){
+    L=r;
+    R=l;
+  }
+  else{
+    L=l;
+    R=r;
+  }
+  float M = (rand()*1.0)/RAND_MAX;
+  float ans = M*(R-L) + L;
+  return ans;
+}
+

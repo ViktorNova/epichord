@@ -573,6 +573,57 @@ void set_quant(int q){
   }
 }
 
+void set_songtool(int i){
+  switch(i){
+    case 0:
+      ui->edit_button->state(1);
+      ui->color_button->state(0);
+      ui->unclone_button->state(0);
+      ui->split_button->state(0);
+      ui->join_button->state(0);
+      ui->arranger->color_flag = 0;
+      ui->arranger->unclone_flag = 0;
+      break;
+    case 1:
+      ui->edit_button->state(0);
+      ui->color_button->state(1);
+      ui->unclone_button->state(0);
+      ui->split_button->state(0);
+      ui->join_button->state(0);
+      ui->arranger->color_flag = 1;
+      ui->arranger->unclone_flag = 0;
+      break;
+    case 2:
+      ui->edit_button->state(0);
+      ui->color_button->state(0);
+      ui->unclone_button->state(1);
+      ui->split_button->state(0);
+      ui->join_button->state(0);
+      ui->arranger->color_flag = 0;
+      ui->arranger->unclone_flag = 1;
+      break;
+    case 3:
+      ui->edit_button->state(0);
+      ui->color_button->state(0);
+      ui->unclone_button->state(0);
+      ui->split_button->state(1);
+      ui->join_button->state(0);
+      ui->arranger->color_flag = 0;
+      ui->arranger->unclone_flag = 0;
+      break;
+    case 4:
+      ui->edit_button->state(0);
+      ui->color_button->state(0);
+      ui->unclone_button->state(0);
+      ui->split_button->state(0);
+      ui->join_button->state(1);
+      ui->arranger->color_flag = 0;
+      ui->arranger->unclone_flag = 0;
+      break;
+  }
+}
+
+
 
 void set_beats_per_measure(int n){
   config.beats_per_measure = n;

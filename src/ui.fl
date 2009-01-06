@@ -57,16 +57,16 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open
-      xywh {31 41 640 480} resizable
+save_config();}
+      xywh {31 41 640 480} hide resizable
       extra_code {\#include <unistd.h>
 \#include <stdio.h>
 \#include "seq.h"
 \#include "trackmodule.h"
 o->size_range(640,455);
-o->resize(640,455);} visible
+o->resize(640,455);}
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {open
@@ -334,29 +334,37 @@ o->state(1);}
             xywh {75 0 25 25}
           }
         }
-        {fltk::Group} song_buttons {
-          xywh {340 5 115 25}
+        {fltk::Group} song_buttons {open
+          xywh {330 5 145 25}
         } {
-          {fltk::Button} color_toggle {
-            callback {arranger->color_flag = o->state();}
+          {fltk::Button} edit_button {
+            callback {set_songtool(0);}
+            tooltip {create delete move resize select paste blocks}
+            xywh {0 0 25 25} value 1
+          }
+          {fltk::Button} color_button {
+            callback {set_songtool(1);}
             tooltip {color tool}
-            xywh {0 0 25 25}
+            xywh {25 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} unclone_button {
-            label dclo
-            tooltip {unclone selected block}
-            xywh {30 0 25 25}
-          }
-          {fltk::Button} join_button {
-            label join
-            tooltip {join selected blocks}
-            xywh {60 0 25 25}
+            callback {set_songtool(2);}
+            tooltip {click on blocks to unclone them}
+            xywh {50 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
           }
           {fltk::Button} split_button {
-            label split
-            tooltip {split selected block}
-            xywh {90 0 25 25}
+            callback {set_songtool(3);}
+            tooltip {click on a block to split in two}
+            xywh {75 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
+          {fltk::Button} join_button {
+            callback {set_songtool(4);}
+            tooltip {click on adjacent blocks to join them}
+            xywh {100 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
           }
         }
         {fltk::Button} loop_toggle {
@@ -371,7 +379,7 @@ o->state(1);}
 }
 else{
   ui->config_window->hide();
-}} selected
+}}
           tooltip configuration
           xywh {520 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
@@ -925,14 +933,18 @@ scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/scope.gif"));
 file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
 help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
 
-color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
+edit_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/edit.gif"));
+color_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
+unclone_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/fork.gif"));
+
 qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
 qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
 qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
 qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
 qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
-qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
+qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {selected
+    }
     code {track_info->set_rec(0);} {}
     code {start_monitor();} {}
     code {main_window->show();} {}

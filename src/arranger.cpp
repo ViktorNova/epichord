@@ -21,6 +21,7 @@
 */
 
 #include <stdio.h>
+#include <math.h>
 #include <vector>
 #include <fltk/Group.h>
 #include <fltk/Widget.h>
@@ -77,6 +78,9 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   resize_s = NULL;
   resize_handle_width = 4;
 
+  unclone_flag=0;
+  join_flag=0;
+  split_flag=0;
 }
 
 int Arranger::handle(int event){
@@ -160,7 +164,7 @@ int Arranger::handle(int event){
       if(event_button()==1){//left mouse
         seqpat* s = over_seqpat();
         if(s==NULL){
-          if(color_flag){//do nothing
+          if(color_flag || unclone_flag){//do nothing
           }
           else if(event_state()&fltk::SHIFT){//begin box
             box_flag = 1;
@@ -191,6 +195,9 @@ int Arranger::handle(int event){
             color_h = color_orig_h;
             color_v = color_orig_v;
             return 1;
+          }
+          if(unclone_flag){
+            apply_unclone();
           }
           if(!s->selected && !(event_state()&SHIFT)){
             unselect_all();
@@ -1188,4 +1195,29 @@ int Arranger::check_paste_safety(){
 }
 
 
+void Arranger::apply_unclone(){
+  Command* c;
+
+  pattern* p2 = new pattern(main_sel->p);
+  //does p2 need to have its ref_c set
+  float a = randf(0.2,0.8);
+  while(fabs(p2->v - a)<0.1){
+    a = randf(0.2,0.8);
+  }
+  p2->v = a;
+  p2->regen_colors();
+
+  //this creates a copy of the block, but uses a copy of the pattern
+  seqpat* s2 = new seqpat(main_sel,p2);
+
+
+  c = new DeleteSeqpat(main_sel);
+  set_undo(c);
+  main_sel = NULL;
+
+  c = new CreateSeqpat(s2->track,s2->tick,s2,0);
+  set_undo(c);
+
+  undo_push(2);
+}
 

@@ -156,14 +156,31 @@ private:
         static void cb_tool_button(fltk::Button*, void*);
 public:
       fltk::Group *song_buttons;
-        fltk::Button *color_toggle;
+        fltk::Button *edit_button;
 private:
-        inline void cb_color_toggle_i(fltk::Button*, void*);
-        static void cb_color_toggle(fltk::Button*, void*);
+        inline void cb_edit_button_i(fltk::Button*, void*);
+        static void cb_edit_button(fltk::Button*, void*);
+public:
+        fltk::Button *color_button;
+private:
+        inline void cb_color_button_i(fltk::Button*, void*);
+        static void cb_color_button(fltk::Button*, void*);
 public:
         fltk::Button *unclone_button;
-        fltk::Button *join_button;
+private:
+        inline void cb_unclone_button_i(fltk::Button*, void*);
+        static void cb_unclone_button(fltk::Button*, void*);
+public:
         fltk::Button *split_button;
+private:
+        inline void cb_split_button_i(fltk::Button*, void*);
+        static void cb_split_button(fltk::Button*, void*);
+public:
+        fltk::Button *join_button;
+private:
+        inline void cb_join_button_i(fltk::Button*, void*);
+        static void cb_join_button(fltk::Button*, void*);
+public:
       fltk::Button *loop_toggle;
 private:
       inline void cb_loop_toggle_i(fltk::Button*, void*);

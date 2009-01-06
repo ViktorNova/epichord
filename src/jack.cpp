@@ -44,7 +44,7 @@ lash_client_t* lash_client;
 #include "backend.h"
 
 
-#include "ui.h"
+//#include "ui.h"
 
 #define PORT_COUNT 8
 

@@ -211,11 +211,39 @@ void UI::cb_tool_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_tool_button_i(o,v);
 }
 
-inline void UI::cb_color_toggle_i(fltk::Button* o, void*) {
-  arranger->color_flag = o->state();
+inline void UI::cb_edit_button_i(fltk::Button*, void*) {
+  set_songtool(0);
 }
-void UI::cb_color_toggle(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_color_toggle_i(o,v);
+void UI::cb_edit_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_edit_button_i(o,v);
+}
+
+inline void UI::cb_color_button_i(fltk::Button*, void*) {
+  set_songtool(1);
+}
+void UI::cb_color_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_color_button_i(o,v);
+}
+
+inline void UI::cb_unclone_button_i(fltk::Button*, void*) {
+  set_songtool(2);
+}
+void UI::cb_unclone_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_unclone_button_i(o,v);
+}
+
+inline void UI::cb_split_button_i(fltk::Button*, void*) {
+  set_songtool(3);
+}
+void UI::cb_split_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_split_button_i(o,v);
+}
+
+inline void UI::cb_join_button_i(fltk::Button*, void*) {
+  set_songtool(4);
+}
+void UI::cb_join_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_join_button_i(o,v);
 }
 
 inline void UI::cb_loop_toggle_i(fltk::Button*, void*) {
@@ -706,21 +734,32 @@ UI::UI() {
         }
         o->end();
       }
-       {fltk::Group* o = song_buttons = new fltk::Group(340, 5, 115, 25);
+       {fltk::Group* o = song_buttons = new fltk::Group(330, 5, 145, 25);
         o->begin();
-         {fltk::Button* o = color_toggle = new fltk::Button(0, 0, 25, 25);
-          o->callback((fltk::Callback*)cb_color_toggle);
+         {fltk::Button* o = edit_button = new fltk::Button(0, 0, 25, 25);
+          o->set_flag(fltk::STATE);
+          o->callback((fltk::Callback*)cb_edit_button);
+          o->tooltip("create delete move resize select paste blocks");
+        }
+         {fltk::Button* o = color_button = new fltk::Button(25, 0, 25, 25);
+          o->callback((fltk::Callback*)cb_color_button);
           o->tooltip("color tool");
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = unclone_button = new fltk::Button(30, 0, 25, 25, "dclo");
-          o->tooltip("unclone selected block");
+         {fltk::Button* o = unclone_button = new fltk::Button(50, 0, 25, 25);
+          o->callback((fltk::Callback*)cb_unclone_button);
+          o->tooltip("click on blocks to unclone them");
+          o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = join_button = new fltk::Button(60, 0, 25, 25, "join");
-          o->tooltip("join selected blocks");
+         {fltk::Button* o = split_button = new fltk::Button(75, 0, 25, 25);
+          o->callback((fltk::Callback*)cb_split_button);
+          o->tooltip("click on a block to split in two");
+          o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = split_button = new fltk::Button(90, 0, 25, 25, "split");
-          o->tooltip("split selected block");
+         {fltk::Button* o = join_button = new fltk::Button(100, 0, 25, 25);
+          o->callback((fltk::Callback*)cb_join_button);
+          o->tooltip("click on adjacent blocks to join them");
+          o->type(fltk::Button::TOGGLE);
         }
         o->end();
       }
@@ -1137,7 +1176,10 @@ track.");
   file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
   help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
   
-  color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
+  edit_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/edit.gif"));
+  color_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
+  unclone_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/fork.gif"));
+  
   qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
   qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
   qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));

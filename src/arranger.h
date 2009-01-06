@@ -110,6 +110,8 @@ class Arranger : public fltk::Widget {
     void apply_lresize();
     void apply_insert();
 
+    void apply_unclone();
+
     int check_move_safety();
     int check_insert_safety();
     int check_resize_safety();
@@ -126,6 +128,9 @@ class Arranger : public fltk::Widget {
     int zoom_n;
 
     int color_flag;
+    int unclone_flag;
+    int join_flag;
+    int split_flag;
 
     int q_tick;
 

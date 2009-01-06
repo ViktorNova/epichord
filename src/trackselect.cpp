@@ -24,11 +24,13 @@
 #include <stdio.h>
 #include <fltk/Group.h>
 #include <fltk/Widget.h>
-#include "ui.h"
+#include <fltk/draw.h>
+//#include "ui.h"
+
+#include "trackselect.h"
 
 
-
-extern UI* ui;
+//extern UI* ui;
 
 
 TrackSelect::TrackSelect(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {

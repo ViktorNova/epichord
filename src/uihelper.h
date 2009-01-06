@@ -49,6 +49,7 @@ void press_panic();
 void press_play();
 
 void set_quant(int q);
+void set_songtool(int i);
 
 void turnonscope();
 void turnoffscope();
