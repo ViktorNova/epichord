@@ -32,6 +32,10 @@
 extern UI* ui;
 
 inline void UI::cb_main_window_i(fltk::Window* o, void*) {
+  if(!fltk::ask("Quit?")){
+    return;
+  }
+  
   config_window->hide();
   help_window->hide();
   action_window->hide();
@@ -665,7 +669,6 @@ UI::UI() {
         o->end();
       }
       o->end();
-      fltk::Group::current()->resizable(o);
     }
      {fltk::Group* o = new fltk::Group(0, 445, 640, 35);
       o->box(fltk::UP_BOX);
@@ -791,8 +794,11 @@ UI::UI() {
       o->end();
     }
     o->end();
+    
+    
     o->size_range(640,455);
     o->resize(640,455);
+    o->resizable(o);
   }
    {fltk::Window* o = config_window = new fltk::Window(320, 285, "controls");
     o->shortcut(0xff1b);

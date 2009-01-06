@@ -3,8 +3,8 @@
 #ifndef ui_h
 #define ui_h
 #include <fltk/Window.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <fltk/ask.h>
 #include "seq.h"
 #include "trackmodule.h"
 #include <fltk/Group.h>

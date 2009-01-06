@@ -51,23 +51,29 @@ class UI {open
   } {
     {fltk::Window} main_window {
       label Epichord
-      callback {config_window->hide();
+      callback {if(!fltk::ask("Quit?")){
+  return;
+}
+
+config_window->hide();
 help_window->hide();
 action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();}
-      xywh {31 41 640 480} hide resizable
-      extra_code {\#include <unistd.h>
-\#include <stdio.h>
+save_config();} selected
+      xywh {31 41 640 480} resizable
+      extra_code {\#include <stdio.h>
+
+\#include <fltk/ask.h>
+
 \#include "seq.h"
 \#include "trackmodule.h"
 o->size_range(640,455);
-o->resize(640,455);}
+o->resize(640,455);} visible
     } {
       {fltk::Group} {} {
-        xywh {0 0 640 445} resizable
+        xywh {0 0 640 445}
       } {
         {fltk::Group} song_edit {open
           xywh {0 0 640 445}
