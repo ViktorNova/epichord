@@ -405,6 +405,21 @@ void Keyboard::cut_notes(int rec){
 }
 
 
+void Keyboard::highlight_note(int note){
+  if(note!=highlight){
+    highlight = note;
+    redraw();
+  }
+}
+
+void Keyboard::highlight_clear(){
+  if(highlight != -1){
+    highlight=-1;
+    redraw();
+  }
+}
+
+
 void Keyboard::draw(){
   fltk::setcolor(fltk::WHITE);
   fltk::fillrect(0,0,w(),h());
@@ -414,7 +429,7 @@ void Keyboard::draw(){
   //draw held white notes
   int black;
   for(int i=0; i<128; i++){
-    if(ons[i]){
+    if(ons[i] || i==highlight){
       int Y = note2ypix(i,&black)-scroll;
       if(!black){
         fltk::setcolor(fltk::GRAY50);
@@ -443,7 +458,7 @@ void Keyboard::draw(){
 
   //draw held black notes
   for(int i=0; i<128; i++){
-    if(ons[i]){
+    if(ons[i] || i == highlight){
       int Y = note2ypix(i,&black)-scroll;
       if(black){
         fltk::setcolor(fltk::GRAY70);

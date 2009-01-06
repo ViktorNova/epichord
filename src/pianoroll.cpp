@@ -222,7 +222,7 @@ int PianoRoll::handle(int event){
       redraw();
       return 1;
     case fltk::DRAG:
-
+      ui->keyboard->highlight_clear();
       if(box_flag){
         box_x2 = X;
         box_y2 = Y;
@@ -325,6 +325,7 @@ int PianoRoll::handle(int event){
       return 1;
 
     case fltk::MOVE:
+      ui->keyboard->highlight_note(ypix2note(Y+scrolly,1));
       e = over_note();
       if(e){
         if(over_rhandle(e)){
@@ -364,6 +365,11 @@ int PianoRoll::handle(int event){
         }
       }
 
+      return 1;
+
+
+    case fltk::LEAVE:
+      ui->keyboard->highlight_clear();
       return 1;
   }
   return 0;

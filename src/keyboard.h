@@ -35,6 +35,8 @@ class Keyboard : public fltk::Widget {
 
     int octave;
 
+    int highlight;
+
   public:
     int cur_port;
     int cur_chan;
@@ -55,6 +57,8 @@ class Keyboard : public fltk::Widget {
     int handle(int event);
     void draw();
 
+    void highlight_note(int note);
+    void highlight_clear();
 };
 
 
