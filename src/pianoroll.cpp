@@ -218,7 +218,6 @@ int PianoRoll::handle(int event){
           delete_flag = 1;
           resize_arrow_color = fltk::color(120,60,58);
         }
-
       }
       redraw();
       return 1;

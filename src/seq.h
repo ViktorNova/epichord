@@ -151,8 +151,6 @@ struct seqpat {
   int selected;
   int modified;
   int record_flag;//0=on record, erase/save. 1=dont
-  int rhandle;
-  int lhandle;
 
   int scrollx, scrolly;
 
@@ -175,8 +173,6 @@ struct seqpat {
     dur=0;
     selected=0;
     modified=0;
-    rhandle=0;
-    lhandle=0;
     record_flag=1;
     layers = NULL;
     scrollx = 0;
@@ -194,8 +190,6 @@ struct seqpat {
     next = NULL;
     selected = 0;
     modified = 0;
-    rhandle = 0;
-    lhandle = 0;
     record_flag = 1;
     layers = NULL;
     scrollx = 0;
@@ -220,8 +214,6 @@ struct seqpat {
     selected = zs->selected;
     modified = zs->modified;
 
-    rhandle = 0;
-    lhandle = 0;
     record_flag = 1;
     layers = NULL;
   }
@@ -244,8 +236,6 @@ struct seqpat {
     selected = zs->selected;
     modified = zs->modified;
 
-    rhandle=0;
-    lhandle=0;
     record_flag=1;
     layers = NULL;
   }

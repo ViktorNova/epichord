@@ -63,6 +63,13 @@ class Arranger : public fltk::Widget {
     int lresize_torig;
     int lresize_toffset;
 
+    int resize_arrow;
+    int resize_redraw;
+    int resize_x;
+    int resize_y;
+    fltk::Color resize_arrow_color;
+    seqpat* resize_s;
+    int resize_handle_width;
 
     int paste_flag;
     int paste_t;

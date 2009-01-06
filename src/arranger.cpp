@@ -74,6 +74,9 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   scrollx=0;
   scrolly=0;
 
+  resize_s = NULL;
+  resize_handle_width = 4;
+
 }
 
 int Arranger::handle(int event){
@@ -269,6 +272,7 @@ int Arranger::handle(int event){
             unselect_all();
           }
           s->selected = 1;
+          resize_arrow_color = fltk::color(128,0,0);
         }
       }
       redraw();
@@ -328,10 +332,12 @@ int Arranger::handle(int event){
         else if(rresize_flag){
           apply_rresize();
           rresize_flag = 0;
+          resize_arrow = 0;
         }
         else if(lresize_flag){
           apply_lresize();
           lresize_flag = 0;
+          resize_arrow = 0;
         }
 
         insert_flag=0;
@@ -351,7 +357,7 @@ int Arranger::handle(int event){
           }
         }
         delete_flag=0;
-        //last_handle==NULL;
+        resize_arrow = 0;
       }
 
 
@@ -362,11 +368,40 @@ int Arranger::handle(int event){
       if(color_flag){break;}
       seqpat* s = over_seqpat();
       if(s){
-        if(over_rhandle(s)){s->rhandle = 1;}
-        else{s->rhandle = 0;}
-        if(over_lhandle(s)){s->lhandle = 1;}
-        else{s->lhandle = 0;}
-        redraw();
+        if(over_rhandle(s)){
+          if(resize_s != s || resize_arrow != 1){
+            if(s->selected){resize_arrow_color = fltk::color(128,128,0);}
+            else{resize_arrow_color = fltk::color(s->p->r2,s->p->g2,s->p->b2);}
+            resize_s = s;
+            resize_arrow = 1;
+           resize_x = tick2xpix(s->tick + s->dur)-scrollx-resize_handle_width-1;
+            resize_y = s->track*30-scrolly;
+            redraw();
+          }
+        }
+        else if(over_lhandle(s)){
+          if(resize_s != s || resize_arrow != 1){
+            if(s->selected){resize_arrow_color = fltk::color(128,128,0);}
+            else{resize_arrow_color = fltk::color(s->p->r2,s->p->g2,s->p->b2);}
+            resize_s = s;
+            resize_arrow = -1;
+            resize_x = tick2xpix(s->tick)+1 - scrollx;
+            resize_y = s->track*30 - scrolly;
+            redraw();
+          }
+        }
+        else{
+          if(resize_arrow != 0){
+            resize_arrow=0;
+            redraw();
+          }
+        }
+      }
+      else{
+        if(resize_arrow != 0){
+          resize_arrow=0;
+          redraw();
+        }
       }
       return 1;
 
@@ -520,35 +555,6 @@ void Arranger::draw(){
 
       fltk::push_clip(tick2xpix(T1)-scrollx,s->track*30-scrolly,tick2xpix(T2-T1),30);
 
-      if(s->rhandle && !rresize_flag){
-        setcolor(cx);
-        if(delete_flag){
-          setcolor(fltk::color(128,0,0));
-        }
-
-        int W2 = 5;
-        X = tick2xpix(s->tick+s->dur) - W2 - 1 - scrollx;
-        Y = s->track*30 - scrolly;
-        addvertex(X+W2,Y+28/2);
-        addvertex(X,Y);
-        addvertex(X,Y+28);
-        fillpath();
-      }
-
-      if(s->lhandle && !lresize_flag){
-        setcolor(cx);
-        if(delete_flag){
-          setcolor(fltk::color(128,0,0));
-        }
-        int W2 = 5;
-        X = tick2xpix(s->tick)+1-scrollx;
-        Y = s->track*30 - scrolly;
-        addvertex(X,Y+28/2);
-        addvertex(X+W2,Y);
-        addvertex(X+W2,Y+28);
-        fillpath();
-      }
-
       fltk::setcolor(cx);
 
 
@@ -585,6 +591,35 @@ void Arranger::draw(){
       fltk::pop_clip();
 
       s=s->next;
+    }
+  }
+
+  if(!rresize_flag && !lresize_flag){
+    if(resize_arrow > 0){
+      setcolor(resize_arrow_color);
+
+      int W = resize_handle_width;
+      int H = 28;
+      int X = resize_x;
+      int Y = resize_y;
+
+      addvertex(X,Y);
+      addvertex(X,Y+H);
+      addvertex(X+W,Y+H/2);
+      fillpath();
+    }
+    else if(resize_arrow < 0){
+      setcolor(resize_arrow_color);
+
+      int W = resize_handle_width;
+      int H = 28;
+      int X = resize_x;
+      int Y = resize_y;
+
+      addvertex(X+W,Y);
+      addvertex(X+W,Y+H);
+      addvertex(X,Y+H/2);
+      fillpath();
     }
   }
 
