@@ -67,6 +67,9 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
   for(int i=0; i<134; i++){
     has[i] = 0;
   }
+
+  line_t1 = 0;
+  line_t2 = 0;
 }
 
 int EventEdit::handle(int event){

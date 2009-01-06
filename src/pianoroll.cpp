@@ -61,7 +61,9 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   move_toffset = 0;
 
-
+  insert_flag = 0;
+  move_flag = 0;
+  delete_flag=0;
   lresize_flag = 0;
   rresize_flag = 0;
 
