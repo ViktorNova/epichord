@@ -936,6 +936,8 @@ help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
 edit_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/edit.gif"));
 color_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
 unclone_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/fork.gif"));
+split_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/split.gif"));
+join_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/join.gif"));
 
 qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
 qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
@@ -943,8 +945,7 @@ qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
 qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
 qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
-qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {selected
-    }
+qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {track_info->set_rec(0);} {}
     code {start_monitor();} {}
     code {main_window->show();} {}

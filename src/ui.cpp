@@ -1179,6 +1179,8 @@ track.");
   edit_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/edit.gif"));
   color_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
   unclone_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/fork.gif"));
+  split_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/split.gif"));
+  join_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/join.gif"));
   
   qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
   qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
