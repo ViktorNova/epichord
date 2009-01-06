@@ -11,5 +11,5 @@ saveload.cpp seq.h backend.h ui.h pianoroll.h \
 trackselect.h eventedit.h timeline.h sampleview.h \
 trackinfo.h arranger.h keyboard.h trackmodule.h \
 util.h midi.h uihelper.h saveload.h metronome.cpp \
-metronome.h eventmenu.cpp eventmenu.h customscroll.cpp \
-customscroll.h theme.cpp theme.h
+metronome.h eventmenu.cpp eventmenu.h \
+theme.cpp theme.h
