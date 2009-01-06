@@ -2,7 +2,7 @@ occasional bug on switching layers - check sequencer/backend details
 pop up window toggles need to be reset if window closes - simple fix
 import midi doesnt handle misfit events - see 'extratracks' in loadsmf
 scroll bar size does not indicate scroll range
-
+zoom needs to be adjusted
 
 end of frame sequencing bug - unknown cause
 out of order dispatch bug - sequencer needs to sort dispatched events

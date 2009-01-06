@@ -169,10 +169,10 @@ private:
       inline void cb_loop_toggle_i(fltk::Button*, void*);
       static void cb_loop_toggle(fltk::Button*, void*);
 public:
-      fltk::Button *config_button;
+      fltk::Button *conf_toggle;
 private:
-      inline void cb_config_button_i(fltk::Button*, void*);
-      static void cb_config_button(fltk::Button*, void*);
+      inline void cb_conf_toggle_i(fltk::Button*, void*);
+      static void cb_conf_toggle(fltk::Button*, void*);
 public:
       fltk::Button *scope_button;
 private:

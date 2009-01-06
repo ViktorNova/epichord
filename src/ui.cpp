@@ -225,7 +225,7 @@ void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
-inline void UI::cb_config_button_i(fltk::Button* o, void*) {
+inline void UI::cb_conf_toggle_i(fltk::Button* o, void*) {
   if(o->state()){
     ui->config_window->show();
   }
@@ -233,8 +233,8 @@ inline void UI::cb_config_button_i(fltk::Button* o, void*) {
     ui->config_window->hide();
   }
 ;}
-void UI::cb_config_button(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_config_button_i(o,v);
+void UI::cb_conf_toggle(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_conf_toggle_i(o,v);
 }
 
 inline void UI::cb_scope_button_i(fltk::Button* o, void*) {
@@ -729,8 +729,8 @@ UI::UI() {
         o->tooltip("toggle looping");
         o->type(fltk::Button::TOGGLE);
       }
-       {fltk::Button* o = config_button = new fltk::Button(520, 5, 25, 25, "conf");
-        o->callback((fltk::Callback*)cb_config_button);
+       {fltk::Button* o = conf_toggle = new fltk::Button(520, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_conf_toggle);
         o->tooltip("configuration");
         o->type(fltk::Button::TOGGLE);
       }
@@ -1132,11 +1132,12 @@ track.");
     o->resizable(o);
   }
   loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
-  color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
-  scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
+  conf_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
+  scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/scope.gif"));
   file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
   help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
   
+  color_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/color.gif"));
   qbutton4->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q4.gif"));
   qbutton8->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q8.gif"));
   qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
