@@ -69,7 +69,7 @@ Keyboard::Keyboard(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
 
 int keyboard_handler(int e, fltk::Window* w){
-  combo E = combo(event_key(),event_state());
+  combo E = combo(event_key(),event_state()&(fltk::SHIFT|fltk::CTRL|fltk::ALT|fltk::META|fltk::OPTION));
   switch(e){
     case fltk::SHORTCUT:
       if(fltk::event_key_repeated()){
