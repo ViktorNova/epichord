@@ -579,7 +579,7 @@ void Arranger::draw(){
         }
         if(e->type == MIDI_NOTE_ON){
           X = tick2xpix(e->tick) + tick2xpix(s->tick)+2 - scrollx;
-          Y = s->track*30 + 27 - e->value1*27/127;
+          Y = s->track*30 + 27 - e->value1*27/127 - scrolly;
           W = tick2xpix(e->dur);
           if(W==0){W=1;}
           fillrect(X,Y,W,1);
