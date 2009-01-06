@@ -887,7 +887,7 @@ void Arranger::apply_paste(){
 
   Command* c;
 
-  c = new CreateSeqpat(paste_track,paste_t,main_sel,0);
+  c = new CreateSeqpat(paste_track,paste_t,main_sel,config.alwayscopy);
   set_undo(c);
   undo_push(1);
 
