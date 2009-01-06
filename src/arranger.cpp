@@ -542,7 +542,7 @@ void Arranger::draw(){
       }
 
       fillrect(X+1,Y+1,W-2,27);
-      float a = 1.5f;
+      //float a = 1.5f;
 
 
       fltk::setcolor(c2);
@@ -553,7 +553,7 @@ void Arranger::draw(){
       fillrect(X,Y,1,28);
       fillrect(X,Y,W,1);
 
-      fltk::push_clip(tick2xpix(T1)-scrollx,s->track*30-scrolly,tick2xpix(T2-T1),30);
+      fltk::push_clip(X,Y,W,30);
 
       fltk::setcolor(cx);
 
@@ -564,12 +564,12 @@ void Arranger::draw(){
           break;
         }
         if(e->type == MIDI_NOTE_ON){
-          X = tick2xpix(e->tick) + tick2xpix(s->tick)+2 - scrollx;
+          int X2 = tick2xpix(e->tick) + tick2xpix(s->tick)+2 - scrollx;
           Y = s->track*30 + 27 - e->value1*27/127 - scrolly;
           int W2 = tick2xpix(e->dur);
           if(W2==0){W2=1;}
-          if(!(X+W2<0 || X>W )){
-            fillrect(X,Y,W2,1);
+          if(!(X2+W2<0 || X2>X+W )){
+            fillrect(X2,Y,W2,1);
           }
         }
         e=e->next;
