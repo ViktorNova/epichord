@@ -70,6 +70,8 @@ EventEdit::EventEdit(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   line_t1 = 0;
   line_t2 = 0;
+
+  cur_seqpat = NULL;
 }
 
 int EventEdit::handle(int event){

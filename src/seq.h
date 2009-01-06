@@ -125,7 +125,10 @@ struct layerstack {
   int ref_c;
 
   pattern* push_new();
-  void push_new(pattern* p);
+  void push(pattern* p);
+  pattern* pop();
+  void remove(int n);
+  void insert(pattern* p, int n);
   pattern* next();
   pattern* prev();
   void reallocate();
@@ -456,6 +459,7 @@ class MoveSeqpat : public Command {
     void undo();
 };
 
+/*TODO*/
 class SplitSeqpat : public Command {
     seqpat* s;
     pattern* p1;
@@ -474,6 +478,73 @@ class SplitSeqpat : public Command {
       if(--(p2->ref_c) == 0){
         delete p2;
       }
+    }
+
+    void redo();
+    void undo();
+};
+
+
+/*TODO*/
+class JoinSeqpat : public Command {
+
+  public:
+
+    JoinSeqpat(seqpat* zs1, seqpat* zs2){
+      //s = zs;
+      //p1 = s->p;
+      //p2 = new pattern();
+      //p2->ref_c = 1;
+    }
+
+    ~JoinSeqpat(){
+      //if(--(p2->ref_c) == 0){
+      //  delete p2;
+      //}
+    }
+
+    void redo();
+    void undo();
+};
+
+class ClearSeqpat : public Command {
+
+    seqpat* s;
+    pattern* p1;
+    pattern* p2;
+
+  public:
+
+    ClearSeqpat(seqpat* zs){
+      s = zs;
+      p1 = s->p;
+      p2 = new pattern();
+      p2->ref_c = 1;
+    }
+
+    ~ClearSeqpat(){
+      //delete p2
+    }
+
+    void redo();
+    void undo();
+};
+
+class LayerSeqpat : public Command {
+
+    seqpat* s;
+    pattern* p;
+
+  public:
+
+    LayerSeqpat(seqpat* zs){
+      s = zs;
+      p = new pattern();
+      p->ref_c = 1;
+    }
+
+    ~LayerSeqpat(){
+      //delete p2
     }
 
     void redo();

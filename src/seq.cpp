@@ -326,14 +326,44 @@ void MoveSeqpat::undo(){
 }
 
 void SplitSeqpat::redo(){
-  s->p = p2;
+
 }
 
 void SplitSeqpat::undo(){
+
+}
+
+void JoinSeqpat::redo(){
+
+}
+
+void JoinSeqpat::undo(){
+
+}
+
+void ClearSeqpat::redo(){
+  s->p = p2;
+}
+
+void ClearSeqpat::undo(){
   s->p = p1;
 }
 
+void LayerSeqpat::redo(){
+  if(s->layers == NULL){
+    s->layers = new layerstack(s->p);
+  }
+  s->layers->push(p);
+  s->p = p;
+}
 
+void LayerSeqpat::undo(){
+  s->p = s->layers->pop();
+  if(s->layers->total == 1){
+    delete s->layers;
+    s->layers = NULL;
+  }
+}
 
 
 void CreateNote::redo(){
@@ -720,40 +750,19 @@ void seqpat::restate(){
 
 //clear the pattern
 void seqpat::apply_erase(){
-  if(layers){
-    layers->ref_c--;
-    if(layers->ref_c == 0){
-      delete layers;
-      layers = NULL;
-    }
-  }
 
-  pattern* ptmp = new pattern();
-  ptmp->ref_c = 1;
-  ptmp->h = p->h;
-  ptmp->s = p->s;
-  ptmp->v = p->v;
-  ptmp->regen_colors();
+  Command* c;
 
-  if(p){
-    if(--(p->ref_c) == 0){
-      delete p;
-    }
-  }
-
-  p = ptmp;
+  c = new ClearSeqpat(this);
+  set_undo(c);
+  undo_push(1);
 }
 
 //create new pattern and make it current
 void seqpat::apply_layer(){
-  if(layers){
-    p = layers->push_new();
-  }
-  else{
-    layers = new layerstack(p);
-    layers->ref_c = 1;
-    p = layers->push_new();
-  }
+  Command* c = new LayerSeqpat(this);
+  set_undo(c);
+  undo_push(1);
 }
 
 void seqpat::next_layer(){
@@ -843,7 +852,7 @@ pattern* layerstack::push_new(){
   return array[index];
 }
 
-void layerstack::push_new(pattern* p){
+void layerstack::push(pattern* p){
   if(total==memsize){
     reallocate();
   }
@@ -862,6 +871,26 @@ void layerstack::reallocate(){
   memsize *= 2;
   delete [] array;
   array = ptmp;
+}
+
+pattern* layerstack::pop(){
+  if(index == 1){
+    return NULL;
+  }
+  if(index == total-1){
+    index--;
+  }
+  array[total-1]=NULL;
+  total--;
+  return array[index];
+}
+
+void layerstack::remove(int n){
+
+}
+
+void layerstack::insert(pattern* p, int n){
+
 }
 
 

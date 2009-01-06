@@ -522,7 +522,7 @@ int load(const char* filename){
             for(int j=1; j<total_layers; j++){
               file >> index;
               p = findpatternbyindex(index,patlist);
-              layers->push_new(p);
+              layers->push(p);
             }
 
             file >> layers->index;

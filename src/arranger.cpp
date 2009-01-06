@@ -77,6 +77,7 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
   resize_s = NULL;
   resize_handle_width = 4;
+  resize_arrow = 0;
 
   unclone_flag=0;
   join_flag=0;
