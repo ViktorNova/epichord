@@ -793,6 +793,7 @@ void remove_track(int n){
 
 
 void init_gui(){
+
   ui->arranger->layout();
   ui->song_vscroll->slider_size(60);
   ui->song_vscroll->value(0);

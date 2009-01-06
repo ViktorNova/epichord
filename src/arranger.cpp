@@ -115,18 +115,6 @@ int Arranger::handle(int event){
       }
       return 1;
     case fltk::SHORTCUT:
-      if(event_state() && event_key()=='c'){
-
-        return 1;
-      }
-      if(event_state() && event_key()=='v'){
-
-        return 1;
-      }
-      if(event_state() && event_key()=='z'){
-
-        return 1;
-      }
       if(event_key()==fltk::DeleteKey){
         apply_delete();
         delete_flag = 0;

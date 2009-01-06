@@ -751,6 +751,7 @@ void set_undo(Command* c);
 void undo_push(int n);
 void do_undo();
 void do_redo();
+void undo_reset();
 
 
 void reset_record_flags();

@@ -141,9 +141,6 @@ int clear(){
     delete t;
   }
 
-
-
-
   ui->title_text->text("");
   ui->author_text->text("");
 
@@ -151,6 +148,9 @@ int clear(){
   tb->text("");
 
   ui->track_info->clear_tracks();
+
+
+  undo_reset();
 
   ui->main_window->redraw();
 

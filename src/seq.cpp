@@ -35,8 +35,10 @@
 std::vector<track*> tracks;
 
 std::list<Command*> undo_stack;
-std::list<int> undo_number;
 std::list<Command*>::iterator undo_ptr;
+std::list<int> undo_number;
+std::list<int>::iterator undo_nptr;
+
 
 int solo_flag = 0;
 
@@ -174,32 +176,7 @@ int set_default_hsv_value(float v){
   default_hsv_value = v;
 }
 
-void set_undo(Command* c){
-  if(undo_ptr != undo_stack.end()){
-    //then we need to clean house
-    //delete everything at and after undo_ptr (for real);
-  }
 
-  undo_stack.push_back(c);
-  undo_ptr = undo_stack.end();
-  c->redo();
-}
-
-void undo_push(int n){
-  undo_number.push_back(n);
-}
-
-void do_undo(){
-
-  undo_ptr--;
-  (*undo_ptr)->undo();
-}
-
-void do_redo(){
-
-  (*undo_ptr)->redo();
-  undo_ptr++;
-}
 
 
 
@@ -359,7 +336,9 @@ void LayerSeqpat::redo(){
 
 void LayerSeqpat::undo(){
   s->p = s->layers->pop();
+printf("ok...%d\n",s->layers->total);
   if(s->layers->total == 1){
+printf("deleting layers\n");
     delete s->layers;
     s->layers = NULL;
   }
@@ -874,7 +853,7 @@ void layerstack::reallocate(){
 }
 
 pattern* layerstack::pop(){
-  if(index == 1){
+  if(index == 0){
     return NULL;
   }
   if(index == total-1){
@@ -945,4 +924,82 @@ void reset_record_flags(){
       s = s->next;
     }
   }
+}
+
+
+
+
+void set_undo(Command* c){
+  if(undo_ptr != undo_stack.end()){
+    //printf("changing the past, need to erase the future\n");
+    std::list<Command*>::iterator ptr = undo_ptr;
+    ptr++;
+    int N=0;
+    while(undo_ptr != undo_stack.end()){
+      N++;
+      undo_ptr++;
+    }
+    for(int i=0; i<N; i++){
+      undo_stack.pop_back();
+      undo_number.pop_back();
+    }
+  }
+//printf("pushing command\n");
+  undo_stack.push_back(c);
+  undo_ptr = undo_stack.end();
+  c->redo();
+}
+
+void undo_push(int n){
+  if(n==0){return;}
+//printf("pushing number of commands %d\n",n);
+  undo_number.push_back(n);
+  undo_nptr++;
+}
+
+void do_undo(){
+  if(undo_ptr==undo_stack.begin()){
+    printf("no more to undo!\n");
+    return;
+  }
+//printf("undoing\n");
+  int N = *undo_nptr;
+  undo_nptr--;
+  for(int i=0; i<N; i++){
+    undo_ptr--;
+    (*undo_ptr)->undo();
+  }
+}
+
+void do_redo(){
+  if(undo_ptr==undo_stack.end()){
+    printf("no more to redo!\n");
+    return;
+  }
+//printf("redoing\n");
+  undo_nptr++;
+  int N = *undo_nptr;
+  for(int i=0; i<N; i++){
+    (*undo_ptr)->redo();
+    undo_ptr++;
+  }
+}
+
+void undo_reset(){
+  //printf("undo reset\n");
+  int N = undo_stack.size();
+  for(int i=0; i<N; i++){
+    std::list<Command*>::iterator c = undo_stack.end();
+    c--;
+    //delete (*c);
+    undo_stack.pop_back();
+  }
+
+  N = undo_number.size();
+  for(int i=0; i<N; i++){
+    undo_number.pop_back();
+  }
+
+  undo_nptr = undo_number.begin();
+  undo_ptr = undo_stack.begin();
 }

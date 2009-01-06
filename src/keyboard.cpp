@@ -78,6 +78,14 @@ int keyboard_handler(int e, fltk::Window* w){
       if(E==combo(fltk::SpaceKey,0)){
         ui->keyboard->set_sustain(1);
       }
+      else if(E==combo('z',fltk::CTRL)){
+        do_undo();
+        ui->main_window->redraw();
+      }
+      else if(E==combo('r',fltk::CTRL)){
+        do_redo();
+        ui->main_window->redraw();
+      }
       else if(ui->kg_od->cmp(E)){
         ui->keyboard->octave_down();
       }
@@ -521,7 +529,7 @@ void KeyGrabber::draw(){
 
 int KeyGrabber::set_key(int zkey, int zmod){
   key = zkey;
-  mod = zmod;
+  mod = zmod&(fltk::SHIFT|fltk::CTRL|fltk::ALT|fltk::META|fltk::OPTION);
   strncpy(str,get_keystring(key,mod),32);
   redraw();
 }
