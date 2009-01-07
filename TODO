@@ -9,16 +9,15 @@ remaining tools
   quantize note off
   join blocks
   split blocks
-  unclone block
+  //unclone block
   (note off tool)
   (aftertouch tool)
   (portamento tool)
 
 //enhance recording
-  //overwrite block
   //layer block
 
-undo and redo
+//undo and redo
 
 //midi files
   //import smf
