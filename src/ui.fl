@@ -72,10 +72,10 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -288,25 +288,25 @@ ui->event_edit->redraw();}
           xywh {125 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
-        {fltk::Group} {} {open
+        {fltk::Group} {} {selected
           xywh {155 0 20 35} resizable
         } {}
         {fltk::Group} pattern_buttons {
           xywh {200 5 310 25} hide
         } {
+          {fltk::Button} tool_button {
+            label tool
+            callback {toggle_tool();}
+            xywh {35 0 25 25} hide
+          }
           {fltk::Button} quant1_button {
             label qua
             tooltip {quantize selected notes}
-            xywh {35 0 25 25}
+            xywh {60 0 25 25}
           }
           {fltk::Button} quant0_button {
             label qu_
             tooltip {quantize length of selected notes}
-            xywh {60 0 25 25}
-          }
-          {fltk::Button} tool_button {
-            label tool
-            callback {toggle_tool();}
             xywh {85 0 25 25}
           }
           {fltk::Button} qbutton4 {
@@ -429,7 +429,7 @@ else{
     {fltk::Window} config_window {
       label config
       callback {ui->conf_button->state(0);
-o->hide();} open selected
+o->hide();}
       xywh {52 125 320 285} hide
     } {
       {fltk::TabGroup} {} {open

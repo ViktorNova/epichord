@@ -9,12 +9,10 @@ A midi sequencer
 
 **Epichord**
 
-This is a program which I have heard described as a classical multi-track
-midi sequencer. It allows you to arrange notes and patterns to be played on a
-midi bus or record notes from some midi source. It does not make sound
-and it does not handle audio in any way. That is the the job of other midi
-aware softwares and hardware devices.
-
+Epichord is a midi sequencer. It allows you to arrange midi patterns to be 
+played on midi aware tools, record midi, and store/load arrangements to/from 
+disk. It does not make sound or handle audio in any way. That is the job of 
+other midi programs and hardware to which it can connect.
 
 **where to get the source**
 
@@ -22,6 +20,13 @@ Epichord is licensed under the GNU GPL, so by using this program you implicitly
 accept the ability to get the source code if you do not already have it.
 
 the source is in a git repo at http://repo.or.cz/w/epichord.git
+
+Use the following command to get a clone of the repo which you can use
+to easily get updates to the very latest version, or to make improvments
+and submit them. The repo has the mob branch enabled so you do not need
+a password to use that branch.
+
+git clone git://repo.or.cz/epichord.git
 
 
 **how to build**

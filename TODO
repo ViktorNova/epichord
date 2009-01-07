@@ -7,8 +7,8 @@ remaining mouse editing
 remaining tools
   quantize note on
   quantize note off
-  join blocks
-  split blocks
+  //join blocks
+  //split blocks
   //unclone block
   (note off tool)
   (aftertouch tool)

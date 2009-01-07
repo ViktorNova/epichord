@@ -1023,12 +1023,12 @@ void reset_record_flags(){
 
 void set_undo(Command* c){
   if(undo_ptr != undo_stack.end()){
-    printf("changing the past, need to erase the future\n");
+    //printf("changing the past, need to erase the future\n");
     std::list<int>::iterator nptr = undo_number.end();
     nptr--;
     while(nptr != undo_nptr){
       int N = *nptr;
-printf("deleting %d commands\n",N);
+//printf("deleting %d commands\n",N);
       for(int i=0; i<N; i++){
         //delete this command
         undo_stack.pop_back();
@@ -1037,7 +1037,7 @@ printf("deleting %d commands\n",N);
       undo_number.pop_back();
     }
   }
-printf("pushing command\n");
+//printf("pushing command\n");
   undo_stack.push_back(c);
   undo_ptr = undo_stack.end();
   c->redo();
@@ -1045,7 +1045,7 @@ printf("pushing command\n");
 
 void undo_push(int n){
   if(n==0){return;}
-printf("pushing number of commands %d\n",n);
+//printf("pushing number of commands %d\n",n);
   undo_number.push_back(n);
   undo_nptr++;
 }
@@ -1055,7 +1055,7 @@ void do_undo(){
     printf("no more to undo!\n");
     return;
   }
-printf("undoing\n");
+//printf("undoing\n");
   int N = *undo_nptr;
   undo_nptr--;
   for(int i=0; i<N; i++){
@@ -1069,7 +1069,7 @@ void do_redo(){
     printf("no more to redo!\n");
     return;
   }
-printf("redoing\n");
+//printf("redoing\n");
   undo_nptr++;
   int N = *undo_nptr;
   for(int i=0; i<N; i++){
@@ -1079,7 +1079,7 @@ printf("redoing\n");
 }
 
 void undo_reset(){
-  printf("undo reset\n");
+  //printf("undo reset\n");
   int N = undo_stack.size();
   for(int i=0; i<N; i++){
     std::list<Command*>::iterator c = undo_stack.end();

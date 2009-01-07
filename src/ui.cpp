@@ -735,14 +735,15 @@ UI::UI() {
        {fltk::Group* o = pattern_buttons = new fltk::Group(200, 5, 310, 25);
         o->hide();
         o->begin();
-         {fltk::Button* o = quant1_button = new fltk::Button(35, 0, 25, 25, "qua");
+         {fltk::Button* o = tool_button = new fltk::Button(35, 0, 25, 25, "tool");
+          o->callback((fltk::Callback*)cb_tool_button);
+          o->hide();
+        }
+         {fltk::Button* o = quant1_button = new fltk::Button(60, 0, 25, 25, "qua");
           o->tooltip("quantize selected notes");
         }
-         {fltk::Button* o = quant0_button = new fltk::Button(60, 0, 25, 25, "qu_");
+         {fltk::Button* o = quant0_button = new fltk::Button(85, 0, 25, 25, "qu_");
           o->tooltip("quantize length of selected notes");
-        }
-         {fltk::Button* o = tool_button = new fltk::Button(85, 0, 25, 25, "tool");
-          o->callback((fltk::Callback*)cb_tool_button);
         }
          {fltk::Button* o = qbutton4 = new fltk::Button(135, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);

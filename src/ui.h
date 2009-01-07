@@ -118,13 +118,13 @@ private:
       static void cb_loop_toggle(fltk::Button*, void*);
 public:
       fltk::Group *pattern_buttons;
-        fltk::Button *quant1_button;
-        fltk::Button *quant0_button;
         fltk::Button *tool_button;
 private:
         inline void cb_tool_button_i(fltk::Button*, void*);
         static void cb_tool_button(fltk::Button*, void*);
 public:
+        fltk::Button *quant1_button;
+        fltk::Button *quant0_button;
         fltk::Button *qbutton4;
 private:
         inline void cb_qbutton4_i(fltk::Button*, void*);

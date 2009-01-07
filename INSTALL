@@ -14,9 +14,13 @@ as root to install to the default location.
 
 When you run into problems, make sure you have the dependency libraries
 installed. FLTK 2 and JACK with midi support (any recent version) is
-required. 
+required. Also, LASH is currently required to build. However if you want
+LASH to actually work, you need the latest release candidate. At the
+time I write this it is 0.6.0-rc2. LASH can easily be deactivated
+by not defining HAVE_LASH. If you can add this to the autoconf script,
+by all means do it and commit the changes.
 
-NOTE that FLTK2's default configuration will not build the shared libs. 
+*NOTE that FLTK2's default configuration will not build the shared libs. 
 Remember to use --enable-shared when building FLTK2.
 
 After building you may have an error message about missing graphics and
