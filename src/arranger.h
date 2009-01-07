@@ -104,6 +104,7 @@ class Arranger : public fltk::Widget {
     seqpat* split_s;
     int split_t;
 
+    seqpat* join_s;
 
     void unselect_all();
 
@@ -117,11 +118,14 @@ class Arranger : public fltk::Widget {
 
     void apply_unclone();
     void apply_split();
+    void apply_join();
 
     int check_move_safety();
     int check_insert_safety();
     int check_resize_safety();
     int check_paste_safety();
+
+    int check_join_safety();
 
 
   public:

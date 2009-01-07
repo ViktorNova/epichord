@@ -85,6 +85,7 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 
 
   split_s = NULL;
+  join_s = NULL;
 }
 
 int Arranger::handle(int event){
@@ -202,6 +203,13 @@ int Arranger::handle(int event){
           }
           if(split_flag){
             apply_split();
+            redraw();
+            return 1;
+          }
+          if(join_flag){
+            join_s = s;
+            apply_join();
+            join_s = NULL;
             redraw();
             return 1;
           }
@@ -380,7 +388,7 @@ int Arranger::handle(int event){
       redraw();
       return 1;
     case fltk::MOVE:
-      if(color_flag||unclone_flag||join_flag){break;}
+      if(color_flag||unclone_flag){break;}
       seqpat* s = over_seqpat();
       if(s){
         if(split_flag){
@@ -389,6 +397,18 @@ int Arranger::handle(int event){
           if(temp_t != split_t){
             split_t = temp_t;
             redraw();
+          }
+        }
+        else if(join_flag){
+          if(s!=join_s){
+            join_s = s;
+            if(check_join_safety()){
+              redraw();
+            }
+            else{
+              join_s = NULL;
+              redraw();
+            }
           }
         }
         else if(over_rhandle(s)){
@@ -422,6 +442,10 @@ int Arranger::handle(int event){
       }
       else{
         int redraw_question = 0;
+        if(join_s != NULL){
+          join_s = NULL;
+          redraw_question = 1;
+        }
         if(split_s != NULL){
           split_s = NULL;
           redraw_question = 1;
@@ -582,10 +606,16 @@ void Arranger::draw(){
       fillrect(X,Y,1,28);
       fillrect(X,Y,W,1);
 
+      if(s==join_s){
+        fltk::setcolor(fltk::YELLOW);
+        fillrect(X-2,Y,3,28);
+        fltk::setcolor(fltk::color(128,128,0));
+        fillrect(X-2,Y+28,3,1);
+      }
+
       fltk::push_clip(X,Y,W,30);
 
       fltk::setcolor(cx);
-
 
       mevent* e = s->p->events;
       while(e){
@@ -1223,6 +1253,14 @@ int Arranger::check_paste_safety(){
   return 1;
 }
 
+int Arranger::check_join_safety(){
+  seqpat* s = join_s;
+  if(s->prev->tick+s->prev->dur==s->tick && s->prev->prev){
+    return 1;
+  }
+  return 0;
+}
+
 
 void Arranger::apply_unclone(){
   Command* c;
@@ -1260,3 +1298,15 @@ void Arranger::apply_split(){
   set_undo(c);
   undo_push(1);
 }
+
+
+void Arranger::apply_join(){
+  seqpat* s = join_s;
+  if(!check_join_safety()){
+    return;
+  }
+  Command* c = new JoinSeqpat(join_s->prev,join_s);
+  set_undo(c);
+  undo_push(1);
+}
+

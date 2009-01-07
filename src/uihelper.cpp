@@ -628,7 +628,7 @@ void set_songtool(int i){
       ui->arranger->color_flag = 0;
       ui->arranger->unclone_flag = 0;
       ui->arranger->split_flag = 0;
-      //ui->arranger->join_flag = 1;
+      ui->arranger->join_flag = 1;
       break;
   }
 }

@@ -479,22 +479,18 @@ class SplitSeqpat : public Command {
 };
 
 
-/*TODO*/
+
 class JoinSeqpat : public Command {
+    seqpat* s1;
+    seqpat* s2;
+    seqpat* s;
 
   public:
 
-    JoinSeqpat(seqpat* zs1, seqpat* zs2){
-      //s = zs;
-      //p1 = s->p;
-      //p2 = new pattern();
-      //p2->ref_c = 1;
-    }
+    JoinSeqpat(seqpat* zs1, seqpat* zs2);
 
     ~JoinSeqpat(){
-      //if(--(p2->ref_c) == 0){
-      //  delete p2;
-      //}
+      //delete s
     }
 
     void redo();

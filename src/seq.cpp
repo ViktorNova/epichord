@@ -365,13 +365,50 @@ void SplitSeqpat::undo(){
   tinsert<seqpat>(s->prev,s);
 }
 
-void JoinSeqpat::redo(){
 
+
+JoinSeqpat::JoinSeqpat(seqpat* zs1, seqpat* zs2){
+  s1 = zs1;
+  s2 = zs2;
+
+  pattern* p = new pattern();
+  p->h = randf(0,360);
+  p->regen_colors();
+
+  mevent* e = s1->p->events->next;
+  while(e){
+    mevent* f = new mevent(e);
+    f->next = NULL;
+    p->append(f);
+    e=e->next;
+  }
+
+  e=s2->p->events->next;
+  while(e){
+    mevent* f = new mevent(e);
+    f->next = NULL;
+    f->tick += s1->dur;
+    p->append(f);
+    e=e->next;
+  }
+
+  s = new seqpat(s1,p);
+  s->scrollx = 0;
+  s->dur = s1->dur + s2->dur;
+}
+
+void JoinSeqpat::redo(){
+  tremove<seqpat>(s2);
+  tremove<seqpat>(s1);
+  tinsert<seqpat>(s->prev,s);
 }
 
 void JoinSeqpat::undo(){
-
+  tremove<seqpat>(s);
+  tinsert<seqpat>(s->prev,s1);
+  tinsert<seqpat>(s1,s2);
 }
+
 
 void ClearSeqpat::redo(){
   s->p = p2;
