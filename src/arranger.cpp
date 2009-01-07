@@ -82,6 +82,9 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   unclone_flag=0;
   join_flag=0;
   split_flag=0;
+
+
+  split_s = NULL;
 }
 
 int Arranger::handle(int event){
@@ -160,7 +163,7 @@ int Arranger::handle(int event){
       if(event_button()==1){//left mouse
         seqpat* s = over_seqpat();
         if(s==NULL){
-          if(color_flag || unclone_flag){//do nothing
+          if(color_flag||unclone_flag||split_flag||join_flag){//do nothing
           }
           else if(event_state()&fltk::SHIFT){//begin box
             box_flag = 1;
@@ -194,6 +197,13 @@ int Arranger::handle(int event){
           }
           if(unclone_flag){
             apply_unclone();
+            redraw();
+            return 1;
+          }
+          if(split_flag){
+            apply_split();
+            redraw();
+            return 1;
           }
           if(!s->selected && !(event_state()&SHIFT)){
             unselect_all();
@@ -281,6 +291,7 @@ int Arranger::handle(int event){
       redraw();
       return 1;
     case fltk::DRAG:
+      if(split_flag||unclone_flag||join_flag){return 0;}
       if(box_flag){
         box_x2 = X;
         box_y2 = Y;
@@ -319,6 +330,7 @@ int Arranger::handle(int event){
       redraw();
       return 1;
     case fltk::RELEASE:
+      if(split_flag||unclone_flag||join_flag){return 0;}
       if(event_button()==1){
         if(box_flag){
           apply_box();
@@ -368,10 +380,18 @@ int Arranger::handle(int event){
       redraw();
       return 1;
     case fltk::MOVE:
-      if(color_flag){break;}
+      if(color_flag||unclone_flag||join_flag){break;}
       seqpat* s = over_seqpat();
       if(s){
-        if(over_rhandle(s)){
+        if(split_flag){
+          split_s = s;
+          int temp_t = xpix2tick(X+scrollx)/TICKS_PER_BEAT*TICKS_PER_BEAT;
+          if(temp_t != split_t){
+            split_t = temp_t;
+            redraw();
+          }
+        }
+        else if(over_rhandle(s)){
           if(resize_s != s || resize_arrow != 1){
             if(s->selected){resize_arrow_color = fltk::color(128,128,0);}
             else{resize_arrow_color = fltk::color(s->p->r2,s->p->g2,s->p->b2);}
@@ -401,10 +421,16 @@ int Arranger::handle(int event){
         }
       }
       else{
+        int redraw_question = 0;
+        if(split_s != NULL){
+          split_s = NULL;
+          redraw_question = 1;
+        }
         if(resize_arrow != 0){
           resize_arrow=0;
-          redraw();
+          redraw_question = 1;
         }
+        if(redraw_question){redraw();}
       }
       return 1;
 
@@ -624,6 +650,13 @@ void Arranger::draw(){
       addvertex(X,Y+H/2);
       fillpath();
     }
+  }
+
+  if(split_s){
+    fltk::setcolor(fltk::RED);
+    int X = tick2xpix(split_t) - scrollx;
+    int Y = split_s->track*30;
+    fltk::fillrect(X,Y+1,1,28);
   }
 
   fltk::pop_clip();
@@ -1217,3 +1250,13 @@ void Arranger::apply_unclone(){
   undo_push(2);
 }
 
+
+void Arranger::apply_split(){
+  seqpat* s = split_s;
+  if(split_t == s->tick || split_t == s->tick+s->dur){
+    return;
+  }
+  Command* c = new SplitSeqpat(split_s,split_t);
+  set_undo(c);
+  undo_push(1);
+}

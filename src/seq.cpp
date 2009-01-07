@@ -302,12 +302,67 @@ void MoveSeqpat::undo(){
   tinsert<seqpat>(targ1,s);
 }
 
-void SplitSeqpat::redo(){
+
+SplitSeqpat::SplitSeqpat(seqpat* zs, int tick){
+  s = zs;
+
+  int w1 = tick - s->tick;
+  int w2 = s->tick+s->dur - tick;
+
+  pattern* p1 = new pattern();
+  pattern* p2 = new pattern();
+
+  p1->h = randf(0,360);
+  p2->h = randf(0,360);
+  p1->regen_colors();
+  p2->regen_colors();
+
+  //split the events into two groups
+  mevent* e = s->p->events->next;
+  while(e){
+    mevent* f = new mevent(e);
+    f->next = NULL;
+    if(e->tick < tick-s->tick){//group 1
+      p1->append(f);
+    }
+    else if(e->tick == tick-s->tick){//depends, maybe one, maybe other
+      if(e->type == MIDI_NOTE_OFF){
+        p1->append(f);
+      }
+      else{
+        p2->append(f);
+        f->tick -= w1;
+      }
+    }
+    else{//group 2
+      p2->append(f);
+      f->tick -= w1;
+    }
+    e = e->next;
+  }
+
+  s1 = new seqpat(zs,p1);
+  s1->dur = w1;
+  s1->scrollx = 0;
+
+  s2 = new seqpat(zs,p2);
+  s2->tick = s1->tick + w1;
+  s2->dur = w2;
+  s2->scrollx = 0;
+
 
 }
 
-void SplitSeqpat::undo(){
+void SplitSeqpat::redo(){
+  tremove<seqpat>(s);
+  tinsert<seqpat>(s->prev,s1);
+  tinsert<seqpat>(s1,s2);
+}
 
+void SplitSeqpat::undo(){
+  tremove<seqpat>(s2);
+  tremove<seqpat>(s1);
+  tinsert<seqpat>(s->prev,s);
 }
 
 void JoinSeqpat::redo(){

@@ -100,6 +100,11 @@ class Arranger : public fltk::Widget {
 
     void get_outline_color(seqpat* s, fltk::Color* c1, fltk::Color* c2, fltk::Color* c3, fltk::Color* cx);
 
+
+    seqpat* split_s;
+    int split_t;
+
+
     void unselect_all();
 
     void apply_box();
@@ -111,6 +116,7 @@ class Arranger : public fltk::Widget {
     void apply_insert();
 
     void apply_unclone();
+    void apply_split();
 
     int check_move_safety();
     int check_insert_safety();

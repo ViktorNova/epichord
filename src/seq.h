@@ -454,30 +454,24 @@ class MoveSeqpat : public Command {
   public:
 
     MoveSeqpat(seqpat* zs, int track, int tick);
+    ~MoveSeqpat(){}
 
     void redo();
     void undo();
 };
 
-/*TODO*/
+
 class SplitSeqpat : public Command {
     seqpat* s;
-    pattern* p1;
-    pattern* p2;
+    seqpat* s1;
+    seqpat* s2;
 
   public:
 
-    SplitSeqpat(seqpat* zs){
-      s = zs;
-      p1 = s->p;
-      p2 = new pattern();
-      p2->ref_c = 1;
-    }
+    SplitSeqpat(seqpat* zs, int tick);
 
-    SplitSeqpat(){
-      if(--(p2->ref_c) == 0){
-        delete p2;
-      }
+    ~SplitSeqpat(){
+      //delete s1 and s2
     }
 
     void redo();
