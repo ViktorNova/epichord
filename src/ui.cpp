@@ -257,7 +257,7 @@ void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
-inline void UI::cb_conf_toggle_i(fltk::Button* o, void*) {
+inline void UI::cb_conf_button_i(fltk::Button* o, void*) {
   if(o->state()){
     ui->config_window->show();
   }
@@ -265,8 +265,8 @@ inline void UI::cb_conf_toggle_i(fltk::Button* o, void*) {
     ui->config_window->hide();
   }
 ;}
-void UI::cb_conf_toggle(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_conf_toggle_i(o,v);
+void UI::cb_conf_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_conf_button_i(o,v);
 }
 
 inline void UI::cb_scope_button_i(fltk::Button* o, void*) {
@@ -303,6 +303,14 @@ inline void UI::cb_help_button_i(fltk::Button* o, void*) {
 ;}
 void UI::cb_help_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_help_button_i(o,v);
+}
+
+inline void UI::cb_config_window_i(fltk::Window* o, void*) {
+  ui->conf_button->state(0);
+  o->hide();
+}
+void UI::cb_config_window(fltk::Window* o, void* v) {
+  ((UI*)(o->user_data()))->cb_config_window_i(o,v);
 }
 
 inline void UI::cb_beats_per_measure_i(fltk::ValueInput* o, void*) {
@@ -455,6 +463,22 @@ void UI::cb_kg_l10(KeyGrabber* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_kg_l10_i(o,v);
 }
 
+inline void UI::cb_help_window_i(fltk::Window* o, void*) {
+  ui->help_button->state(0);
+  o->hide();
+}
+void UI::cb_help_window(fltk::Window* o, void* v) {
+  ((UI*)(o->user_data()))->cb_help_window_i(o,v);
+}
+
+inline void UI::cb_action_window_i(fltk::Window* o, void*) {
+  ui->file_button->state(0);
+  o->hide();
+}
+void UI::cb_action_window(fltk::Window* o, void* v) {
+  ((UI*)(o->user_data()))->cb_action_window_i(o,v);
+}
+
 inline void UI::cb_new1_i(fltk::Button*, void*) {
   reset_song();
 }
@@ -504,6 +528,14 @@ inline void UI::cb_export_i(fltk::Button*, void*) {
 }
 void UI::cb_export(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_export_i(o,v);
+}
+
+inline void UI::cb_scope_window_i(fltk::Window* o, void*) {
+  ui->scope_button->state(0);
+  o->hide();
+}
+void UI::cb_scope_window(fltk::Window* o, void* v) {
+  ((UI*)(o->user_data()))->cb_scope_window_i(o,v);
 }
 
 inline void UI::cb_on_i(fltk::Button* o, void*) {
@@ -771,8 +803,8 @@ UI::UI() {
         o->tooltip("toggle looping");
         o->type(fltk::Button::TOGGLE);
       }
-       {fltk::Button* o = conf_toggle = new fltk::Button(520, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_conf_toggle);
+       {fltk::Button* o = conf_button = new fltk::Button(520, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_conf_button);
         o->tooltip("configuration");
         o->type(fltk::Button::TOGGLE);
       }
@@ -802,7 +834,7 @@ UI::UI() {
   }
    {fltk::Window* o = config_window = new fltk::Window(320, 285, "controls");
     o->shortcut(0xff1b);
-    o->user_data((void*)(this));
+    o->callback((fltk::Callback*)cb_config_window, (void*)(this));
     o->begin();
      {fltk::TabGroup* o = new fltk::TabGroup(0, 0, 320, 285);
       o->begin();
@@ -1066,7 +1098,7 @@ track.");
   }
    {fltk::Window* o = help_window = new fltk::Window(580, 370, "help");
     o->shortcut(0xff1b);
-    o->user_data((void*)(this));
+    o->callback((fltk::Callback*)cb_help_window, (void*)(this));
     o->begin();
      {fltk::TabGroup* o = new fltk::TabGroup(0, 0, 580, 370);
       o->begin();
@@ -1129,7 +1161,7 @@ track.");
   }
    {fltk::Window* o = action_window = new fltk::Window(100, 130, "menu");
     o->shortcut(0xff1b);
-    o->user_data((void*)(this));
+    o->callback((fltk::Callback*)cb_action_window, (void*)(this));
     o->begin();
      {fltk::Button* o = new fltk::Button(5, 5, 90, 20, "new");
       o->callback((fltk::Callback*)cb_new1);
@@ -1154,7 +1186,7 @@ track.");
    {fltk::Window* o = scope_window = new fltk::Window(425, 280, "scope");
     w = o;
     o->shortcut(0xff1b);
-    o->user_data((void*)(this));
+    o->callback((fltk::Callback*)cb_scope_window, (void*)(this));
     o->begin();
      {fltk::TextDisplay* o = scope = new fltk::TextDisplay(5, 5, 415, 245);
       o->textfont(fltk::COURIER);
@@ -1177,7 +1209,7 @@ track.");
     o->resizable(o);
   }
   loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
-  conf_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
+  conf_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
   scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/scope.gif"));
   file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
   help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));

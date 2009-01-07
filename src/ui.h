@@ -186,10 +186,10 @@ private:
       inline void cb_loop_toggle_i(fltk::Button*, void*);
       static void cb_loop_toggle(fltk::Button*, void*);
 public:
-      fltk::Button *conf_toggle;
+      fltk::Button *conf_button;
 private:
-      inline void cb_conf_toggle_i(fltk::Button*, void*);
-      static void cb_conf_toggle(fltk::Button*, void*);
+      inline void cb_conf_button_i(fltk::Button*, void*);
+      static void cb_conf_button(fltk::Button*, void*);
 public:
       fltk::Button *scope_button;
 private:
@@ -207,6 +207,10 @@ private:
       static void cb_help_button(fltk::Button*, void*);
 public:
   fltk::Window *config_window;
+private:
+  inline void cb_config_window_i(fltk::Window*, void*);
+  static void cb_config_window(fltk::Window*, void*);
+public:
         fltk::ValueInput *beats_per_measure;
 private:
         inline void cb_beats_per_measure_i(fltk::ValueInput*, void*);
@@ -333,11 +337,17 @@ public:
         KeyGrabber *kg_ou;
         KeyGrabber *kg_od;
   fltk::Window *help_window;
+private:
+  inline void cb_help_window_i(fltk::Window*, void*);
+  static void cb_help_window(fltk::Window*, void*);
+public:
         fltk::Input *title_text;
         fltk::Input *author_text;
         fltk::TextEditor *info_text;
   fltk::Window *action_window;
 private:
+  inline void cb_action_window_i(fltk::Window*, void*);
+  static void cb_action_window(fltk::Window*, void*);
     inline void cb_new1_i(fltk::Button*, void*);
     static void cb_new1(fltk::Button*, void*);
     inline void cb_save_i(fltk::Button*, void*);
@@ -352,6 +362,10 @@ private:
     static void cb_export(fltk::Button*, void*);
 public:
   fltk::Window *scope_window;
+private:
+  inline void cb_scope_window_i(fltk::Window*, void*);
+  static void cb_scope_window(fltk::Window*, void*);
+public:
     fltk::TextDisplay *scope;
 private:
       inline void cb_on_i(fltk::Button*, void*);

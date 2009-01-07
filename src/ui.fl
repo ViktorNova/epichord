@@ -61,7 +61,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open
+save_config();}
       xywh {31 41 640 480} resizable
       extra_code {\#include <stdio.h>
 
@@ -75,7 +75,7 @@ o->resize(640,455);} visible
       {fltk::Group} {} {
         xywh {0 0 640 445}
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {
@@ -126,7 +126,7 @@ ui->arranger->scrollTo(dummy,target);}
             }
           }
         }
-        {fltk::Group} pattern_edit {open
+        {fltk::Group} pattern_edit {
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -257,7 +257,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {open selected
+      {fltk::Group} {} {
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -379,7 +379,7 @@ o->state(1);}
           xywh {490 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
-        {fltk::Button} conf_toggle {
+        {fltk::Button} conf_button {
           callback {if(o->state()){
   ui->config_window->show();
 }
@@ -428,7 +428,9 @@ else{
     }
     {fltk::Window} config_window {
       label controls
-      xywh {52 125 320 285} hide
+      callback {ui->conf_button->state(0);
+o->hide();}
+      xywh {52 125 320 285} visible
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
@@ -802,10 +804,12 @@ set_defaultvelocity((int)o->value());}
     }
     {fltk::Window} help_window {
       label help
-      xywh {519 345 580 370} hide resizable
-      extra_code {o->size_range(580,370);}
+      callback {ui->help_button->state(0);
+o->hide();}
+      xywh {519 345 580 370} resizable
+      extra_code {o->size_range(580,370);} visible
     } {
-      {fltk::TabGroup} {} {open
+      {fltk::TabGroup} {} {open selected
         xywh {0 0 580 370}
       } {
         {fltk::Group} {} {
@@ -864,7 +868,9 @@ set_defaultvelocity((int)o->value());}
     }
     {fltk::Window} action_window {
       label menu
-      xywh {286 302 100 130} horizontal hide
+      callback {ui->file_button->state(0);
+o->hide();}
+      xywh {286 302 100 130} horizontal visible
     } {
       {fltk::Button} {} {
         label new
@@ -908,7 +914,9 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
     }
     {fltk::Window} scope_window {
       label scope
-      xywh {647 310 425 280} hide resizable
+      callback {ui->scope_button->state(0);
+o->hide();} open
+      xywh {647 310 425 280} resizable visible
     } {
       {fltk::TextDisplay} scope {
         xywh {5 5 415 245} textfont 4 color 0x280000 textcolor 0xff0000
@@ -934,7 +942,7 @@ else{
       }
     }
     code {loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
-conf_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
+conf_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
 scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/scope.gif"));
 file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
 help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
