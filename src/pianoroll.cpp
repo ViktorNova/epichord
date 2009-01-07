@@ -87,6 +87,8 @@ int PianoRoll::handle(int event){
   int X = event_x();
   int Y = event_y();
 
+  int prevt;
+
   switch(event){
     case fltk::ENTER:
       return 1;
@@ -107,26 +109,30 @@ int PianoRoll::handle(int event){
       }
       if(zoom_out_key(event_key(),event_state())){
         if(zoom_n > 1){
+          prevt = xpix2tick(scrollx);
           zoom_n--;
           set_zoom(30*(1<<zoom_n)/16);
           ui->pattern_timeline->zoom = zoom;
-          ui->pattern_timeline->update(get_play_position());
-          ui->pattern_timeline->redraw();
+          //ui->pattern_timeline->update(get_play_position());
+          //ui->pattern_timeline->redraw();
           ui->event_edit->zoom = zoom;
-          ui->event_edit->redraw();
+          scrollTo(tick2xpix(prevt),scrolly);
+          //ui->event_edit->redraw();
         }
         redraw();
         return 1;
       }
       if(zoom_in_key(event_key(),event_state())){
         if(zoom_n < 8){
+          prevt = xpix2tick(scrollx);
           zoom_n++;
           set_zoom(30*(1<<zoom_n)/16);
           ui->pattern_timeline->zoom = zoom;
-          ui->pattern_timeline->update(get_play_position());
-          ui->pattern_timeline->redraw();
+          //ui->pattern_timeline->update(get_play_position());
+          //ui->pattern_timeline->redraw();
           ui->event_edit->zoom = zoom;
-          ui->event_edit->redraw();
+          scrollTo(tick2xpix(prevt),scrolly);
+          //ui->event_edit->redraw();
         }
         redraw();
         return 1;

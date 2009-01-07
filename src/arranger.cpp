@@ -87,6 +87,8 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
 int Arranger::handle(int event){
   Command* c;
 
+  int prevt;
+
   int X = event_x();
   int Y = event_y();
 
@@ -124,12 +126,14 @@ int Arranger::handle(int event){
       if(zoom_out_key(event_key(),event_state())){
       //if(event_key()==fltk::LeftKey){
         if(zoom_n > 1){
+          prevt = xpix2tick(scrollx);
           zoom_n--;
           zoom = 30*(1<<zoom_n)/16;
           ui->song_timeline->zoom = 30*(1<<zoom_n)/16;
-          ui->song_timeline->update(get_play_position());
-          ui->song_timeline->redraw();
-          relayout();
+          scrollTo(tick2xpix(prevt),scrolly);
+          //ui->song_timeline->update(get_play_position());
+          //ui->song_timeline->redraw();
+          //relayout();
         }
         redraw();
         return 1;
@@ -137,12 +141,15 @@ int Arranger::handle(int event){
       if(zoom_in_key(event_key(),event_state())){
       //if(event_key()==fltk::RightKey){
         if(zoom_n < 8){
+          prevt = xpix2tick(scrollx);
           zoom_n++;
           zoom = 30*(1<<zoom_n)/16;
           ui->song_timeline->zoom = 30*(1<<zoom_n)/16;
-          ui->song_timeline->update(get_play_position());
-          ui->song_timeline->redraw();
-          relayout();
+          scrollTo(tick2xpix(prevt),scrolly);
+          //ui->song_timeline->update(get_play_position());
+          //ui->song_timeline->redraw();
+
+          //relayout();
         }
         redraw();
         return 1;
