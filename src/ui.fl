@@ -62,7 +62,7 @@ scope_window->hide();
 o->hide();
 
 save_config();} open
-      xywh {31 41 640 480} resizable
+      xywh {31 41 640 480} hide resizable
       extra_code {\#include <stdio.h>
 
 \#include <fltk/ask.h>
@@ -70,12 +70,12 @@ save_config();} open
 \#include "seq.h"
 \#include "trackmodule.h"
 o->size_range(640,455);
-o->resize(640,455);} visible
+o->resize(640,455);}
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -257,7 +257,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {open
+      {fltk::Group} {} {open selected
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -288,25 +288,25 @@ ui->event_edit->redraw();}
           xywh {125 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
-        {fltk::Group} {} {selected
+        {fltk::Group} {} {open
           xywh {155 0 20 35} resizable
         } {}
         {fltk::Group} pattern_buttons {
           xywh {200 5 310 25} hide
         } {
-          {fltk::Button} tool_button {
-            label tool
-            callback {toggle_tool();}
-            xywh {35 0 25 25} hide
-          }
           {fltk::Button} quant1_button {
             label qua
             tooltip {quantize selected notes}
-            xywh {60 0 25 25}
+            xywh {35 0 25 25}
           }
           {fltk::Button} quant0_button {
             label qu_
             tooltip {quantize length of selected notes}
+            xywh {60 0 25 25}
+          }
+          {fltk::Button} tool_button {
+            label tool
+            callback {toggle_tool();}
             xywh {85 0 25 25}
           }
           {fltk::Button} qbutton4 {
