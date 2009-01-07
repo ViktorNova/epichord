@@ -61,7 +61,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();}
+save_config();} open
       xywh {31 41 640 480} resizable
       extra_code {\#include <stdio.h>
 
@@ -73,12 +73,12 @@ o->size_range(640,455);
 o->resize(640,455);} visible
     } {
       {fltk::Group} {} {
-        xywh {0 0 640 445}
+        xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
-          {fltk::Group} {} {
+          {fltk::Group} {} {open
             xywh {0 0 255 445} box FLAT_BOX
           } {
             {fltk::Widget} track_info {
@@ -104,7 +104,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::Group} song_scrollgroup {open
+          {fltk::Group} song_scrollgroup {
             xywh {255 15 385 430} resizable
           } {
             {fltk::Widget} arranger {
@@ -257,7 +257,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -282,12 +282,33 @@ ui->event_edit->redraw();}
           extra_code {\#include <metronome.h>}
           class Metronome
         }
+        {fltk::Button} loop_toggle {
+          callback {toggle_loop();}
+          tooltip {toggle looping}
+          xywh {125 5 25 25}
+          extra_code {o->type(fltk::Button::TOGGLE);}
+        }
         {fltk::Group} {} {open
-          xywh {125 0 20 35} resizable
+          xywh {155 0 20 35} resizable
         } {}
         {fltk::Group} pattern_buttons {
-          xywh {145 5 310 25} hide
+          xywh {200 5 310 25} hide
         } {
+          {fltk::Button} quant1_button {
+            label qua
+            tooltip {quantize selected notes}
+            xywh {35 0 25 25}
+          }
+          {fltk::Button} quant0_button {
+            label qu_
+            tooltip {quantize length of selected notes}
+            xywh {60 0 25 25}
+          }
+          {fltk::Button} tool_button {
+            label tool
+            callback {toggle_tool();}
+            xywh {85 0 25 25}
+          }
           {fltk::Button} qbutton4 {
             callback {set_quant(4);}
             xywh {135 0 25 25}
@@ -324,24 +345,9 @@ o->state(1);}
             xywh {285 0 25 25}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
-          {fltk::Button} quant1_button {
-            label qua
-            tooltip {quantize selected notes}
-            xywh {15 0 25 25}
-          }
-          {fltk::Button} quant0_button {
-            label qu_
-            tooltip {quantize length of selected notes}
-            xywh {45 0 25 25}
-          }
-          {fltk::Button} tool_button {
-            label tool
-            callback {toggle_tool();}
-            xywh {75 0 25 25}
-          }
         }
         {fltk::Group} song_buttons {open
-          xywh {330 5 145 25}
+          xywh {385 5 145 25}
         } {
           {fltk::Button} edit_button {
             callback {set_songtool(0);}
@@ -373,12 +379,6 @@ o->state(1);}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
         }
-        {fltk::Button} loop_toggle {
-          callback {toggle_loop();}
-          tooltip {toggle looping}
-          xywh {490 5 25 25}
-          extra_code {o->type(fltk::Button::TOGGLE);}
-        }
         {fltk::Button} conf_button {
           callback {if(o->state()){
   ui->config_window->show();
@@ -387,7 +387,7 @@ else{
   ui->config_window->hide();
 }}
           tooltip configuration
-          xywh {520 5 25 25}
+          xywh {535 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} scope_button {
@@ -398,7 +398,7 @@ else{
   ui->scope_window->hide();
 }}
           tooltip scope
-          xywh {550 5 25 25}
+          xywh {560 5 25 25}
           extra_code {o->type(fltk::Button::TOGGLE);}
         }
         {fltk::Button} file_button {
@@ -409,7 +409,7 @@ else{
   ui->action_window->hide();
 }}
           tooltip disk
-          xywh {580 5 25 25}
+          xywh {585 5 25 25}
           extra_code {\#include "saveload.h"
 o->type(fltk::Button::TOGGLE);}
         }
@@ -427,10 +427,10 @@ else{
       }
     }
     {fltk::Window} config_window {
-      label controls
+      label config
       callback {ui->conf_button->state(0);
-o->hide();}
-      xywh {52 125 320 285} visible
+o->hide();} open selected
+      xywh {52 125 320 285} hide
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
@@ -806,10 +806,10 @@ set_defaultvelocity((int)o->value());}
       label help
       callback {ui->help_button->state(0);
 o->hide();}
-      xywh {519 345 580 370} resizable
-      extra_code {o->size_range(580,370);} visible
+      xywh {519 345 580 370} hide resizable
+      extra_code {o->size_range(580,370);}
     } {
-      {fltk::TabGroup} {} {open selected
+      {fltk::TabGroup} {} {open
         xywh {0 0 580 370}
       } {
         {fltk::Group} {} {
@@ -870,7 +870,7 @@ o->hide();}
       label menu
       callback {ui->file_button->state(0);
 o->hide();}
-      xywh {286 302 100 130} horizontal visible
+      xywh {286 302 100 130} horizontal hide
     } {
       {fltk::Button} {} {
         label new
@@ -915,15 +915,15 @@ savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
     {fltk::Window} scope_window {
       label scope
       callback {ui->scope_button->state(0);
-o->hide();} open
-      xywh {647 310 425 280} resizable visible
+o->hide();}
+      xywh {647 310 425 280} hide resizable
     } {
       {fltk::TextDisplay} scope {
-        xywh {5 5 415 245} textfont 4 color 0x280000 textcolor 0xff0000
+        xywh {5 5 415 245} resizable textfont 4 color 0x280000 textcolor 0xff0000
         extra_code {o->wrap_mode(1);}
       }
-      {fltk::Group} {} {
-        xywh {5 255 410 20}
+      {fltk::Group} {} {open
+        xywh {5 255 415 20}
       } {
         {fltk::Button} {} {
           label on

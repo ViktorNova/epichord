@@ -159,6 +159,20 @@ void UI::cb_record_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_record_button_i(o,v);
 }
 
+inline void UI::cb_loop_toggle_i(fltk::Button*, void*) {
+  toggle_loop();
+}
+void UI::cb_loop_toggle(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
+}
+
+inline void UI::cb_tool_button_i(fltk::Button*, void*) {
+  toggle_tool();
+}
+void UI::cb_tool_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_tool_button_i(o,v);
+}
+
 inline void UI::cb_qbutton4_i(fltk::Button*, void*) {
   set_quant(4);
 }
@@ -208,13 +222,6 @@ void UI::cb_qbutton0(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_qbutton0_i(o,v);
 }
 
-inline void UI::cb_tool_button_i(fltk::Button*, void*) {
-  toggle_tool();
-}
-void UI::cb_tool_button(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_tool_button_i(o,v);
-}
-
 inline void UI::cb_edit_button_i(fltk::Button*, void*) {
   set_songtool(0);
 }
@@ -248,13 +255,6 @@ inline void UI::cb_join_button_i(fltk::Button*, void*) {
 }
 void UI::cb_join_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_join_button_i(o,v);
-}
-
-inline void UI::cb_loop_toggle_i(fltk::Button*, void*) {
-  toggle_loop();
-}
-void UI::cb_loop_toggle(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
 inline void UI::cb_conf_button_i(fltk::Button* o, void*) {
@@ -701,6 +701,7 @@ UI::UI() {
         o->end();
       }
       o->end();
+      fltk::Group::current()->resizable(o);
     }
      {fltk::Group* o = new fltk::Group(0, 445, 640, 35);
       o->box(fltk::UP_BOX);
@@ -722,13 +723,27 @@ UI::UI() {
         o->color((fltk::Color)56);
         o->labelcolor((fltk::Color)0xffffff00);
       }
-       {fltk::Group* o = new fltk::Group(125, 0, 20, 35);
+       {fltk::Button* o = loop_toggle = new fltk::Button(125, 5, 25, 25);
+        o->callback((fltk::Callback*)cb_loop_toggle);
+        o->tooltip("toggle looping");
+        o->type(fltk::Button::TOGGLE);
+      }
+       {fltk::Group* o = new fltk::Group(155, 0, 20, 35);
         o->set_vertical();
         fltk::Group::current()->resizable(o);
       }
-       {fltk::Group* o = pattern_buttons = new fltk::Group(145, 5, 310, 25);
+       {fltk::Group* o = pattern_buttons = new fltk::Group(200, 5, 310, 25);
         o->hide();
         o->begin();
+         {fltk::Button* o = quant1_button = new fltk::Button(35, 0, 25, 25, "qua");
+          o->tooltip("quantize selected notes");
+        }
+         {fltk::Button* o = quant0_button = new fltk::Button(60, 0, 25, 25, "qu_");
+          o->tooltip("quantize length of selected notes");
+        }
+         {fltk::Button* o = tool_button = new fltk::Button(85, 0, 25, 25, "tool");
+          o->callback((fltk::Callback*)cb_tool_button);
+        }
          {fltk::Button* o = qbutton4 = new fltk::Button(135, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);
           o->type(fltk::Button::TOGGLE);
@@ -758,18 +773,9 @@ UI::UI() {
           o->callback((fltk::Callback*)cb_qbutton0);
           o->type(fltk::Button::TOGGLE);
         }
-         {fltk::Button* o = quant1_button = new fltk::Button(15, 0, 25, 25, "qua");
-          o->tooltip("quantize selected notes");
-        }
-         {fltk::Button* o = quant0_button = new fltk::Button(45, 0, 25, 25, "qu_");
-          o->tooltip("quantize length of selected notes");
-        }
-         {fltk::Button* o = tool_button = new fltk::Button(75, 0, 25, 25, "tool");
-          o->callback((fltk::Callback*)cb_tool_button);
-        }
         o->end();
       }
-       {fltk::Group* o = song_buttons = new fltk::Group(330, 5, 145, 25);
+       {fltk::Group* o = song_buttons = new fltk::Group(385, 5, 145, 25);
         o->begin();
          {fltk::Button* o = edit_button = new fltk::Button(0, 0, 25, 25);
           o->set_flag(fltk::STATE);
@@ -798,22 +804,17 @@ UI::UI() {
         }
         o->end();
       }
-       {fltk::Button* o = loop_toggle = new fltk::Button(490, 5, 25, 25);
-        o->callback((fltk::Callback*)cb_loop_toggle);
-        o->tooltip("toggle looping");
-        o->type(fltk::Button::TOGGLE);
-      }
-       {fltk::Button* o = conf_button = new fltk::Button(520, 5, 25, 25);
+       {fltk::Button* o = conf_button = new fltk::Button(535, 5, 25, 25);
         o->callback((fltk::Callback*)cb_conf_button);
         o->tooltip("configuration");
         o->type(fltk::Button::TOGGLE);
       }
-       {fltk::Button* o = scope_button = new fltk::Button(550, 5, 25, 25);
+       {fltk::Button* o = scope_button = new fltk::Button(560, 5, 25, 25);
         o->callback((fltk::Callback*)cb_scope_button);
         o->tooltip("scope");
         o->type(fltk::Button::TOGGLE);
       }
-       {fltk::Button* o = file_button = new fltk::Button(580, 5, 25, 25);
+       {fltk::Button* o = file_button = new fltk::Button(585, 5, 25, 25);
         o->callback((fltk::Callback*)cb_file_button);
         o->tooltip("disk");
         o->type(fltk::Button::TOGGLE);
@@ -830,9 +831,8 @@ UI::UI() {
     
     o->size_range(640,455);
     o->resize(640,455);
-    o->resizable(o);
   }
-   {fltk::Window* o = config_window = new fltk::Window(320, 285, "controls");
+   {fltk::Window* o = config_window = new fltk::Window(320, 285, "config");
     o->shortcut(0xff1b);
     o->callback((fltk::Callback*)cb_config_window, (void*)(this));
     o->begin();
@@ -1192,9 +1192,10 @@ track.");
       o->textfont(fltk::COURIER);
       o->color((fltk::Color)0x280000);
       o->textcolor((fltk::Color)0xff0000);
+      fltk::Group::current()->resizable(o);
       o->wrap_mode(1);
     }
-     {fltk::Group* o = new fltk::Group(5, 255, 410, 20);
+     {fltk::Group* o = new fltk::Group(5, 255, 415, 20);
       o->begin();
        {fltk::Button* o = new fltk::Button(0, 0, 40, 20, "on");
         o->callback((fltk::Callback*)cb_on);
@@ -1206,7 +1207,6 @@ track.");
       o->end();
     }
     o->end();
-    o->resizable(o);
   }
   loop_toggle->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/loop.gif"));
   conf_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));

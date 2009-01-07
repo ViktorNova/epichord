@@ -112,7 +112,19 @@ private:
       static void cb_record_button(fltk::Button*, void*);
 public:
       Metronome *metronome;
+      fltk::Button *loop_toggle;
+private:
+      inline void cb_loop_toggle_i(fltk::Button*, void*);
+      static void cb_loop_toggle(fltk::Button*, void*);
+public:
       fltk::Group *pattern_buttons;
+        fltk::Button *quant1_button;
+        fltk::Button *quant0_button;
+        fltk::Button *tool_button;
+private:
+        inline void cb_tool_button_i(fltk::Button*, void*);
+        static void cb_tool_button(fltk::Button*, void*);
+public:
         fltk::Button *qbutton4;
 private:
         inline void cb_qbutton4_i(fltk::Button*, void*);
@@ -148,13 +160,6 @@ private:
         inline void cb_qbutton0_i(fltk::Button*, void*);
         static void cb_qbutton0(fltk::Button*, void*);
 public:
-        fltk::Button *quant1_button;
-        fltk::Button *quant0_button;
-        fltk::Button *tool_button;
-private:
-        inline void cb_tool_button_i(fltk::Button*, void*);
-        static void cb_tool_button(fltk::Button*, void*);
-public:
       fltk::Group *song_buttons;
         fltk::Button *edit_button;
 private:
@@ -180,11 +185,6 @@ public:
 private:
         inline void cb_join_button_i(fltk::Button*, void*);
         static void cb_join_button(fltk::Button*, void*);
-public:
-      fltk::Button *loop_toggle;
-private:
-      inline void cb_loop_toggle_i(fltk::Button*, void*);
-      static void cb_loop_toggle(fltk::Button*, void*);
 public:
       fltk::Button *conf_button;
 private:
