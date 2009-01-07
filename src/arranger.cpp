@@ -392,9 +392,9 @@ int Arranger::handle(int event){
       seqpat* s = over_seqpat();
       if(s){
         if(split_flag){
-          split_s = s;
           int temp_t = xpix2tick(X+scrollx)/TICKS_PER_BEAT*TICKS_PER_BEAT;
-          if(temp_t != split_t){
+          if(split_s != s || temp_t != split_t){
+            split_s = s;
             split_t = temp_t;
             redraw();
           }

@@ -312,10 +312,16 @@ SplitSeqpat::SplitSeqpat(seqpat* zs, int tick){
   pattern* p1 = new pattern();
   pattern* p2 = new pattern();
 
-  p1->h = randf(0,360);
-  p2->h = randf(0,360);
+  p1->h = s->p->h;
+  p1->s = s->p->s;
+  p1->v = s->p->v;
   p1->regen_colors();
+
+  p2->h = s->p->h;
+  p2->s = s->p->s;
+  p2->v = randf(0.2,0.8);
   p2->regen_colors();
+
 
   //split the events into two groups
   mevent* e = s->p->events->next;
@@ -372,7 +378,9 @@ JoinSeqpat::JoinSeqpat(seqpat* zs1, seqpat* zs2){
   s2 = zs2;
 
   pattern* p = new pattern();
-  p->h = randf(0,360);
+  p->h = s1->p->h;
+  p->s = s1->p->s;
+  p->v = s1->p->v;
   p->regen_colors();
 
   mevent* e = s1->p->events->next;
