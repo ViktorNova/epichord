@@ -629,7 +629,11 @@ void EventEdit::delete_events(int (EventEdit::*pred)(mevent* e)){
 
 
 int EventEdit::delete_type_in_range_pred(mevent* e){
-  if(e->tick > delete_t1 && e->tick < delete_t2 && match_event_type(e))
+  int L = delete_t1;
+  int R = delete_t2;
+  int tmp;
+  if(L>R){SWAP(L,R);}
+  if(e->tick > L && e->tick < R && match_event_type(e))
     return 1;
   else
     return 0;

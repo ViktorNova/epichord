@@ -61,7 +61,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} selected
+save_config();} open
       xywh {31 41 640 480} resizable
       extra_code {\#include <stdio.h>
 
@@ -257,7 +257,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {open
+      {fltk::Group} {} {open selected
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {

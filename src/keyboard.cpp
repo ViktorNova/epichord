@@ -511,6 +511,10 @@ int specialok=0;
           case fltk::Keypad8:
           case fltk::Keypad9:
           case fltk::KeypadLast:
+          case fltk::PageUpKey:
+          case fltk::PageDownKey:
+          case fltk::HomeKey:
+          case fltk::EndKey:
             specialok = 1;
             break;
         }
@@ -638,6 +642,10 @@ char* get_keystring(int key, int mod){
     case fltk::Keypad7: strcpy(keystring+N,"7"); break;
     case fltk::Keypad8: strcpy(keystring+N,"8"); break;
     case fltk::Keypad9: strcpy(keystring+N,"9"); break;
+    case fltk::PageUpKey: strcpy(keystring+N,"pgup"); break;
+    case fltk::PageDownKey: strcpy(keystring+N,"pgdn"); break;
+    case fltk::HomeKey: strcpy(keystring+N,"home"); break;
+    case fltk::EndKey: strcpy(keystring+N,"end"); break;
     default: strcpy(keystring+N,k); break;
   }
 
