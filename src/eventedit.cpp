@@ -510,17 +510,13 @@ void EventEdit::apply_line(){
   mevent* e = cur_seqpat->p->events;
   Command* c;
   int N = 0;
-  int T1, T2;
+  int T1 = line_t1;
+  int T2 = line_t2;
   int M1 = line_M1;
   int M2 = line_M2;
-  if(line_t1>line_t2){
-    T1=line_t2;
-    T2=line_t1;
-  }
-  else{
-    T1=line_t1;
-    T2=line_t2;
-  }
+  int tmp;
+  if(T1>T2){SWAP(T1,T2);}
+
   while(e->tick < T1){
     e = e->next;
     if(!e){
