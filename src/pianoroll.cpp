@@ -168,6 +168,7 @@ int PianoRoll::handle(int event){
             unselect_all();
           }
           e->selected = 1;
+          ui->event_edit->select_flag = 1;
           resize_arrow_color = fltk::color(128,128,0);
 
           if(over_rhandle(e)){//resize

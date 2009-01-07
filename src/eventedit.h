@@ -39,8 +39,6 @@ class EventEdit : public fltk::Widget {
 
     int q_tick;
 
-    int select_flag;
-
     int line_flag;
     int line_t1;
     int line_M1;
@@ -132,6 +130,8 @@ class EventEdit : public fltk::Widget {
 
     void recount_has();
     int has[134];
+
+    int select_flag;
 
 };
 

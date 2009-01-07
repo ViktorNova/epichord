@@ -516,6 +516,7 @@ void EventEdit::apply_line(){
   int M2 = line_M2;
   int tmp;
   if(T1>T2){SWAP(T1,T2);}
+  //if(M1>M2){SWAP(M1,M2);}
 
   while(e->tick < T1){
     e = e->next;
@@ -528,8 +529,8 @@ void EventEdit::apply_line(){
       break;
     }
     if(match_event_type(e) && (e->selected || !select_flag)){
-      float m = (float)(M2-M1)/(T2-T1);
-      float b = M1 - m*T1;
+      float m = (float)(M2-M1)/(line_t2-line_t1);
+      float b = M1 - m*line_t1;
       int M = (int)(m*e->tick + b);
       int V1, V2;
       if(M<0){M=0;}
