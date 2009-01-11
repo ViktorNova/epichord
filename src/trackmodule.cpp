@@ -87,7 +87,6 @@ void bankcb(fltk::Widget* w, long i){
 void namecb(fltk::Widget* w, long i){
   fltk::Input* o = (fltk::Input*)w;
   track* t = tracks[i];
-  strcpy(t->name,o->text());
   free(t->name);
   t->name = (char*)malloc(strlen(o->text())+1);
   strcpy(t->name,o->text());

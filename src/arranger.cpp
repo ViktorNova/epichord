@@ -261,10 +261,10 @@ int Arranger::handle(int event){
           redraw();
           return 1;
         }
-        if(main_sel){
+        if(!s){
           paste_flag = 1;
-          paste_t = quantize(xpix2tick(X+scrollx));
-          paste_track = (Y+scrolly) / 30;
+          paste_tcenter1 = quantize(xpix2tick(X+scrollx));
+          paste_kcenter1 = (Y+scrolly) / 30;
         }
       }
       else if(event_button()==3){//right mouse
@@ -332,8 +332,8 @@ int Arranger::handle(int event){
         move_koffset = (Y+scrolly) / 30 - move_korig;
       }
       else if(paste_flag){
-        paste_t = quantize(xpix2tick(X+scrollx));
-        paste_track = (Y+scrolly) / 30;
+        paste_tcenter1 = quantize(xpix2tick(X+scrollx));
+        paste_kcenter1 = (Y+scrolly) / 30;
       }
       redraw();
       return 1;
@@ -530,15 +530,33 @@ void Arranger::draw(){
     }
   }
 
+
   if(paste_flag){
-    fltk::setcolor(fltk::GREEN);
-    int X = tick2xpix(paste_t)+1 - scrollx;
-    int Y = paste_track*30 - scrolly;
-    int W = tick2xpix(main_sel->dur);
-    fltk::fillrect(X,Y,W-1,1);
-    fltk::fillrect(X,Y+28,W-1,1);
-    fltk::fillrect(X,Y,1,28);
-    fltk::fillrect(X+W-2,Y,1,28);
+    //recalc_paste_center();
+    if(check_paste_safety()){
+      fltk::setcolor(fltk::GREEN);
+    }
+    else{
+      fltk::setcolor(fltk::RED);
+    }
+
+    for(int i=0; i<tracks.size(); i++){
+      seqpat* s = tracks[i]->head->next;
+      while(s){
+        if(s->selected){
+          //int X = tick2xpix(s->tick-paste_tcenter0+paste_tcenter1) - scrollx;
+          //int Y = (s->track-paste_tcenter0+paste_kcenter1)*30 - scrolly;
+          int X = tick2xpix(paste_tcenter1) - scrollx;
+          int Y = paste_kcenter1*30 - scrolly;
+          int W = tick2xpix(s->dur);
+          fltk::fillrect(X+1,Y+1,W-1,1);
+          fltk::fillrect(X+1,Y+1,1,29-1);
+          fltk::fillrect(X+1,Y+29-1,W-1,1);
+          fltk::fillrect(X+W-1,Y+1,1,29-1);
+        }
+        s = s->next;
+      }
+    }
   }
 
   int tmp;
@@ -983,16 +1001,50 @@ void Arranger::apply_move(){
 }
 
 void Arranger::apply_paste(){
-  //safety check
 
+  //recalc_paste_center();
+
+  //safety check
+  //if(!check_paste_safety()){
+  //  return;
+  //}
 
   Command* c;
-
-  c = new CreateSeqpat(paste_track,paste_t,main_sel,config.alwayscopy);
+  c = new CreateSeqpat(paste_kcenter1,paste_tcenter1,main_sel,config.alwayscopy);
   set_undo(c);
   undo_push(1);
 
-  
+}
+
+void Arranger::recalc_paste_center(){
+
+  seqpat* s;
+
+  int accum_t = 0;
+  int accum_k = 0;
+  int T = 0;
+  int K = 0;
+
+  for(int i=0; i<tracks.size(); i++){
+    s = tracks[i]->head->next;
+    while(s){
+      if(s->selected){
+        accum_t = (s->tick+s->dur) / 2;
+        T++;
+
+        accum_k = s->track;
+        K++;
+
+        s = s->next;
+      }
+    }
+  }
+
+  printf("T %d K %d  %d %d \n",T,K,accum_t/T,accum_k/K);
+
+  paste_tcenter0 = accum_t / T;
+  paste_kcenter0 = accum_k / K;
+
 }
 
 void Arranger::apply_rresize(){
@@ -1250,6 +1302,7 @@ int Arranger::check_resize_safety(){
 
 
 int Arranger::check_paste_safety(){
+
   return 1;
 }
 
@@ -1309,4 +1362,5 @@ void Arranger::apply_join(){
   set_undo(c);
   undo_push(1);
 }
+
 

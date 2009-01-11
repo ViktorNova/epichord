@@ -581,8 +581,10 @@ void PianoRoll::scrollTo(int X, int Y){
   }
 
   if(is_backend_playing() && config.follow){
-    int pos = tick2xpix(get_play_position()) - cur_seqpat->tick;
-    if(pos < X || pos > X + w() - 30 - 30){
+    int pos = tick2xpix(get_play_position() - cur_seqpat->tick);
+    if(pos < cur_seqpat->tick){
+    }
+    else if(pos < X || pos > X + w() - 30 - 30){
       ui->pattern_hscroll->value(scrollx);
       return;
     }
@@ -692,6 +694,9 @@ mevent* PianoRoll::over_note(){
 
 void PianoRoll::update(int pos){
   if(!is_backend_playing() || !cur_seqpat){
+    return;
+  }
+  if(pos < cur_seqpat->tick){
     return;
   }
   int X1 = tick2xpix(pos-cur_seqpat->tick);

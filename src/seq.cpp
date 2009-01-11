@@ -184,6 +184,7 @@ int set_default_hsv_value(float v){
 
 CreateSeqpat::CreateSeqpat(int track, int tick, seqpat* zs, int copy){
   s = new seqpat(zs);
+  s->selected = 0;
   if(copy){
     s->p = new pattern(zs->p);
     s->skip = s->p->events;

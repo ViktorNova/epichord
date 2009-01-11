@@ -72,8 +72,10 @@ class Arranger : public fltk::Widget {
     int resize_handle_width;
 
     int paste_flag;
-    int paste_t;
-    int paste_track;
+    int paste_tcenter0;
+    int paste_kcenter0;
+    int paste_tcenter1;
+    int paste_kcenter1;
 
 
     seqpat* main_sel;
@@ -126,6 +128,8 @@ class Arranger : public fltk::Widget {
     int check_paste_safety();
 
     int check_join_safety();
+
+    void recalc_paste_center();
 
 
   public:

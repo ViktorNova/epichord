@@ -49,7 +49,7 @@ void load_text(fltk::TextDisplay* o, const char* filename){
 
 void hsv_to_rgb(float h, float s, float v, unsigned char* r, unsigned char* g, unsigned char* b){
 
-  float lh = h - floor(h/360);
+  float lh = h - 360*floor(h/360);
 
   float R,G,B;
 
@@ -86,12 +86,6 @@ void hsv_to_rgb(float h, float s, float v, unsigned char* r, unsigned char* g, u
     G = V*(1-S);
     B = -(lh-300)*V*S/60 + V;
   } 
-
-  double Z = sqrt(R*R + G*G + B*B);
-
-  //R = R / Z * 255;
-  //G = G / Z * 255;
-  //B = B / Z * 255;
 
   *r = (unsigned char)(255*R);
   *g = (unsigned char)(255*G);
