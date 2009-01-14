@@ -32,6 +32,7 @@
 #include "ui.h"
 #include "backend.h"
 #include "uihelper.h"
+#include "saveload.h"
 
 UI* ui;
 
@@ -45,10 +46,22 @@ int main(int argc, char* argv[]){
 
   load_config();
 
-  reset_song();
+  if(argc > 1){
+    if(loadsmf(argv[1])<0){
+      if(load(argv[1])<0){
+        reset_song();
+      }
+    }
+  }
+  else{
+    reset_song();
+  }
+
   if(init_backend(&argc, &argv) < 0){
     return 1;
   }
+
+
 
   int ret = fltk::run();
 
