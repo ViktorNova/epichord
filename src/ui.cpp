@@ -48,11 +48,22 @@ void UI::cb_main_window(fltk::Window* o, void* v) {
   ((UI*)(o->user_data()))->cb_main_window_i(o,v);
 }
 
-inline void UI::cb_line_i(fltk::Button*, void*) {
+inline void UI::cb__i(fltk::Button*, void*) {
   ui->track_info->toggle_controls();
 }
-void UI::cb_line(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_line_i(o,v);
+void UI::cb_(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
+}
+
+inline void UI::cb_1_i(fltk::Button*, void*) {
+  track* t = new track();
+  add_track(t);
+  ui->track_info->redraw();
+  ui->arranger->layout();
+  ui->song_vscroll->redraw();
+}
+void UI::cb_1(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_1_i(o,v);
 }
 
 inline void UI::cb_song_vscroll_i(fltk::Scrollbar* o, void*) {
@@ -131,11 +142,11 @@ void UI::cb_Z(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_Z_i(o,v);
 }
 
-inline void UI::cb__i(fltk::Button*, void*) {
+inline void UI::cb_2_i(fltk::Button*, void*) {
   show_song_edit();
 }
-void UI::cb_(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
+void UI::cb_2(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_2_i(o,v);
 }
 
 inline void UI::cb_play_button_i(fltk::Button*, void*) {
@@ -568,8 +579,16 @@ UI::UI() {
             o->set_vertical();
             fltk::Group::current()->resizable(o);
           }
-           {fltk::Button* o = new fltk::Button(0, 0, 255, 15, "@line");
-            o->callback((fltk::Callback*)cb_line);
+           {fltk::Button* o = new fltk::Button(170, 0, 85, 15, "@");
+            o->callback((fltk::Callback*)cb_);
+            o->tooltip("more settings");
+          }
+           {fltk::Button* o = new fltk::Button(0, 0, 85, 15, "+");
+            o->callback((fltk::Callback*)cb_1);
+            o->tooltip("add new track");
+          }
+           {fltk::Button* o = new fltk::Button(85, 0, 85, 15, "-");
+            o->tooltip("delete last track");
           }
           o->end();
         }
@@ -694,14 +713,13 @@ UI::UI() {
           }
            {fltk::Button* o = new fltk::Button(0, 370, 45, 75, "@<-");
             o->set_vertical();
-            o->callback((fltk::Callback*)cb_);
+            o->callback((fltk::Callback*)cb_2);
           }
           o->end();
         }
         o->end();
       }
       o->end();
-      fltk::Group::current()->resizable(o);
     }
      {fltk::Group* o = new fltk::Group(0, 445, 640, 35);
       o->box(fltk::UP_BOX);
@@ -735,15 +753,14 @@ UI::UI() {
        {fltk::Group* o = pattern_buttons = new fltk::Group(200, 5, 310, 25);
         o->hide();
         o->begin();
-         {fltk::Button* o = tool_button = new fltk::Button(35, 0, 25, 25, "tool");
-          o->callback((fltk::Callback*)cb_tool_button);
-          o->hide();
-        }
-         {fltk::Button* o = quant1_button = new fltk::Button(60, 0, 25, 25, "qua");
+         {fltk::Button* o = quant1_button = new fltk::Button(35, 0, 25, 25, "qua");
           o->tooltip("quantize selected notes");
         }
-         {fltk::Button* o = quant0_button = new fltk::Button(85, 0, 25, 25, "qu_");
+         {fltk::Button* o = quant0_button = new fltk::Button(60, 0, 25, 25, "qu_");
           o->tooltip("quantize length of selected notes");
+        }
+         {fltk::Button* o = tool_button = new fltk::Button(85, 0, 25, 25, "tool");
+          o->callback((fltk::Callback*)cb_tool_button);
         }
          {fltk::Button* o = qbutton4 = new fltk::Button(135, 0, 25, 25);
           o->callback((fltk::Callback*)cb_qbutton4);
@@ -832,6 +849,7 @@ UI::UI() {
     
     o->size_range(640,455);
     o->resize(640,455);
+    o->resizable(o);
   }
    {fltk::Window* o = config_window = new fltk::Window(320, 285, "config");
     o->shortcut(0xff1b);

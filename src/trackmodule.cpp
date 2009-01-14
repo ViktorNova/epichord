@@ -287,8 +287,8 @@ int TrackModule::handle(int e){
   return fltk::Group::handle(e);
 }
 
-void TrackModule::toggle(){
-  if(!settings_shown){
+void TrackModule::toggle_controls(int n){
+  if(n==1){
     volume.hide();
     pan.hide();
     solo.hide();
@@ -300,6 +300,7 @@ void TrackModule::toggle(){
     settings_shown = 1;
   }
   else{
+settings_shown=0;
     volume.show();
     pan.show();
     solo.show();
@@ -308,7 +309,6 @@ void TrackModule::toggle(){
     chan.hide();
     prog.hide();
     bank.hide();
-    settings_shown = 0;
   }
 }
 

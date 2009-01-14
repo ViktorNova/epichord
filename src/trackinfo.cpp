@@ -50,6 +50,9 @@ TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label = 0) : fltk::
  // }
 
   //end();
+
+  settings = 0;
+
 }
 
 int TrackInfo::handle(int event){
@@ -76,8 +79,10 @@ void TrackInfo::layout(){
 }
 
 void TrackInfo::toggle_controls(){
+  if(settings==0){settings=1;}
+  else{settings=0;}
   for(int i=0; i<children(); i++){
-    ((TrackModule*)child(i))->toggle();
+    ((TrackModule*)child(i))->toggle_controls(settings);
   }
 }
 
@@ -121,6 +126,8 @@ void TrackInfo::add_track(){
   mod->set_channel(i%16);
 
   add(mod);
+
+  mod->toggle_controls(settings);
 }
 
 void TrackInfo::del_track(int n){

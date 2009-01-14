@@ -44,8 +44,10 @@ public:
       fltk::Group *song_edit;
           TrackInfo *track_info;
 private:
-          inline void cb_line_i(fltk::Button*, void*);
-          static void cb_line(fltk::Button*, void*);
+          inline void cb__i(fltk::Button*, void*);
+          static void cb_(fltk::Button*, void*);
+          inline void cb_1_i(fltk::Button*, void*);
+          static void cb_1(fltk::Button*, void*);
 public:
           Timeline *song_timeline;
         fltk::Group *song_scrollgroup;
@@ -93,8 +95,8 @@ public:
             SampleView *sample_view;
             Keyboard *keyboard;
 private:
-          inline void cb__i(fltk::Button*, void*);
-          static void cb_(fltk::Button*, void*);
+          inline void cb_2_i(fltk::Button*, void*);
+          static void cb_2(fltk::Button*, void*);
 public:
       fltk::Button *play_button;
 private:
@@ -118,13 +120,13 @@ private:
       static void cb_loop_toggle(fltk::Button*, void*);
 public:
       fltk::Group *pattern_buttons;
+        fltk::Button *quant1_button;
+        fltk::Button *quant0_button;
         fltk::Button *tool_button;
 private:
         inline void cb_tool_button_i(fltk::Button*, void*);
         static void cb_tool_button(fltk::Button*, void*);
 public:
-        fltk::Button *quant1_button;
-        fltk::Button *quant0_button;
         fltk::Button *qbutton4;
 private:
         inline void cb_qbutton4_i(fltk::Button*, void*);

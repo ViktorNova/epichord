@@ -25,6 +25,8 @@
 
 class TrackInfo : public fltk::Group {
 
+    int settings;
+
   public:
 
     int scroll;

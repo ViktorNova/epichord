@@ -118,7 +118,7 @@ class TrackModule : public fltk::Group {
   VGauge bank;
   Toggle rec;
 
-  void toggle();
+  void toggle_controls(int n);
 
   TrackModule(int x, int y, int w, int h, int i, const char* label=0);
   int handle(int event);
