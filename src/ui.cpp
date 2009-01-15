@@ -720,6 +720,7 @@ UI::UI() {
         o->end();
       }
       o->end();
+      fltk::Group::current()->resizable(o);
     }
      {fltk::Group* o = new fltk::Group(0, 445, 640, 35);
       o->box(fltk::UP_BOX);
@@ -849,7 +850,6 @@ UI::UI() {
     
     o->size_range(640,455);
     o->resize(640,455);
-    o->resizable(o);
   }
    {fltk::Window* o = config_window = new fltk::Window(320, 285, "config");
     o->shortcut(0xff1b);

@@ -62,7 +62,7 @@ scope_window->hide();
 o->hide();
 
 save_config();} open
-      xywh {362 103 640 480} hide resizable
+      xywh {973 84 640 480} resizable
       extra_code {\#include <stdio.h>
 
 \#include <fltk/ask.h>
@@ -70,10 +70,10 @@ save_config();} open
 \#include "seq.h"
 \#include "trackmodule.h"
 o->size_range(640,455);
-o->resize(640,455);}
+o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {open
-        xywh {0 0 640 445}
+      {fltk::Group} {} {
+        xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {open
           xywh {0 0 640 445}
@@ -104,7 +104,7 @@ ui->song_vscroll->redraw();}
               xywh {0 0 85 15}
             }
             {fltk::Button} {} {
-              label {-} selected
+              label {-}
               tooltip {delete last track}
               xywh {85 0 85 15}
             }
@@ -273,7 +273,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {
+      {fltk::Group} {} {selected
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
