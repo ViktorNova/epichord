@@ -492,6 +492,7 @@ void UI::cb_action_window(fltk::Window* o, void* v) {
 
 inline void UI::cb_new1_i(fltk::Button*, void*) {
   reset_song();
+  ui->file_button->state(0);
 }
 void UI::cb_new1(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->user_data()))->cb_new1_i(o,v);
@@ -499,6 +500,7 @@ void UI::cb_new1(fltk::Button* o, void* v) {
 
 inline void UI::cb_save_i(fltk::Button*, void*) {
   action_window->hide();
+  ui->file_button->state(0);
   save();
 }
 void UI::cb_save(fltk::Button* o, void* v) {
@@ -507,6 +509,7 @@ void UI::cb_save(fltk::Button* o, void* v) {
 
 inline void UI::cb_save1_i(fltk::Button*, void*) {
   action_window->hide();
+  ui->file_button->state(0);
   save(fltk::file_chooser("save file",NULL,get_last_dir()));
 }
 void UI::cb_save1(fltk::Button* o, void* v) {
@@ -515,6 +518,7 @@ void UI::cb_save1(fltk::Button* o, void* v) {
 
 inline void UI::cb_load_i(fltk::Button*, void*) {
   action_window->hide();
+  ui->file_button->state(0);
   if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
     reset_song();
   }
@@ -525,6 +529,7 @@ void UI::cb_load(fltk::Button* o, void* v) {
 
 inline void UI::cb_import_i(fltk::Button*, void*) {
   action_window->hide();
+  ui->file_button->state(0);
   if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
     reset_song();
   }
@@ -535,6 +540,7 @@ void UI::cb_import(fltk::Button* o, void* v) {
 
 inline void UI::cb_export_i(fltk::Button*, void*) {
   action_window->hide();
+  ui->file_button->state(0);
   savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));
 }
 void UI::cb_export(fltk::Button* o, void* v) {
@@ -1201,6 +1207,7 @@ track.");
       o->callback((fltk::Callback*)cb_export);
     }
     o->end();
+    o->resizable(o);
   }
    {fltk::Window* o = scope_window = new fltk::Window(425, 280, "scope");
     w = o;

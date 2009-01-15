@@ -273,7 +273,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {selected
+      {fltk::Group} {} {open
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -885,29 +885,33 @@ o->hide();}
     {fltk::Window} action_window {
       label menu
       callback {ui->file_button->state(0);
-o->hide();}
-      xywh {286 302 100 130} horizontal hide
+o->hide();} open
+      xywh {286 302 100 130} horizontal resizable visible
     } {
       {fltk::Button} {} {
         label new
-        callback {reset_song();}
+        callback {reset_song();
+ui->file_button->state(0);}
         xywh {5 5 90 20}
       }
       {fltk::Button} {} {
         label save
         callback {action_window->hide();
+ui->file_button->state(0);
 save();}
         xywh {5 25 90 20}
       }
       {fltk::Button} {} {
         label {save as}
         callback {action_window->hide();
+ui->file_button->state(0);
 save(fltk::file_chooser("save file",NULL,get_last_dir()));}
         xywh {5 45 90 20}
       }
       {fltk::Button} {} {
         label load
         callback {action_window->hide();
+ui->file_button->state(0);
 if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
   reset_song();
 }}
@@ -916,6 +920,7 @@ if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
       {fltk::Button} {} {
         label import
         callback {action_window->hide();
+ui->file_button->state(0);
 if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
   reset_song();
 }}
@@ -924,7 +929,8 @@ if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
       {fltk::Button} {} {
         label export
         callback {action_window->hide();
-savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
+ui->file_button->state(0);
+savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));} selected
         xywh {5 105 90 20}
       }
     }
