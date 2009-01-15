@@ -479,13 +479,17 @@ void press_play(){
 
 void press_stop(){
 
-  //stops playback and sets the play position to zero
+  int left = get_loop_start();
+  if(get_play_position()==left || get_play_position()==0){
+    left=0;
+  }
+
   pause_backend();
-  reset_backend(0);
+  reset_backend(left);
   all_notes_off();
 
-  ui->song_timeline->update(0);
-  ui->pattern_timeline->update(0);
+  ui->song_timeline->update(left);
+  ui->pattern_timeline->update(left);
 
   ui->song_timeline->redraw();
   ui->pattern_timeline->redraw();
@@ -493,7 +497,7 @@ void press_stop(){
   ui->play_button->label("@>");
   ui->play_button->redraw();
 
-  ui->metronome->update(0);
+  ui->metronome->update(left);
 
 }
 
