@@ -572,8 +572,9 @@ ResizeNote::ResizeNote(pattern* zp, mevent* ze, int dur){
   r1 = find_off(ze);
   if(r1){
     r2 = new mevent(r1);
-    r2->prev = tfind<mevent>(p->events, ze->tick + dur);
-    if(r2->prev == r1 || r2->prev == l1){
+    //r2->prev = tfind<mevent>(p->events, ze->tick + dur);
+    r2->prev = r1->prev;
+    if(r2->prev == l1){
       r2->prev = l2;
     }
     r2->tick = ze->tick + dur;

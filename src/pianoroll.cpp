@@ -198,12 +198,14 @@ int PianoRoll::handle(int event){
             //move_offset = quantize(xpix2tick(X)) - move_torig - move_qoffset;
             //move_toffset = 0;
             move_offset = X - tick2xpix(e->tick);
-            move_norig = ypix2note(Y+scrolly,1);
+            //move_norig = ypix2note(Y+scrolly,1);
+            move_norig = e->value1;
             move_noffset = 0;
 
-            last_note = move_norig;
+            last_note = e->value1;
             if(config.playmove){
               ui->keyboard->play_note(last_note,0);
+              ui->keyboard->highlight_note(last_note);
             }
           }
         }
@@ -255,6 +257,7 @@ int PianoRoll::handle(int event){
         move_noffset = ypix2note(Y+scrolly,1) - move_norig;
         int N = move_norig+move_noffset;
         if(N != last_note){
+          ui->keyboard->highlight_note(N);
           if(config.playmove){//play on move
             ui->keyboard->release_note(last_note,0);
             ui->keyboard->play_note(N,0);
