@@ -304,6 +304,63 @@ void UI::cb_file_button(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_file_button_i(o,v);
 }
 
+inline void UI::cb_new_i(fltk::Item*, void*) {
+  reset_song();
+  ui->file_button->state(0);
+}
+void UI::cb_new(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_new_i(o,v);
+}
+
+inline void UI::cb_save_i(fltk::Item*, void*) {
+  action_window->hide();
+  ui->file_button->state(0);
+  save();
+}
+void UI::cb_save(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_save_i(o,v);
+}
+
+inline void UI::cb_save1_i(fltk::Item*, void*) {
+  action_window->hide();
+  ui->file_button->state(0);
+  save(fltk::file_chooser("save file",NULL,get_last_dir()));
+}
+void UI::cb_save1(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_save1_i(o,v);
+}
+
+inline void UI::cb_load_i(fltk::Item*, void*) {
+  action_window->hide();
+  ui->file_button->state(0);
+  if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
+    reset_song();
+  }
+;}
+void UI::cb_load(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_load_i(o,v);
+}
+
+inline void UI::cb_import_i(fltk::Item*, void*) {
+  action_window->hide();
+  ui->file_button->state(0);
+  if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
+    reset_song();
+  }
+;}
+void UI::cb_import(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_import_i(o,v);
+}
+
+inline void UI::cb_export_i(fltk::Item*, void*) {
+  action_window->hide();
+  ui->file_button->state(0);
+  savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));
+}
+void UI::cb_export(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_export_i(o,v);
+}
+
 inline void UI::cb_help_button_i(fltk::Button* o, void*) {
   if(o->state()){
     ui->help_window->show();
@@ -453,11 +510,11 @@ void UI::cb_do(fltk::Item* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_do_i(o,v);
 }
 
-inline void UI::cb_new_i(fltk::Item*, void*) {
+inline void UI::cb_new1_i(fltk::Item*, void*) {
   set_robmode(1);
 }
-void UI::cb_new(fltk::Item* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_new_i(o,v);
+void UI::cb_new1(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_new1_i(o,v);
 }
 
 inline void UI::cb_extend_i(fltk::Item*, void*) {
@@ -490,61 +547,61 @@ void UI::cb_action_window(fltk::Window* o, void* v) {
   ((UI*)(o->user_data()))->cb_action_window_i(o,v);
 }
 
-inline void UI::cb_new1_i(fltk::Button*, void*) {
+inline void UI::cb_new2_i(fltk::Button*, void*) {
   reset_song();
   ui->file_button->state(0);
 }
-void UI::cb_new1(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_new1_i(o,v);
+void UI::cb_new2(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_new2_i(o,v);
 }
 
-inline void UI::cb_save_i(fltk::Button*, void*) {
+inline void UI::cb_save2_i(fltk::Button*, void*) {
   action_window->hide();
   ui->file_button->state(0);
   save();
 }
-void UI::cb_save(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_save_i(o,v);
+void UI::cb_save2(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_save2_i(o,v);
 }
 
-inline void UI::cb_save1_i(fltk::Button*, void*) {
+inline void UI::cb_save3_i(fltk::Button*, void*) {
   action_window->hide();
   ui->file_button->state(0);
   save(fltk::file_chooser("save file",NULL,get_last_dir()));
 }
-void UI::cb_save1(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_save1_i(o,v);
+void UI::cb_save3(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_save3_i(o,v);
 }
 
-inline void UI::cb_load_i(fltk::Button*, void*) {
+inline void UI::cb_load1_i(fltk::Button*, void*) {
   action_window->hide();
   ui->file_button->state(0);
   if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
     reset_song();
   }
 ;}
-void UI::cb_load(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_load_i(o,v);
+void UI::cb_load1(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_load1_i(o,v);
 }
 
-inline void UI::cb_import_i(fltk::Button*, void*) {
+inline void UI::cb_import1_i(fltk::Button*, void*) {
   action_window->hide();
   ui->file_button->state(0);
   if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
     reset_song();
   }
 ;}
-void UI::cb_import(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_import_i(o,v);
+void UI::cb_import1(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_import1_i(o,v);
 }
 
-inline void UI::cb_export_i(fltk::Button*, void*) {
+inline void UI::cb_export1_i(fltk::Button*, void*) {
   action_window->hide();
   ui->file_button->state(0);
   savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));
 }
-void UI::cb_export(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->user_data()))->cb_export_i(o,v);
+void UI::cb_export1(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->user_data()))->cb_export1_i(o,v);
 }
 
 inline void UI::cb_scope_window_i(fltk::Window* o, void*) {
@@ -841,8 +898,32 @@ UI::UI() {
       }
        {fltk::Button* o = file_button = new fltk::Button(585, 5, 25, 25);
         o->callback((fltk::Callback*)cb_file_button);
+        o->hide();
         o->tooltip("disk");
         o->type(fltk::Button::TOGGLE);
+      }
+       {fltk::PopupMenu* o = file_menu = new fltk::PopupMenu(585, 5, 25, 25);
+        o->begin();
+         {fltk::Item* o = new fltk::Item("new");
+          o->callback((fltk::Callback*)cb_new);
+        }
+         {fltk::Item* o = new fltk::Item("save");
+          o->callback((fltk::Callback*)cb_save);
+        }
+         {fltk::Item* o = new fltk::Item("save as...");
+          o->callback((fltk::Callback*)cb_save1);
+        }
+        new fltk::Divider();
+         {fltk::Item* o = new fltk::Item("load");
+          o->callback((fltk::Callback*)cb_load);
+        }
+         {fltk::Item* o = new fltk::Item("import");
+          o->callback((fltk::Callback*)cb_import);
+        }
+         {fltk::Item* o = new fltk::Item("export");
+          o->callback((fltk::Callback*)cb_export);
+        }
+        o->end();
       }
        {fltk::Button* o = help_button = new fltk::Button(610, 5, 25, 25);
         o->callback((fltk::Callback*)cb_help_button);
@@ -963,7 +1044,7 @@ track.");
             o->callback((fltk::Callback*)cb_do);
           }
            {fltk::Item* o = new fltk::Item("new block");
-            o->callback((fltk::Callback*)cb_new);
+            o->callback((fltk::Callback*)cb_new1);
           }
            {fltk::Item* o = new fltk::Item("extend block");
             o->callback((fltk::Callback*)cb_extend);
@@ -1189,22 +1270,22 @@ track.");
     o->callback((fltk::Callback*)cb_action_window, (void*)(this));
     o->begin();
      {fltk::Button* o = new fltk::Button(5, 5, 90, 20, "new");
-      o->callback((fltk::Callback*)cb_new1);
+      o->callback((fltk::Callback*)cb_new2);
     }
      {fltk::Button* o = new fltk::Button(5, 25, 90, 20, "save");
-      o->callback((fltk::Callback*)cb_save);
+      o->callback((fltk::Callback*)cb_save2);
     }
      {fltk::Button* o = new fltk::Button(5, 45, 90, 20, "save as");
-      o->callback((fltk::Callback*)cb_save1);
+      o->callback((fltk::Callback*)cb_save3);
     }
      {fltk::Button* o = new fltk::Button(5, 65, 90, 20, "load");
-      o->callback((fltk::Callback*)cb_load);
+      o->callback((fltk::Callback*)cb_load1);
     }
      {fltk::Button* o = new fltk::Button(5, 85, 90, 20, "import");
-      o->callback((fltk::Callback*)cb_import);
+      o->callback((fltk::Callback*)cb_import1);
     }
      {fltk::Button* o = new fltk::Button(5, 105, 90, 20, "export");
-      o->callback((fltk::Callback*)cb_export);
+      o->callback((fltk::Callback*)cb_export1);
     }
     o->end();
     o->resizable(o);
@@ -1238,6 +1319,7 @@ track.");
   conf_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
   scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/scope.gif"));
   file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
+  file_menu->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
   help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
   
   edit_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/edit.gif"));

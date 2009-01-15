@@ -22,12 +22,14 @@
 #include "keyboard.h"
 #include <metronome.h>
 #include "saveload.h"
+#include <fltk/PopupMenu.h>
+#include <fltk/Item.h>
+#include <fltk/Divider.h>
 #include <fltk/TabGroup.h>
 #include <fltk/ValueInput.h>
 #include <fltk/ValueOutput.h>
 #include <fltk/CheckButton.h>
 #include <fltk/Choice.h>
-#include <fltk/Item.h>
 #include <fltk/Input.h>
 #include <fltk/TextEditor.h>
 #include <fltk/TextDisplay.h>
@@ -203,6 +205,21 @@ private:
       inline void cb_file_button_i(fltk::Button*, void*);
       static void cb_file_button(fltk::Button*, void*);
 public:
+      fltk::PopupMenu *file_menu;
+private:
+        inline void cb_new_i(fltk::Item*, void*);
+        static void cb_new(fltk::Item*, void*);
+        inline void cb_save_i(fltk::Item*, void*);
+        static void cb_save(fltk::Item*, void*);
+        inline void cb_save1_i(fltk::Item*, void*);
+        static void cb_save1(fltk::Item*, void*);
+        inline void cb_load_i(fltk::Item*, void*);
+        static void cb_load(fltk::Item*, void*);
+        inline void cb_import_i(fltk::Item*, void*);
+        static void cb_import(fltk::Item*, void*);
+        inline void cb_export_i(fltk::Item*, void*);
+        static void cb_export(fltk::Item*, void*);
+public:
       fltk::Button *help_button;
 private:
       inline void cb_help_button_i(fltk::Button*, void*);
@@ -287,8 +304,8 @@ public:
 private:
           inline void cb_do_i(fltk::Item*, void*);
           static void cb_do(fltk::Item*, void*);
-          inline void cb_new_i(fltk::Item*, void*);
-          static void cb_new(fltk::Item*, void*);
+          inline void cb_new1_i(fltk::Item*, void*);
+          static void cb_new1(fltk::Item*, void*);
           inline void cb_extend_i(fltk::Item*, void*);
           static void cb_extend(fltk::Item*, void*);
 public:
@@ -350,18 +367,18 @@ public:
 private:
   inline void cb_action_window_i(fltk::Window*, void*);
   static void cb_action_window(fltk::Window*, void*);
-    inline void cb_new1_i(fltk::Button*, void*);
-    static void cb_new1(fltk::Button*, void*);
-    inline void cb_save_i(fltk::Button*, void*);
-    static void cb_save(fltk::Button*, void*);
-    inline void cb_save1_i(fltk::Button*, void*);
-    static void cb_save1(fltk::Button*, void*);
-    inline void cb_load_i(fltk::Button*, void*);
-    static void cb_load(fltk::Button*, void*);
-    inline void cb_import_i(fltk::Button*, void*);
-    static void cb_import(fltk::Button*, void*);
-    inline void cb_export_i(fltk::Button*, void*);
-    static void cb_export(fltk::Button*, void*);
+    inline void cb_new2_i(fltk::Button*, void*);
+    static void cb_new2(fltk::Button*, void*);
+    inline void cb_save2_i(fltk::Button*, void*);
+    static void cb_save2(fltk::Button*, void*);
+    inline void cb_save3_i(fltk::Button*, void*);
+    static void cb_save3(fltk::Button*, void*);
+    inline void cb_load1_i(fltk::Button*, void*);
+    static void cb_load1(fltk::Button*, void*);
+    inline void cb_import1_i(fltk::Button*, void*);
+    static void cb_import1(fltk::Button*, void*);
+    inline void cb_export1_i(fltk::Button*, void*);
+    static void cb_export1(fltk::Button*, void*);
 public:
   fltk::Window *scope_window;
 private:

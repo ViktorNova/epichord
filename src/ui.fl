@@ -62,7 +62,7 @@ scope_window->hide();
 o->hide();
 
 save_config();} open
-      xywh {973 84 640 480} resizable
+      xywh {1036 527 640 480} resizable
       extra_code {\#include <stdio.h>
 
 \#include <fltk/ask.h>
@@ -72,7 +72,7 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {open
@@ -120,7 +120,7 @@ o->label_scale=4;}
               class Timeline
             }
           }
-          {fltk::Group} song_scrollgroup {
+          {fltk::Group} song_scrollgroup {open
             xywh {255 15 385 430} resizable
           } {
             {fltk::Widget} arranger {
@@ -425,9 +425,54 @@ else{
   ui->action_window->hide();
 }}
           tooltip disk
-          xywh {585 5 25 25}
+          xywh {585 5 25 25} hide
           extra_code {\#include "saveload.h"
 o->type(fltk::Button::TOGGLE);}
+        }
+        {fltk::PopupMenu} file_menu {open
+          xywh {585 5 25 25}
+        } {
+          {fltk::Item} {} {
+            label new
+            callback {reset_song();
+ui->file_button->state(0);}
+            }
+          {fltk::Item} {} {
+            label save
+            callback {action_window->hide();
+ui->file_button->state(0);
+save();}
+            }
+          {fltk::Item} {} {
+            label {save as...}
+            callback {action_window->hide();
+ui->file_button->state(0);
+save(fltk::file_chooser("save file",NULL,get_last_dir()));}
+            }
+          {fltk::Divider} {} {
+            }
+          {fltk::Item} {} {
+            label load
+            callback {action_window->hide();
+ui->file_button->state(0);
+if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
+  reset_song();
+}}
+            }
+          {fltk::Item} {} {
+            label import
+            callback {action_window->hide();
+ui->file_button->state(0);
+if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
+  reset_song();
+}}
+            }
+          {fltk::Item} {} {
+            label export
+            callback {action_window->hide();
+ui->file_button->state(0);
+savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
+            }
         }
         {fltk::Button} help_button {
           callback {if(o->state()){
@@ -886,7 +931,7 @@ o->hide();}
       label menu
       callback {ui->file_button->state(0);
 o->hide();} open
-      xywh {286 302 100 130} horizontal resizable visible
+      xywh {286 302 100 130} horizontal hide resizable
     } {
       {fltk::Button} {} {
         label new
@@ -930,7 +975,7 @@ if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
         label export
         callback {action_window->hide();
 ui->file_button->state(0);
-savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));} selected
+savesmf(fltk::file_chooser("export file",NULL,get_last_dir()));}
         xywh {5 105 90 20}
       }
     }
@@ -967,6 +1012,7 @@ else{
 conf_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/conf.gif"));
 scope_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/scope.gif"));
 file_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
+file_menu->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/file.gif"));
 help_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/help.gif"));
 
 edit_button->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/edit.gif"));
@@ -981,7 +1027,8 @@ qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
 qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
 qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
-qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
+qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {selected
+    }
     code {track_info->set_rec(0);} {}
     code {start_monitor();} {}
     code {main_window->show();} {}
