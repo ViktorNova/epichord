@@ -1014,6 +1014,7 @@ void Arranger::apply_paste(){
   set_undo(c);
   undo_push(1);
 
+  tracks[paste_kcenter1]->restate();
 }
 
 void Arranger::recalc_paste_center(){

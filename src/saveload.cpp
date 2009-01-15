@@ -189,7 +189,7 @@ int save(const char* filename){
   file.open(filename, fstream::out);
 
   if(!file.is_open()){
-    printf("error, cant open file for saving\n");
+    printf("save: can't open file for saving.\n");
     return -1;
   }
 
@@ -328,7 +328,7 @@ int load(const char* filename){
   file.open(filename, fstream::in);
 
   if(!file.is_open()){
-    printf("error, cant open file for saving\n");
+    printf("load: can't open file for loading.\n");
     return -1;
   }
 
@@ -611,7 +611,7 @@ int savesmf(const char* filename){
   file.open(filename, fstream::out);
 
   if(!file.is_open()){
-    printf("error, cant open file for saving\n");
+    printf("savesmf: can't open file for exporting.\n");
     return -1;
   }
 
@@ -822,7 +822,7 @@ int loadsmf(const char* filename){
   file.open(filename, fstream::in);
 
   if(!file.is_open()){
-    printf("error, cant open file for saving\n");
+    printf("loadsmf: can't open file for importing.\n");
     return -1;
   }
 
