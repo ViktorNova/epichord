@@ -441,9 +441,12 @@ ui->file_button->state(0);}
             label load
             callback {action_window->hide();
 ui->file_button->state(0);
-if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
-  reset_song();
-}} selected
+const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
+if(filename){
+  if(load(filename)<0){
+    reset_song();
+  }
+}}
             }
           {fltk::Item} {} {
             label save
@@ -463,9 +466,12 @@ save(fltk::file_chooser("save file",NULL,get_last_dir()));}
             label import
             callback {action_window->hide();
 ui->file_button->state(0);
-if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
-  reset_song();
-}}
+const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
+if(filename){
+  if(loadsmf(filename)<0){
+    reset_song();
+  }
+}} selected
             }
           {fltk::Item} {} {
             label export
@@ -930,7 +936,7 @@ o->hide();}
     {fltk::Window} action_window {
       label menu
       callback {ui->file_button->state(0);
-o->hide();} open
+o->hide();}
       xywh {286 302 100 130} horizontal hide resizable
     } {
       {fltk::Button} {} {

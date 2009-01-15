@@ -315,8 +315,11 @@ void UI::cb_new(fltk::Item* o, void* v) {
 inline void UI::cb_load_i(fltk::Item*, void*) {
   action_window->hide();
   ui->file_button->state(0);
-  if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
-    reset_song();
+  const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
+  if(filename){
+    if(load(filename)<0){
+      reset_song();
+    }
   }
 ;}
 void UI::cb_load(fltk::Item* o, void* v) {
@@ -344,8 +347,11 @@ void UI::cb_save1(fltk::Item* o, void* v) {
 inline void UI::cb_import_i(fltk::Item*, void*) {
   action_window->hide();
   ui->file_button->state(0);
-  if(loadsmf(fltk::file_chooser("import file",NULL,get_last_dir()))<0){
-    reset_song();
+  const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
+  if(filename){
+    if(loadsmf(filename)<0){
+      reset_song();
+    }
   }
 ;}
 void UI::cb_import(fltk::Item* o, void* v) {
