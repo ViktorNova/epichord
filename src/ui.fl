@@ -72,7 +72,7 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 0 640 445} resizable
       } {
         {fltk::Group} song_edit {open
@@ -362,7 +362,7 @@ o->state(1);}
             extra_code {o->type(fltk::Button::TOGGLE);}
           }
         }
-        {fltk::Group} song_buttons {open
+        {fltk::Group} song_buttons {
           xywh {385 5 145 25}
         } {
           {fltk::Button} edit_button {
@@ -438,6 +438,14 @@ o->type(fltk::Button::TOGGLE);}
 ui->file_button->state(0);}
             }
           {fltk::Item} {} {
+            label load
+            callback {action_window->hide();
+ui->file_button->state(0);
+if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
+  reset_song();
+}} selected
+            }
+          {fltk::Item} {} {
             label save
             callback {action_window->hide();
 ui->file_button->state(0);
@@ -450,14 +458,6 @@ ui->file_button->state(0);
 save(fltk::file_chooser("save file",NULL,get_last_dir()));}
             }
           {fltk::Divider} {} {
-            }
-          {fltk::Item} {} {
-            label load
-            callback {action_window->hide();
-ui->file_button->state(0);
-if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
-  reset_song();
-}}
             }
           {fltk::Item} {} {
             label import
@@ -1027,8 +1027,7 @@ qbutton16->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q16.gif"));
 qbutton32->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q32.gif"));
 qbutton64->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q64.gif"));
 qbutton128->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q128.gif"));
-qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {selected
-    }
+qbutton0->image(fltk::SharedImage::get(ROOT_DATA_DIR"gfx/q0.gif"));} {}
     code {track_info->set_rec(0);} {}
     code {start_monitor();} {}
     code {main_window->show();} {}

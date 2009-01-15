@@ -312,6 +312,17 @@ void UI::cb_new(fltk::Item* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_new_i(o,v);
 }
 
+inline void UI::cb_load_i(fltk::Item*, void*) {
+  action_window->hide();
+  ui->file_button->state(0);
+  if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
+    reset_song();
+  }
+;}
+void UI::cb_load(fltk::Item* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_load_i(o,v);
+}
+
 inline void UI::cb_save_i(fltk::Item*, void*) {
   action_window->hide();
   ui->file_button->state(0);
@@ -328,17 +339,6 @@ inline void UI::cb_save1_i(fltk::Item*, void*) {
 }
 void UI::cb_save1(fltk::Item* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_save1_i(o,v);
-}
-
-inline void UI::cb_load_i(fltk::Item*, void*) {
-  action_window->hide();
-  ui->file_button->state(0);
-  if(load(fltk::file_chooser("open file",NULL,get_last_dir()))<0){
-    reset_song();
-  }
-;}
-void UI::cb_load(fltk::Item* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_load_i(o,v);
 }
 
 inline void UI::cb_import_i(fltk::Item*, void*) {
@@ -907,6 +907,9 @@ UI::UI() {
          {fltk::Item* o = new fltk::Item("new");
           o->callback((fltk::Callback*)cb_new);
         }
+         {fltk::Item* o = new fltk::Item("load");
+          o->callback((fltk::Callback*)cb_load);
+        }
          {fltk::Item* o = new fltk::Item("save");
           o->callback((fltk::Callback*)cb_save);
         }
@@ -914,9 +917,6 @@ UI::UI() {
           o->callback((fltk::Callback*)cb_save1);
         }
         new fltk::Divider();
-         {fltk::Item* o = new fltk::Item("load");
-          o->callback((fltk::Callback*)cb_load);
-        }
          {fltk::Item* o = new fltk::Item("import");
           o->callback((fltk::Callback*)cb_import);
         }

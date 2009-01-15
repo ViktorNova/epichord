@@ -209,12 +209,12 @@ public:
 private:
         inline void cb_new_i(fltk::Item*, void*);
         static void cb_new(fltk::Item*, void*);
+        inline void cb_load_i(fltk::Item*, void*);
+        static void cb_load(fltk::Item*, void*);
         inline void cb_save_i(fltk::Item*, void*);
         static void cb_save(fltk::Item*, void*);
         inline void cb_save1_i(fltk::Item*, void*);
         static void cb_save1(fltk::Item*, void*);
-        inline void cb_load_i(fltk::Item*, void*);
-        static void cb_load(fltk::Item*, void*);
         inline void cb_import_i(fltk::Item*, void*);
         static void cb_import(fltk::Item*, void*);
         inline void cb_export_i(fltk::Item*, void*);
