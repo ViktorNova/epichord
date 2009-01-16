@@ -88,10 +88,7 @@ static int frame_count = 0;
 
 
 
-//void (*update_display)() = NULL;
-
 /* callback for seq.c and play.c */
-/* THIS BARELY WORKS */
 void dispatch_event(mevent* e, int track, int tick_base){
 
   jack_midi_data_t* md;
@@ -99,10 +96,12 @@ void dispatch_event(mevent* e, int track, int tick_base){
   int p = tracks[track]->port;
   int c = tracks[track]->chan;
 
-  uint64_t base = t2f(tick_base);
-  uint64_t frame = t2f(e->tick) + base - last_frame + frame_jump;
+  //uint64_t base = t2f(tick_base);
+  //uint64_t frame = t2f(e->tick) + base - last_frame + frame_jump;
+  uint64_t eframe = t2f((uint64_t)(e->tick+tick_base));
+  uint64_t frame = eframe - last_frame + frame_jump;
 
-  if(e->type == -1){
+  if(e->type == -1){//dummy events
     return;
   }
 
@@ -111,14 +110,15 @@ void dispatch_event(mevent* e, int track, int tick_base){
     return;
   }
 
-//printf("0x%x %d %llu %llu %llu %d %llu %d\n", e->type, e->tick, t2f(e->tick), base, last_frame, frame_jump, frame, bpm);
+//printf("%d %d %d %llu %llu %llu\n",e->tick,tick_base,e->tick+tick_base, eframe, last_frame, frame);
 
-if(t2f(e->tick)+base < last_frame){
-  printf("playing a note in the past?? lucky it didnt segfault!\n");
-  return;
-}
+  if(eframe < last_frame){
+    printf("dispatch: %llu %llu negative frame index. BOOM segfault.\n", t2f(e->tick+tick_base), last_frame);
+    return;
+  }
 
   if(frame == frame_count){
+    printf("dispatch: scheduling bug. frame index == frame count.\n");
     frame--;
   }
 
@@ -132,9 +132,10 @@ if(t2f(e->tick)+base < last_frame){
   if(md == NULL){
     md = jack_midi_event_reserve(pbo[p],frame_count-1,n);
     if(md == NULL){
-      printf("dispatch: can't reserve midi event\n");
+      printf("dispatch: can't reserve midi event.\n");
       return;
     }
+    printf("dispatch: send midi using scheduling kludge.\n");
   }
   for(int i=0; i<n; i++){
     md[i] = buf[i];

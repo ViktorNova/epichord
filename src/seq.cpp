@@ -40,6 +40,34 @@ std::list<int> undo_number;
 std::list<int>::iterator undo_nptr;
 
 
+struct total_event{
+  mevent* e;
+  int t;
+  seqpat* s;
+
+  total_event(){}
+  total_event(mevent* ze, int zt, seqpat* zs){
+    e=ze;
+    t=zt;
+    s=zs;
+  }
+  ~total_event(){}
+  total_event(const total_event& zte){
+    e=zte.e;
+    t=zte.t;
+    s=zte.s;
+  }
+  int operator<(const total_event& zte){
+    return e->tick+s->tick < zte.e->tick+zte.s->tick;
+  }
+  void operator=(const total_event& zte){
+    e=zte.e;
+    t=zte.t;
+    s=zte.s;
+  }
+};
+std::list<total_event> dispatch_queue;
+
 int solo_flag = 0;
 
 int rec_track = 0;
@@ -56,6 +84,9 @@ int play_seq(int cur_tick){
   pattern* p;
   mevent* e;
   int base;
+
+
+  dispatch_queue.clear();
 
   /* start at skip s, and skip e
      if e is in the past, dispatch event and set new skip
@@ -83,8 +114,10 @@ again:
 
       if(e->tick != s->dur || e->type == MIDI_NOTE_OFF)
       if(tracks[i]->mute == 0)
-      if((get_solo() && tracks[i]->solo != 0) || !get_solo())
-          dispatch_event(e, i, s->tick);
+      if((get_solo() && tracks[i]->solo != 0) || !get_solo()){
+          //dispatch_event(e, i, s->tick);
+         dispatch_queue.push_back(total_event(e,i,s));
+      }
 
       e = e->next;
       s->skip = e;
@@ -111,6 +144,17 @@ switchpatseq:
 
       goto again;//play some or all of the next seqpat
   }
+
+
+  //sort and dispatch
+  dispatch_queue.sort();
+
+  std::list<total_event>::iterator i = dispatch_queue.begin();
+  while(i != dispatch_queue.end()){
+    dispatch_event(i->e, i->t, i->s->tick);
+    i++;
+  }
+
 }
 
 int set_seq_pos(int new_tick){
