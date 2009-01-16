@@ -28,9 +28,10 @@
 #include <fltk/TextDisplay.h>
 #include <fltk/TextBuffer.h>
 
+#include "seq.h"
 #include "backend.h"
 
-#include "seq.h"
+
 
 #include "util.h"
 

@@ -50,7 +50,7 @@ static float default_hsv_value = 0.8;
 
 
 
-int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick)){
+int play_seq(int cur_tick){
 
   seqpat* s;
   pattern* p;

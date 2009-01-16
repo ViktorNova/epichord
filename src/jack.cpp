@@ -244,7 +244,13 @@ static int process(jack_nframes_t nframes, void* arg){
   //play
   if(playing){
     if(bpm != new_bpm){
-      bpm = new_bpm;
+      if(new_bpm != 0){
+        bpm = new_bpm;
+      }
+      else{
+        printf("process: someone set the bpm to zero!\n");
+        bpm = 120;
+      }
       cur_frame = t2f(cur_tick);
       last_frame = t2f(last_tick);
     }
@@ -272,7 +278,7 @@ static int process(jack_nframes_t nframes, void* arg){
       cur_frame = last_frame + jump;
       cur_tick = f2t(cur_frame);
       //printf("cur tick %d\n",cur_tick);
-      play_seq(cur_tick, dispatch_event);
+      play_seq(cur_tick);
 
       reset_backend(ls);
       //printf("cur tick %d\n",cur_tick);
@@ -281,7 +287,7 @@ static int process(jack_nframes_t nframes, void* arg){
       cur_frame = last_frame + left_over;
       cur_tick = f2t(cur_frame);
 
-      play_seq(cur_tick, dispatch_event);
+      play_seq(cur_tick);
     }
     else if(lf && cur_tick > le){
       reset_backend(ls);
@@ -289,11 +295,11 @@ static int process(jack_nframes_t nframes, void* arg){
       cur_frame = last_frame + nframes;
       cur_tick = f2t(cur_frame);
       //printf("%llu %llu %d %d\n",last_frame,cur_frame,last_tick,cur_tick);
-      play_seq(cur_tick, dispatch_event);
+      play_seq(cur_tick);
     }
     else{
       //printf("%llu %llu %d %d\n",last_frame,cur_frame,last_tick,cur_tick);
-      play_seq(cur_tick, dispatch_event);
+      play_seq(cur_tick);
     }
   }
 
@@ -310,7 +316,7 @@ int init_backend(int* argc, char*** argv){
 
   client = jack_client_open("Epichord",(jack_options_t)0,NULL);
   if(client == NULL){
-    printf("failure to open jack client\n");
+    printf("init_backend: failure to open jack client\n");
     return -1;
   }
 
@@ -336,7 +342,7 @@ int init_backend(int* argc, char*** argv){
   lash_client = lash_init(lash_extract_args(argc, argv), "Epichord",
                           LASH_Config_File, LASH_PROTOCOL( 2, 0 ));
   if(!lash_client){
-    printf("lash failed to initialize\n");
+    printf("init_backend: lash failed to initialize\n");
   }
   else{
     lash_jack_client_name(lash_client, "Epichord");

@@ -729,7 +729,7 @@ class ChangeEvent : public Command {
 
 
 
-int play_seq(int cur_tick, void (*dispatch_event)(mevent*, int port, int tick));
+int play_seq(int cur_tick);
 int set_seq_pos(int new_tick);
 
 void set_rec_track(int t);

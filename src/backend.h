@@ -33,6 +33,9 @@ int start_backend();
 int pause_backend();
 
 
+void dispatch_event(mevent* e, int track, int tick_base);
+
+
 int reset_backend(int tick);
 void toggle_backend_recording();
 
