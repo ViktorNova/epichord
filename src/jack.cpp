@@ -118,7 +118,7 @@ void dispatch_event(mevent* e, int track, int tick_base){
   }
 
   if(frame == frame_count){
-    printf("dispatch: scheduling bug. frame index == frame count.\n");
+    //printf("dispatch: scheduling bug. frame index == frame count.\n");
     frame--;
   }
 
