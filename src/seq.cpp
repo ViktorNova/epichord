@@ -609,44 +609,52 @@ void MoveNote::undo(){
 ResizeNote::ResizeNote(pattern* zp, mevent* ze, int dur){
   p = zp;
   l1 = ze;
-  l2 = new mevent(ze);
-  l2->dur = dur;
+  //l2 = new mevent(ze);
+  //l2->dur = dur;
+  d1 = l1->dur;
+  d2 = dur;
 
   r2 = NULL;
   r1 = find_off(ze);
   if(r1){
     r2 = new mevent(r1);
-    //r2->prev = tfind<mevent>(p->events, ze->tick + dur);
-    r2->prev = r1->prev;
-    if(r2->prev == l1){
-      r2->prev = l2;
-    }
+    r2->prev = tfind<mevent>(p->events, ze->tick + dur);
+    //r2->prev = r1->prev;
+    //if(r2->prev == l1){
+    //  r2->prev = l2;
+    //}
     r2->tick = ze->tick + dur;
   }
 }
 
 void ResizeNote::redo(){
-  tremove<mevent>(l1);
+  //tremove<mevent>(l1);
   if(r1){
     tremove<mevent>(r1);
-  }
-
-  tinsert<mevent>(l2->prev, l2);
-  if(r2){
     tinsert<mevent>(r2->prev, r2);
   }
+
+  //tinsert<mevent>(l2->prev, l2);
+  //if(r2){
+  //  tinsert<mevent>(r2->prev, r2);
+ // }
+
+  l1->dur = d2;
 }
 
 void ResizeNote::undo(){
   if(r2){
     tremove<mevent>(r2);
-  }
-  tremove<mevent>(l2);
-
-  tinsert<mevent>(l1->prev, l1);
-  if(r1){
     tinsert<mevent>(r1->prev, r1);
   }
+  //tremove<mevent>(l2);
+
+  //tinsert<mevent>(l1->prev, l1);
+  //if(r1){
+  //  tinsert<mevent>(r1->prev, r1);
+  //}
+
+  l1->dur = d1;
 }
 
 

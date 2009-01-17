@@ -657,7 +657,9 @@ class MoveNote : public Command {
 class ResizeNote : public Command {
   pattern* p;
   mevent* l1;
-  mevent* l2;
+  int d1;
+  int d2;
+  //mevent* l2;
   mevent* r1;
   mevent* r2;
 
@@ -665,8 +667,9 @@ class ResizeNote : public Command {
 
   ResizeNote(pattern* zp, mevent* ze, int dur);
   ~ResizeNote(){
-    delete l2;
-    delete r2;
+    if(r2){
+      delete r2;
+    }
   }
 
   void redo();
