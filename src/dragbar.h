@@ -20,32 +20,27 @@
    Boston, MA  02110-1301, USA
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <fltk/Group.h>
-#include <fltk/Widget.h>
-#include <fltk/draw.h>
-//#include "ui.h"
+#ifndef dragbar_h
+#define dragbar_h
 
-#include "trackselect.h"
+class DragBar : public fltk::Widget {
+  int orig_x;
+  int last_val;
+  int val;
+  int cached_flag;
+
+  unsigned char gfxbuf[102*11*3];
+
+  public:
+
+    int value(){return val;}
+    void value(int zv){val=zv;}
+
+    DragBar(int x, int y, int w, int h, const char* label=0);
+    int handle(int event);
+    void draw();
+
+};
 
 
-//extern UI* ui;
-
-
-TrackSelect::TrackSelect(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
-  
-}
-
-int TrackSelect::handle(int event){
-  switch(event){
-  }
-  return 0;
-}
-
-void TrackSelect::draw(){
-  fltk::setcolor(fltk::GRAY40);
-
-  fltk::fillrect(0,0,w(),h());
-}
-
+#endif

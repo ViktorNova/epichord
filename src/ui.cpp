@@ -75,10 +75,10 @@ void UI::cb_song_vscroll(fltk::Scrollbar* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_song_vscroll_i(o,v);
 }
 
-inline void UI::cb_song_hscroll_i(fltk::ThumbWheel* o, void*) {
-  ui->arranger->scrollTo((int)o->value(),ui->arranger->scrolly);
+inline void UI::cb_song_hscroll_i(DragBar* o, void*) {
+  ui->arranger->scrollTo(o->value(), ui->arranger->scrolly);
 }
-void UI::cb_song_hscroll(fltk::ThumbWheel* o, void* v) {
+void UI::cb_song_hscroll(DragBar* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_song_hscroll_i(o,v);
 }
 
@@ -91,10 +91,10 @@ void UI::cb_pattern_vscroll(fltk::Scrollbar* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_pattern_vscroll_i(o,v);
 }
 
-inline void UI::cb_pattern_hscroll_i(fltk::ThumbWheel* o, void*) {
-  ui->piano_roll->scrollTo((int)o->value(),ui->piano_roll->scrolly);
+inline void UI::cb_pattern_hscroll_i(DragBar* o, void*) {
+  ui->piano_roll->scrollTo(o->value(),ui->piano_roll->scrolly);
 }
-void UI::cb_pattern_hscroll(fltk::ThumbWheel* o, void* v) {
+void UI::cb_pattern_hscroll(DragBar* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_pattern_hscroll_i(o,v);
 }
 
@@ -683,9 +683,7 @@ UI::UI() {
             o->slider_size(60);
             o->callback((fltk::Callback*)cb_song_vscroll);
           }
-           {fltk::ThumbWheel* o = song_hscroll = new fltk::ThumbWheel(0, 415, 370, 15);
-            o->maximum(10000);
-            o->step(10);
+           {DragBar* o = song_hscroll = new DragBar(0, 415, 370, 15);
             o->callback((fltk::Callback*)cb_song_hscroll);
           }
           o->end();
@@ -717,8 +715,7 @@ UI::UI() {
               o->set_vertical();
               o->callback((fltk::Callback*)cb_pattern_vscroll);
             }
-             {fltk::ThumbWheel* o = pattern_hscroll = new fltk::ThumbWheel(0, 340, 580, 15);
-              o->step(10);
+             {DragBar* o = pattern_hscroll = new DragBar(0, 340, 580, 15);
               o->callback((fltk::Callback*)cb_pattern_hscroll);
             }
             o->end();

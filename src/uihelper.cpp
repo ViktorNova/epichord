@@ -812,17 +812,12 @@ void init_gui(){
   ui->song_vscroll->slider_size(60);
   ui->song_vscroll->value(0);
 
-  ui->song_hscroll->minimum(0);
-  ui->song_hscroll->maximum(1<<20);
-
   ui->pattern_timeline->edit_flag = 1;
   ui->pattern_timeline->zoom = 15;
   ui->pattern_vscroll->minimum(12*75);
   ui->pattern_vscroll->maximum(0);
   ui->pattern_vscroll->value(300);
   ui->pattern_vscroll->slider_size(50);
-  ui->pattern_hscroll->minimum(0);
-  ui->pattern_hscroll->maximum(1<<20);
   ui->pattern_hscroll->value(0);
 }
 

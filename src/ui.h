@@ -12,7 +12,7 @@
 #include <fltk/Button.h>
 #include "arranger.h"
 #include <fltk/Scrollbar.h>
-#include <fltk/ThumbWheel.h>
+#include "dragbar.h"
 #include "timeline.h"
 #include "pianoroll.h"
 #include "eventedit.h"
@@ -28,6 +28,7 @@
 #include <fltk/TabGroup.h>
 #include <fltk/ValueInput.h>
 #include <fltk/ValueOutput.h>
+#include <fltk/ThumbWheel.h>
 #include <fltk/CheckButton.h>
 #include <fltk/Choice.h>
 #include <fltk/Input.h>
@@ -59,10 +60,10 @@ private:
           inline void cb_song_vscroll_i(fltk::Scrollbar*, void*);
           static void cb_song_vscroll(fltk::Scrollbar*, void*);
 public:
-          fltk::ThumbWheel *song_hscroll;
+          DragBar *song_hscroll;
 private:
-          inline void cb_song_hscroll_i(fltk::ThumbWheel*, void*);
-          static void cb_song_hscroll(fltk::ThumbWheel*, void*);
+          inline void cb_song_hscroll_i(DragBar*, void*);
+          static void cb_song_hscroll(DragBar*, void*);
 public:
       fltk::Group *pattern_edit;
             Timeline *pattern_timeline;
@@ -73,10 +74,10 @@ private:
             inline void cb_pattern_vscroll_i(fltk::Scrollbar*, void*);
             static void cb_pattern_vscroll(fltk::Scrollbar*, void*);
 public:
-            fltk::ThumbWheel *pattern_hscroll;
+            DragBar *pattern_hscroll;
 private:
-            inline void cb_pattern_hscroll_i(fltk::ThumbWheel*, void*);
-            static void cb_pattern_hscroll(fltk::ThumbWheel*, void*);
+            inline void cb_pattern_hscroll_i(DragBar*, void*);
+            static void cb_pattern_hscroll(DragBar*, void*);
 public:
             EventEdit *event_edit;
             EventMenu *event_menu;

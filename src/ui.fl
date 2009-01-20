@@ -72,10 +72,10 @@ save_config();} open
 o->size_range(640,455);
 o->resize(640,455);} visible
     } {
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {open
+        {fltk::Group} song_edit {
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
@@ -136,13 +136,15 @@ int dummy = ui->arranger->scrollx;
 ui->arranger->scrollTo(dummy,target);}
               xywh {370 0 15 415} slider_size 60
             }
-            {fltk::ThumbWheel} song_hscroll {
-              callback {ui->arranger->scrollTo((int)o->value(),ui->arranger->scrolly);}
-              xywh {0 415 370 15} maximum 10000 step 10
+            {fltk::Widget} song_hscroll {
+              callback {ui->arranger->scrollTo(o->value(), ui->arranger->scrolly);}
+              xywh {0 415 370 15}
+              extra_code {\#include "dragbar.h"}
+              class DragBar
             }
           }
         }
-        {fltk::Group} pattern_edit {
+        {fltk::Group} pattern_edit {open
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -174,9 +176,11 @@ int dummy = ui->piano_roll->scrollx;
 ui->piano_roll->scrollTo(dummy,target);}
                 xywh {580 0 15 340}
               }
-              {fltk::ThumbWheel} pattern_hscroll {
-                callback {ui->piano_roll->scrollTo((int)o->value(),ui->piano_roll->scrolly);}
-                xywh {0 340 580 15} step 10
+              {fltk::Widget} pattern_hscroll {
+                callback {ui->piano_roll->scrollTo(o->value(),ui->piano_roll->scrolly);} selected
+                xywh {0 340 580 15}
+                extra_code {\#include "dragbar.h"}
+                class DragBar
               }
             }
             {fltk::Group} {} {
@@ -471,7 +475,7 @@ if(filename){
   if(loadsmf(filename)<0){
     reset_song();
   }
-}} selected
+}}
             }
           {fltk::Item} {} {
             label export

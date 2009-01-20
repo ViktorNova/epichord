@@ -6,7 +6,6 @@ recording makes undo semi useless
 missing graphics
 undo is buggy at least when using layers
 export midi does not include some important meta events
-track settings need readjustment
 paste is missing
 quantize is missing
 hand updates need to be regularized
@@ -14,6 +13,19 @@ channel 10 bank 127 bug
 undo block creation from inside pattern editor probably leads to problems
 
 backend should send init/stop events on all present channels, not all tracks
+backend perhaps shouldnt send tons of messages at time zero
 
 end of frame sequencing bug - unknown cause
-out of order dispatch bug - sequencer needs to sort dispatched events
+
+some track settings are not saved or restored (one or the other)
+
+remembered scroll position doesnt seems to work after some block ops
+
+track modules gui for prog, bank, etc needs to be changed
+bank needs 'none' option
+
+paste does not fully work
+
+undo and redo should reset the select flag
+
+
