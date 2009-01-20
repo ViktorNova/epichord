@@ -21,6 +21,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <fltk/Widget.h>
 #include <fltk/Group.h>
@@ -42,17 +43,17 @@ int DragBar::handle(int event){
   switch(event){
     case fltk::PUSH:
       orig_x = X;
+      orig_val = val;
       return 1;
     case fltk::DRAG:
-      val = last_val - (X - orig_x);
+      val = orig_val - (X - orig_x);
       if(val < 0){val=0;}
       if(val != last_val){
         redraw();
         do_callback();
+        last_val = val;
       }
       return 1;
-    case fltk::RELEASE:
-      last_val = val;
   }
   return 0;
 }

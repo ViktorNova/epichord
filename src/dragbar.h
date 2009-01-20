@@ -25,6 +25,7 @@
 
 class DragBar : public fltk::Widget {
   int orig_x;
+  int orig_val;
   int last_val;
   int val;
   int cached_flag;
