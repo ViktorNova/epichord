@@ -88,5 +88,6 @@ void remove_track(int n);
 
 
 void init_gui();
+void shutdown_gui();
 
 #endif

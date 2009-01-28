@@ -450,7 +450,7 @@ void playing_timeout_cb(void* v){
     switch(ret){
       case SESSION_SAVE: save(filename_string); break;
       case SESSION_LOAD: load(filename_string); break;
-      case SESSION_QUIT: ui->main_window->hide(); break;
+      case SESSION_QUIT: shutdown_gui(); break;
       case SESSION_UNHANDLED: break;
     }
     free(session_string);
@@ -832,3 +832,10 @@ void init_gui(){
   ui->pattern_hscroll->value(0);
 }
 
+void shutdown_gui(){
+  ui->main_window->hide();
+  ui->config_window->hide();
+  ui->help_window->hide();
+  ui->action_window->hide();
+  ui->scope_window->hide();
+}

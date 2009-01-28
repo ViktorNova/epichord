@@ -31,16 +31,12 @@
 #include "config.h"
 extern UI* ui;
 
-inline void UI::cb_main_window_i(fltk::Window* o, void*) {
+inline void UI::cb_main_window_i(fltk::Window*, void*) {
   if(!fltk::ask("Quit?")){
     return;
   }
   
-  config_window->hide();
-  help_window->hide();
-  action_window->hide();
-  scope_window->hide();
-  o->hide();
+  shutdown_gui();
   
   save_config();
 }

@@ -55,13 +55,9 @@ class UI {open
   return;
 }
 
-config_window->hide();
-help_window->hide();
-action_window->hide();
-scope_window->hide();
-o->hide();
+shutdown_gui();
 
-save_config();}
+save_config();} selected
       xywh {1036 527 640 480} resizable
       extra_code {\#include <stdio.h>
 
@@ -554,7 +550,7 @@ set_measures_until_record((int)o->value());}
           }
           {fltk::CheckButton} check_trackinit {
             label {track init}
-            callback {set_trackinit(o->value());} selected
+            callback {set_trackinit(o->value());}
             xywh {145 80 25 25} align 4 value 1
           }
           {fltk::CheckButton} check_autotrackname {
