@@ -69,6 +69,7 @@ static int loop_start = 0;
 static int loop_end = 512;
 static int passthru = 1;
 static int rec_port = 0;
+static int trackinit = 1;
 
 static int init_chans = 1;
 
@@ -190,7 +191,7 @@ static int process(jack_nframes_t nframes, void* arg){
   }
 
   //init chans
-  if(init_chans && playing){
+  if(init_chans && trackinit && playing){
     init_chans=0;
     char buf[3];
     for(int j=0; j<tracks.size(); j++){
@@ -547,6 +548,9 @@ void midi_channel_off(int chan, int port){
 }
 
 
+void backend_set_trackinit(int v){
+  trackinit = v;
+}
 void backend_set_passthru(int v){
   passthru = v;
 }

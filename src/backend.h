@@ -51,6 +51,7 @@ void toggle_loop();
 void set_solo(int s);
 int get_solo();
 
+void backend_set_trackinit(int v);
 void backend_set_passthru(int v);
 
 void set_bpm(int new_bpm);

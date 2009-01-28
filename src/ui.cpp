@@ -435,6 +435,13 @@ void UI::cb_check_alwayscopy(fltk::CheckButton* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_check_alwayscopy_i(o,v);
 }
 
+inline void UI::cb_check_trackinit_i(fltk::CheckButton* o, void*) {
+  set_trackinit(o->value());
+}
+void UI::cb_check_trackinit(fltk::CheckButton* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_check_trackinit_i(o,v);
+}
+
 inline void UI::cb_check_autotrackname_i(fltk::CheckButton* o, void*) {
   set_autotrackname(o->value());
 }
@@ -987,6 +994,11 @@ UI::UI() {
           o->align(fltk::ALIGN_LEFT);
           o->tooltip("instead of making a linked clone when you copy a block in the song view.");
         }
+         {fltk::CheckButton* o = check_trackinit = new fltk::CheckButton(145, 80, 25, 25, "track init");
+          o->set_flag(fltk::STATE);
+          o->callback((fltk::Callback*)cb_check_trackinit);
+          o->align(fltk::ALIGN_LEFT);
+        }
          {fltk::CheckButton* o = check_autotrackname = new fltk::CheckButton(145, 105, 25, 25, "auto track name");
           o->callback((fltk::Callback*)cb_check_autotrackname);
           o->align(fltk::ALIGN_LEFT);
@@ -1204,6 +1216,7 @@ track.");
       o->end();
     }
     o->end();
+    o->resizable(o);
   }
    {fltk::Window* o = help_window = new fltk::Window(580, 370, "help");
     o->shortcut(0xff1b);

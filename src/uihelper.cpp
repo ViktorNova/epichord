@@ -52,6 +52,21 @@ char* config_filename;
 
 void load_config(){
 
+  config.beats_per_measure = 4;
+  config.measures_per_phrase = 4;
+  config.measures_until_record = 1;
+  config.alwayscopy = 0;
+  config.autotrackname = 0;
+  config.passthru = 1;
+  config.playinsert = 1;
+  config.recordonchan = 0;
+  config.playmove = 1;
+  config.follow = 1;
+  config.recordmode = 0;
+  config.robmode = 0;
+  config.defaultvelocity = 96;
+  config.trackinit = 1;
+
   //linux dependent
   char* homepath = getenv("HOME");
   asprintf(&config_filename,"%s/"CONFIG_FILENAME,homepath);
@@ -60,19 +75,6 @@ void load_config(){
   f.open(config_filename,fstream::in);
   if(!f.is_open()){
     printf("load_config: Unable to open config file for reading.\n");
-    config.beats_per_measure = 4;
-    config.measures_per_phrase = 4;
-    config.measures_until_record = 1;
-    config.alwayscopy = 0;
-    config.autotrackname = 0;
-    config.passthru = 1;
-    config.playinsert = 1;
-    config.recordonchan = 0;
-    config.playmove = 1;
-    config.follow = 1;
-    config.recordmode = 0;
-    config.robmode = 0;
-    config.defaultvelocity = 96;
 
     load_default_keymap();
     update_config_gui();
@@ -99,6 +101,7 @@ void load_config(){
     else if(word == "robmode"){f>>config.robmode;}
     else if(word == "keymap"){load_keymap(f);}
     else if(word == "defaultvelocity"){f>>config.defaultvelocity;}
+    else if(word == "trackinit"){f>>config.trackinit;}
     else{
       f.ignore(std::numeric_limits<streamsize>::max(),'\n');
     }
@@ -127,6 +130,7 @@ void save_config(){
   f << "recordmode " << config.recordmode << endl;
   f << "robmode " << config.robmode << endl;
   f << "defaultvelocity " << config.defaultvelocity << endl;
+  f << "trackinit " << config.trackinit << endl;
   f << endl;
   save_keymap(f);
   f.close();
@@ -152,6 +156,8 @@ void update_config_gui(){
   ui->menu_rob->value(config.robmode);
 
   ui->default_velocity->value(config.defaultvelocity);
+
+  ui->check_trackinit->value(config.trackinit);
 
   ui->config_window->redraw();
 }
@@ -705,6 +711,11 @@ void set_robmode(int n){
 
 void set_defaultvelocity(int n){
   config.defaultvelocity = n;
+}
+
+void set_trackinit(int n){
+  config.trackinit = n;
+  backend_set_trackinit(n);
 }
 
 

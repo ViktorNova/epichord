@@ -38,6 +38,7 @@ struct conf{
   int recordmode;
   int robmode;
   int defaultvelocity;
+  int trackinit;
 };
 
 void load_config();
@@ -72,6 +73,7 @@ void set_follow(int v);
 void set_recordmode(int n);
 void set_robmode(int n);
 void set_defaultvelocity(int n);
+void set_trackinit(int n);
 
 void show_song_edit();
 void show_pattern_edit();

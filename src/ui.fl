@@ -61,7 +61,7 @@ action_window->hide();
 scope_window->hide();
 o->hide();
 
-save_config();} open
+save_config();}
       xywh {1036 527 640 480} resizable
       extra_code {\#include <stdio.h>
 
@@ -177,7 +177,7 @@ ui->piano_roll->scrollTo(dummy,target);}
                 xywh {580 0 15 340}
               }
               {fltk::Widget} pattern_hscroll {
-                callback {ui->piano_roll->scrollTo(o->value(),ui->piano_roll->scrolly);} selected
+                callback {ui->piano_roll->scrollTo(o->value(),ui->piano_roll->scrolly);}
                 xywh {0 340 580 15}
                 extra_code {\#include "dragbar.h"}
                 class DragBar
@@ -500,14 +500,14 @@ else{
     {fltk::Window} config_window {
       label config
       callback {ui->conf_button->state(0);
-o->hide();}
-      xywh {52 125 320 285} hide
+o->hide();} open
+      xywh {52 125 320 285} resizable visible
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}
       } {
         {fltk::Group} {} {
-          label options
+          label options open
           xywh {145 15 170 265} horizontal
         } {
           {fltk::ValueInput} beats_per_measure {
@@ -551,6 +551,11 @@ set_measures_until_record((int)o->value());}
             callback {set_alwayscopy(o->value());}
             tooltip {instead of making a linked clone when you copy a block in the song view.}
             xywh {5 105 25 25} align 4
+          }
+          {fltk::CheckButton} check_trackinit {
+            label {track init}
+            callback {set_trackinit(o->value());} selected
+            xywh {145 80 25 25} align 4 value 1
           }
           {fltk::CheckButton} check_autotrackname {
             label {auto track name}
@@ -849,7 +854,7 @@ set_defaultvelocity((int)o->value());}
           }
         }
         {fltk::Group} {} {
-          label colors open
+          label colors
           xywh {0 15 320 270} hide
         } {
           {fltk::Button} {} {

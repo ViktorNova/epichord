@@ -257,6 +257,11 @@ private:
         inline void cb_check_alwayscopy_i(fltk::CheckButton*, void*);
         static void cb_check_alwayscopy(fltk::CheckButton*, void*);
 public:
+        fltk::CheckButton *check_trackinit;
+private:
+        inline void cb_check_trackinit_i(fltk::CheckButton*, void*);
+        static void cb_check_trackinit(fltk::CheckButton*, void*);
+public:
         fltk::CheckButton *check_autotrackname;
 private:
         inline void cb_check_autotrackname_i(fltk::CheckButton*, void*);
