@@ -106,6 +106,9 @@ void load_config(){
       f.ignore(std::numeric_limits<streamsize>::max(),'\n');
     }
   }
+
+  backend_set_trackinit(config.trackinit);
+
   update_config_gui();
   f.close();
 }
