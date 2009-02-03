@@ -86,6 +86,7 @@ void reset_song();
 void add_track(track* t);
 void remove_track(int n);
 
+void dump_pattern();
 
 void init_gui();
 void shutdown_gui();

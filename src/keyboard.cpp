@@ -90,6 +90,10 @@ int keyboard_handler(int e, fltk::Window* w){
         do_redo();
         ui->main_window->redraw();
       }
+      else if(E==combo('d',fltk::CTRL)){
+        dump_pattern();
+        ui->main_window->redraw();
+      }
       else if(ui->kg_od->cmp(E)){
         ui->keyboard->octave_down();
       }

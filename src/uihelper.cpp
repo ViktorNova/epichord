@@ -819,6 +819,48 @@ void remove_track(int n){
 }
 
 
+void dump_pattern(){
+  pattern* p = ui->piano_roll->cur_seqpat->p;
+  mevent* e = p->events;
+
+  printf("dump of pattern %p\n",p);
+  printf("time type value1 value2\n");
+int this_t = 0;
+  while(e){
+    int last_t = this_t;
+    this_t = e->tick;
+    if(this_t < last_t){printf("WARNING\n");}
+    switch(e->type){
+      case -1:
+        printf("%d DUMMY %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_NOTE_OFF:
+        printf("%d NOTEOFF %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_NOTE_ON:
+        printf("%d NOTEON %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_AFTERTOUCH:
+        printf("%d AFTERTOUCH %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_CONTROLLER_CHANGE:
+        printf("%d CC %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_PROGRAM_CHANGE:
+        printf("%d PROGRAM %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_CHANNEL_PRESSURE:
+        printf("%d CHANNELPRESSURE %d %d\n",e->tick,e->value1,e->value2);
+        break;
+      case MIDI_PITCH_WHEEL:
+        printf("%d PITCHWHEEL %d %d\n",e->tick,e->value1,e->value2);
+        break;
+    }
+    e=e->next;
+  }
+  printf("\n");
+}
+
 
 void init_gui(){
 
