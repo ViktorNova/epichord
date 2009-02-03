@@ -609,8 +609,7 @@ void MoveNote::undo(){
 ResizeNote::ResizeNote(pattern* zp, mevent* ze, int dur){
   p = zp;
   l1 = ze;
-  //l2 = new mevent(ze);
-  //l2->dur = dur;
+
   d1 = l1->dur;
   d2 = dur;
 
@@ -619,10 +618,17 @@ ResizeNote::ResizeNote(pattern* zp, mevent* ze, int dur){
   if(r1){
     r2 = new mevent(r1);
     r2->prev = tfind<mevent>(p->events, ze->tick + dur);
-    //r2->prev = r1->prev;
-    //if(r2->prev == l1){
-    //  r2->prev = l2;
-    //}
+    r2->next = r2->prev->next;
+
+    if(r2->prev == r1){//prev fix up
+      r2->prev = ze;
+      r2->next = r1->next;
+    }
+
+    if(r2->next == r1){//next fix up
+      r2->next = r1->next;
+    }
+
     r2->tick = ze->tick + dur;
   }
 }
