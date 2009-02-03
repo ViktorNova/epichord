@@ -86,13 +86,19 @@ int PianoRoll::handle(int event){
 
   int X = event_x();
   int Y = event_y();
-
+  int yprime;
   int prevt;
 
   switch(event){
     case fltk::ENTER:
       return 1;
     case fltk::FOCUS:
+      return 1;
+    case fltk::MOUSEWHEEL:
+      yprime = scrolly+32*event_dy();
+      if(yprime<0){yprime=0;}
+      if(yprime>75*12 - h()){yprime = 75*12 - h();}
+      scrollTo(scrollx,yprime);
       return 1;
     case fltk::SHORTCUT:
       if(event_key()==fltk::DeleteKey){
