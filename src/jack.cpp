@@ -606,6 +606,10 @@ void set_bpm(int n){
   new_bpm = n;
 }
 
+void set_rec_port(int n){
+  rec_port = n;
+}
+
 
 char* session_string;
 int backend_session_process(){

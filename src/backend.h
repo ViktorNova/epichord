@@ -55,6 +55,7 @@ void backend_set_trackinit(int v);
 void backend_set_passthru(int v);
 
 void set_bpm(int new_bpm);
+void set_rec_port(int n);
 
 int get_play_position();
 

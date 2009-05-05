@@ -134,6 +134,7 @@ void reccb(fltk::Widget* w, long i){
     ui->keyboard->cur_chan = t->chan;
     ui->keyboard->cur_port = t->port;
     set_rec_track(i);
+    set_rec_port(t->port);
   }
   o->redraw();
 }
