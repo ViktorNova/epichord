@@ -5,7 +5,11 @@
 #include <fltk/events.h>
 #include <fltk/draw.h>
 
+#include "seq.h"
+#include "backend.h"
 #include "metronome.h"
+
+
 
 using namespace fltk;
 
@@ -63,7 +67,7 @@ int div(int N){
 }
 
 void Metronome::update(int tick){
-  int now_beat = tick/128;
+  int now_beat = tick/TICKS_PER_BEAT;
 
   if(now_beat != last_beat){
     int step = last_beat - now_beat;

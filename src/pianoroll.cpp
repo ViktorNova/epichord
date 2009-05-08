@@ -165,7 +165,12 @@ int PianoRoll::handle(int event){
           else{//begin insert
             insert_flag = 1;
             insert_torig = quantize(xpix2tick(X+scrollx));
-            insert_toffset = q_tick;
+            if(trip_flag){
+              insert_toffset = (q_tick*4) / 3;
+            }
+            else{
+              insert_toffset = q_tick;
+            }
             //new_orig_t = new_left_t;
             insert_note = ypix2note(Y+scrolly,1);
 
@@ -247,9 +252,18 @@ int PianoRoll::handle(int event){
         box_n2 = ypix2note(Y+scrolly,1);
       }
       else if(insert_flag){
-        insert_toffset = quantize(xpix2tick(X+scrollx)+q_tick) - insert_torig;
-        if(insert_toffset<=0){
-          insert_toffset -= q_tick;
+        if(trip_flag){
+          int q_tri = (q_tick*4) / 3;
+          insert_toffset = quantize(xpix2tick(X+scrollx)+q_tri) - insert_torig;
+          if(insert_toffset<=0){
+            insert_toffset -= q_tri;
+          }
+        }
+        else{
+          insert_toffset = quantize(xpix2tick(X+scrollx)+q_tick) - insert_torig;
+          if(insert_toffset<=0){
+            insert_toffset -= q_tick;
+          }
         }
         insert_note = ypix2note(Y+scrolly,1);
         if(insert_note != last_note){
@@ -660,11 +674,11 @@ int PianoRoll::note2ypix(int note){
 }
 
 int PianoRoll::tick2xpix(int tick){
-  return tick*zoom*4 / 128;
+  return tick*zoom*4 / TICKS_PER_BEAT;
 }
 
 int PianoRoll::xpix2tick(int xpix){
-  return xpix*128 / (zoom*4);
+  return xpix*TICKS_PER_BEAT / (zoom*4);
 }
 
 int PianoRoll::quantize(int tick){

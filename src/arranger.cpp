@@ -46,7 +46,7 @@ using namespace fltk;
 #define SWAP(X,Y) tmp=X; X=Y; Y=tmp;
 
 Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Widget(x, y, w, h, label) {
-  new_default_w = 128*4;
+  new_default_w = TICKS_PER_BEAT*4;
   delete_flag = 0;
   move_flag = 0;
   paste_flag = 0;
@@ -55,7 +55,7 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   zoom = 30;
   zoom_n = 4;
 
-  q_tick = 128*4;
+  q_tick = TICKS_PER_BEAT*4;
 
   insert_flag = 0;
   box_flag = 0;
@@ -322,10 +322,12 @@ int Arranger::handle(int event){
         insert_track = (Y+scrolly) / 30;
       }
       else if(rresize_flag){
-        rresize_toffset = xpix2tick(X+scrollx)/128*128 - rresize_torig;
+        rresize_toffset = xpix2tick(X+scrollx)/TICKS_PER_BEAT*TICKS_PER_BEAT -
+rresize_torig;
       }
       else if(lresize_flag){
-        lresize_toffset = xpix2tick(X+scrollx)/128*128 - lresize_torig;
+        lresize_toffset = xpix2tick(X+scrollx)/TICKS_PER_BEAT*TICKS_PER_BEAT -
+lresize_torig;
       }
       else if(move_flag){
         move_toffset = quantize(xpix2tick(X+scrollx)) - move_torig - move_offset;
@@ -606,10 +608,10 @@ void Arranger::draw(){
       int W = tick2xpix(T2)-tick2xpix(T1)-1;
 
       if(rresize_flag && s->selected && T1==T2){
-        W = tick2xpix(128)-1;
+        W = tick2xpix(TICKS_PER_BEAT)-1;
       }
       if(lresize_flag && s->selected && T1==T2){
-        W = tick2xpix(128)-1;
+        W = tick2xpix(TICKS_PER_BEAT)-1;
       }
 
       fillrect(X+1,Y+1,W-2,27);
@@ -784,13 +786,13 @@ int Arranger::over_lhandle(seqpat* s){
   return (Y > Y1 && Y < Y2 && X < X1 + 5 + 1 && X > X1+1);
 }
 
-// 4=beats per measure, 128=ticks per beat, 30=width of measure in pixels
+// 4=beats per measure, TICKS_PER_BEAT=ticks per beat, 30=width of measure in pixels
 int Arranger::tick2xpix(int tick){
-  return tick *zoom /(128*4);
+  return tick *zoom /(TICKS_PER_BEAT*4);
 }
 
 int Arranger::xpix2tick(int xpix){
-  return xpix * (128*4) /zoom;
+  return xpix * (TICKS_PER_BEAT*4) /zoom;
 }
 
 int Arranger::quantize(int tick){
@@ -1089,7 +1091,7 @@ void Arranger::apply_rresize(){
         }
         else{
           if(T1==T2){
-            T2 = T1+128; //magic
+            T2 = T1+TICKS_PER_BEAT;
           }
           c=new ResizeSeqpat(s,T2-T1);
           set_undo(c);
@@ -1149,7 +1151,7 @@ void Arranger::apply_lresize(){
         }
         else{
           if(T1==T2){
-            T2 = T1+128; //magic
+            T2 = T1+TICKS_PER_BEAT;
           }
           seqpat* stmp = s->prev;
           c=new MoveSeqpat(s,s->track,T1);

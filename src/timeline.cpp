@@ -209,15 +209,15 @@ void Timeline::update(int ticks){
 
 int Timeline::tick2xpix(int tick){
   //return (tick - ticks_offset) * zoom / 128 - scroll;
-  return tick * zoom / 128 - scroll - ticks_offset*zoom/32;
+  return tick * zoom / TICKS_PER_BEAT - scroll - ticks_offset*zoom/(32);
 }
 
 int Timeline::xpix2tick(int xpix){
   //return (xpix+scroll+ticks_offset*32/zoom)*128 / zoom;
-  return (xpix+scroll) * 128 / zoom + ticks_offset*120/30;
+  return (xpix+scroll) * TICKS_PER_BEAT / zoom + ticks_offset*120/30;
 }
 
 int Timeline::quantize(int tick){
-  return tick/128 * 128;
+  return tick/TICKS_PER_BEAT * TICKS_PER_BEAT;
 }
 

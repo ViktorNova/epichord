@@ -28,8 +28,8 @@ corresponds to its minimum allowed note length.
 
 a beat is divided into four parts at the regular zoom.
 in 4/4 time this corresponds to 1/16 notes.
-lets make the shortest note 1/128 note.
-this means there are 128 'ticks' per beat.
+lets make the shortest note 1/TICKS_PER_BEAT note.
+this means there are TICKS_PER_BEAT 'ticks' per beat.
 
 to convert from time in us into ticks do
 

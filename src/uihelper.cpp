@@ -177,10 +177,10 @@ seqpat* rob_check(seqpat* s){
     int pos = get_play_position();
     int M = config.measures_per_phrase;
     if(M!=0){
-      M = M*config.beats_per_measure*128;
+      M = M*config.beats_per_measure*TICKS_PER_BEAT;
     }
     else{
-      M = 4*config.beats_per_measure*128;
+      M = 4*config.beats_per_measure*TICKS_PER_BEAT;
     }
     int P1 = pos/M*M;
     int P2 = P1 + M;
@@ -205,10 +205,10 @@ seqpat* rob_check(seqpat* s){
     int pos = get_play_position();
     int M = config.measures_per_phrase;
     if(M!=0){
-      M = M*config.beats_per_measure*128;
+      M = M*config.beats_per_measure*TICKS_PER_BEAT;
     }
     else{
-      M = 4*config.beats_per_measure*128;
+      M = 4*config.beats_per_measure*TICKS_PER_BEAT;
     }
     int P = pos/M*M + M;//tick at next phrase boundary
     int W = P - s->tick;
@@ -531,7 +531,7 @@ void set_quant(int q){
       ui->qbutton64->state(0);
       ui->qbutton128->state(0);
       ui->qbutton0->state(0);
-      ui->piano_roll->set_qtick(128);
+      ui->piano_roll->set_qtick(TICKS_PER_BEAT);
       break;
     case 8:
       ui->qbutton4->state(0);
@@ -541,7 +541,7 @@ void set_quant(int q){
       ui->qbutton64->state(0);
       ui->qbutton128->state(0);
       ui->qbutton0->state(0);
-      ui->piano_roll->set_qtick(64);
+      ui->piano_roll->set_qtick(TICKS_PER_BEAT/2);
       break;
     case 16:
       ui->qbutton4->state(0);
@@ -551,7 +551,7 @@ void set_quant(int q){
       ui->qbutton64->state(0);
       ui->qbutton128->state(0);
       ui->qbutton0->state(0);
-      ui->piano_roll->set_qtick(32);
+      ui->piano_roll->set_qtick(TICKS_PER_BEAT/4);
       break;
     case 32:
       ui->qbutton4->state(0);
@@ -561,7 +561,7 @@ void set_quant(int q){
       ui->qbutton64->state(0);
       ui->qbutton128->state(0);
       ui->qbutton0->state(0);
-      ui->piano_roll->set_qtick(16);
+      ui->piano_roll->set_qtick(TICKS_PER_BEAT/8);
       break;
     case 64:
       ui->qbutton4->state(0);
@@ -571,7 +571,7 @@ void set_quant(int q){
       ui->qbutton64->state(1);
       ui->qbutton128->state(0);
       ui->qbutton0->state(0);
-      ui->piano_roll->set_qtick(8);
+      ui->piano_roll->set_qtick(TICKS_PER_BEAT/16);
       break;
     case 128:
       ui->qbutton4->state(0);
@@ -581,7 +581,7 @@ void set_quant(int q){
       ui->qbutton64->state(0);
       ui->qbutton128->state(1);
       ui->qbutton0->state(0);
-      ui->piano_roll->set_qtick(4);
+      ui->piano_roll->set_qtick(TICKS_PER_BEAT/32);
       break;
   }
 }

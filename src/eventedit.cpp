@@ -34,10 +34,11 @@
 
 #include "uihelper.h"
 
+#include "backend.h"
 
 #define MAG_MAX 16383
 
-#define SWAP(X,Y) tmp=X; X=Y; Y=tmp;
+#define SWAP(X,Y) {int tmp=X; X=Y; Y=tmp;}
 
 extern struct conf config;
 
@@ -401,7 +402,7 @@ void EventEdit::load(seqpat* s){
 }
 
 int EventEdit::tick2xpix(int tick){
-  return tick*zoom*4 / 128;
+  return tick*zoom*4 / TICKS_PER_BEAT;
 }
 
 const char* EventEdit::event_type_name(){

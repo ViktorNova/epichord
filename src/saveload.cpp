@@ -638,9 +638,9 @@ int savesmf(const char* filename){
   L = htons(L);
   memcpy(buf+10,&L,2);
 
-  //128 ticks per beat, 128 | 0x0000
-  buf[12] = 0x00;
-  buf[13] = 0x80;
+  //ticks per beat
+  buf[12] = TICKS_PER_BEAT >> 8;
+  buf[13] = TICKS_PER_BEAT & 0x00ff;
 
   file.write((const char*)buf,14);
 
