@@ -200,7 +200,8 @@ void Timeline::draw(){
 
 void Timeline::update(int ticks){
   //printf("%d\n",ticks);
-  pointer_x = (ticks/16 - ticks_offset/16) * zoom / 8;
+  int T = TICKS_PER_BEAT / 8; /* value was 16 when TICKS_PER_BEAT was 128 */
+  pointer_x = (ticks/T - ticks_offset/T) * zoom / 8;
   if(pointer_x != px_last && ticks != get_loop_end()){
     px_last = pointer_x;
     redraw();

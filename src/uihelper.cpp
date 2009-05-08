@@ -881,7 +881,6 @@ void init_gui(){
   ui->pattern_vscroll->slider_size(50);
   ui->pattern_hscroll->value(0);
 
-  ui->track_info->relayout();
 }
 
 void shutdown_gui(){

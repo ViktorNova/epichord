@@ -25,7 +25,7 @@
 
 #include <inttypes.h>
 
-#define TICKS_PER_BEAT 128
+#define TICKS_PER_BEAT 288
 
 int init_backend(int* argc, char*** argv);
 int shutdown_backend();
