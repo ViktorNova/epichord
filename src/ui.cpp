@@ -173,6 +173,13 @@ void UI::cb_loop_toggle(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->user_data()))->cb_loop_toggle_i(o,v);
 }
 
+inline void UI::cb_tri_button_i(fltk::Button* o, void*) {
+  set_trip(o->value());
+}
+void UI::cb_tri_button(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->user_data()))->cb_tri_button_i(o,v);
+}
+
 inline void UI::cb_tool_button_i(fltk::Button*, void*) {
   toggle_tool();
 }
@@ -823,6 +830,10 @@ UI::UI() {
        {fltk::Group* o = pattern_buttons = new fltk::Group(200, 5, 310, 25);
         o->hide();
         o->begin();
+         {fltk::Button* o = tri_button = new fltk::Button(10, 0, 25, 25, "tri");
+          o->callback((fltk::Callback*)cb_tri_button);
+          o->type(fltk::Button::TOGGLE);
+        }
          {fltk::Button* o = quant1_button = new fltk::Button(35, 0, 25, 25, "qua");
           o->tooltip("quantize selected notes");
         }

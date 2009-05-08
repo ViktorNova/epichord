@@ -647,6 +647,11 @@ void set_songtool(int i){
 }
 
 
+void set_trip(int v){
+  ui->piano_roll->set_trip(v);
+}
+
+
 
 void set_beats_per_measure(int n){
   config.beats_per_measure = n;
@@ -875,6 +880,8 @@ void init_gui(){
   ui->pattern_vscroll->value(300);
   ui->pattern_vscroll->slider_size(50);
   ui->pattern_hscroll->value(0);
+
+  ui->track_info->relayout();
 }
 
 void shutdown_gui(){

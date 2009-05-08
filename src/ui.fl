@@ -57,8 +57,8 @@ class UI {open
 
 shutdown_gui();
 
-save_config();} selected
-      xywh {1036 527 640 480} resizable
+save_config();} open
+      xywh {634 276 640 480} resizable
       extra_code {\#include <stdio.h>
 
 \#include <fltk/ask.h>
@@ -71,14 +71,14 @@ o->resize(640,455);} visible
       {fltk::Group} {} {open
         xywh {0 0 640 445} resizable
       } {
-        {fltk::Group} song_edit {
+        {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
           {fltk::Group} {} {open
             xywh {0 0 255 445} box FLAT_BOX
           } {
             {fltk::Widget} track_info {
-              label {track info}
+              label {track info} selected
               xywh {0 15 255 415} resizable
               extra_code {\#include "trackinfo.h"}
               class TrackInfo
@@ -140,7 +140,7 @@ ui->arranger->scrollTo(dummy,target);}
             }
           }
         }
-        {fltk::Group} pattern_edit {open
+        {fltk::Group} pattern_edit {
           xywh {0 0 640 445} hide
         } {
           {fltk::Group} {} {open
@@ -273,7 +273,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {open
+      {fltk::Group} {} {
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -310,6 +310,12 @@ ui->event_edit->redraw();}
         {fltk::Group} pattern_buttons {
           xywh {200 5 310 25} hide
         } {
+          {fltk::Button} tri_button {
+            label tri
+            callback {set_trip(o->value());}
+            xywh {10 0 25 25}
+            extra_code {o->type(fltk::Button::TOGGLE);}
+          }
           {fltk::Button} quant1_button {
             label qua
             tooltip {quantize selected notes}
@@ -496,8 +502,8 @@ else{
     {fltk::Window} config_window {
       label config
       callback {ui->conf_button->state(0);
-o->hide();} open
-      xywh {52 125 320 285} resizable visible
+o->hide();}
+      xywh {52 125 320 285} hide resizable
     } {
       {fltk::TabGroup} {} {open
         xywh {0 0 320 285}

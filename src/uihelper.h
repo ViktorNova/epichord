@@ -52,6 +52,8 @@ void press_play();
 void set_quant(int q);
 void set_songtool(int i);
 
+void set_trip(int v);
+
 void turnonscope();
 void turnoffscope();
 void scope_print(const char* text);

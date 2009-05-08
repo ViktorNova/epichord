@@ -81,6 +81,8 @@ class PianoRoll : public fltk::Widget {
 
   int delete_flag;
 
+  int trip_flag;
+
   int zoom_n;
   int zoom;
 
@@ -120,6 +122,7 @@ class PianoRoll : public fltk::Widget {
 
     void set_zoom(int z);
     void set_qtick(int q){q_tick=q;}
+    void set_trip(int v){trip_flag=v;}
 
     void update(int pos);
 

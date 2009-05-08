@@ -59,6 +59,8 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   box_flag = 0;
 
+  trip_flag = 0;
+
   move_toffset = 0;
 
   insert_flag = 0;
@@ -666,7 +668,15 @@ int PianoRoll::xpix2tick(int xpix){
 }
 
 int PianoRoll::quantize(int tick){
-  return tick/q_tick * q_tick;
+  if(trip_flag){
+    int T = (q_tick*4) / 3;
+    int P = tick/(q_tick*4) * (q_tick*4);
+    int Q = (tick%(q_tick*4));
+    return P + Q / T * T;
+  }
+  else{
+    return tick/(q_tick) * q_tick;
+  }
 }
 
 

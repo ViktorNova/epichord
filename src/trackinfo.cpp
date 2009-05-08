@@ -51,6 +51,8 @@ TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label = 0) : fltk::
 
   //end();
 
+  scroll = 0;
+
   settings = 0;
 
 }
