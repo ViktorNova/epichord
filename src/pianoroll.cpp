@@ -55,7 +55,7 @@ PianoRoll::PianoRoll(int x, int y, int w, int h, const char* label = 0) : fltk::
   zoom = 15;
   zoom_n = 3;
 
-  q_tick = 32;
+  q_tick = TICKS_PER_BEAT/4;
 
   box_flag = 0;
 
@@ -244,6 +244,7 @@ int PianoRoll::handle(int event){
       redraw();
       return 1;
     case fltk::DRAG:
+      
       ui->keyboard->highlight_clear();
       if(box_flag){
         box_x2 = X;
@@ -253,10 +254,10 @@ int PianoRoll::handle(int event){
       }
       else if(insert_flag){
         if(trip_flag){
-          int q_tri = (q_tick*4) / 3;
-          insert_toffset = quantize(xpix2tick(X+scrollx)+q_tri) - insert_torig;
+          int q_trip = (q_tick*4) / 3;
+          insert_toffset = quantize(xpix2tick(X+scrollx)+q_trip) - insert_torig;
           if(insert_toffset<=0){
-            insert_toffset -= q_tri;
+            insert_toffset -= q_trip;
           }
         }
         else{
@@ -288,7 +289,13 @@ int PianoRoll::handle(int event){
         }
       }
       else if(rresize_flag){
-        rresize_toffset = quantize(xpix2tick(X+scrollx))+q_tick-rresize_torig;
+        if(trip_flag){
+          int q_trip = (q_tick*4) / 3;
+          rresize_toffset = quantize(xpix2tick(X+scrollx))+q_trip-rresize_torig;
+        }
+        else{
+          rresize_toffset = quantize(xpix2tick(X+scrollx))+q_tick-rresize_torig;
+        }
       }
       else if(lresize_flag){
         lresize_toffset = quantize(xpix2tick(X+scrollx)) - lresize_torig;
