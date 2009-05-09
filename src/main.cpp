@@ -46,6 +46,10 @@ int main(int argc, char* argv[]){
 
   load_config();
 
+  if(init_backend(&argc, &argv) < 0){
+    return 1;
+  }
+
   if(argc > 1){
     if(loadsmf(argv[1])<0){
       if(load(argv[1])<0){
@@ -57,9 +61,7 @@ int main(int argc, char* argv[]){
     reset_song();
   }
 
-  if(init_backend(&argc, &argv) < 0){
-    return 1;
-  }
+  
 
 
 
