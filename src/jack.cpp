@@ -415,7 +415,7 @@ int start_backend(){
 
 int pause_backend(){
   jack_transport_stop(client);
-  playing = 0;
+  jack_transport_locate(client, cur_frame);
 }
 
 int reset_backend(int tick){
