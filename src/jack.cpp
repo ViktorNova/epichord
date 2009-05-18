@@ -152,39 +152,6 @@ void dispatch_event(mevent* e, int track, int tick_base){
 
 /* jack callbacks */
 
-int  sync_callback(jack_transport_state_t state, 
-                   jack_position_t *pos, void *arg)
-{
-  printf("sync: callback called. pos = %u\n",pos->frame);
-
-  int tick = f2t(pos->frame);
-  if(tick==0){
-    init_chans = 1;
-  }
-  cur_frame = pos->frame;
-  last_frame = cur_frame;
-  last_tick = tick;
-  cur_tick = tick;
-  set_seq_pos(tick);
-
-  switch(state){
-    case JackTransportStarting:
-      printf("sync: jack transport starting. reposition. start.\n");
-      playing = 1;
-      break;
-    case JackTransportRolling:
-      printf("sync: jack transport rolling. reposition.\n");
-      playing = 1;
-      break;
-    case JackTransportStopped:
-      printf("sync: jack transport stopped. stop.\n");
-      playing = 0;
-      break;
-  }
-
-  return 1;
-}
-
 
 
 static int H = 1;
@@ -362,7 +329,6 @@ int init_backend(int* argc, char*** argv){
   }
 
   jack_set_process_callback(client, process, NULL);
-  jack_set_sync_callback (client, sync_callback, NULL);
 
   char buf[64];
   for(int i=0; i<PORT_COUNT; i++){
@@ -409,16 +375,25 @@ int shutdown_backend(){
 
 
 int start_backend(){
+  playing = 1;
   jack_transport_start(client);
-
 }
 
 int pause_backend(){
+  playing = 0;
   jack_transport_stop(client);
-  jack_transport_locate(client, cur_frame);
 }
 
 int reset_backend(int tick){
+  if(tick==0){
+    init_chans = 1;
+  }
+  cur_frame = t2f(tick);
+  last_frame = cur_frame;
+  last_tick = tick;
+  cur_tick = tick;
+  set_seq_pos(tick);
+
   jack_transport_locate(client, t2f(tick));
 }
 
