@@ -80,7 +80,8 @@ int keyboard_handler(int e, fltk::Window* w){
         return 0;
       }
       if(E==combo(fltk::SpaceKey,0)){
-        ui->keyboard->set_sustain(1);
+        //ui->keyboard->set_sustain(1);
+        press_play();
       }
       else if(E==combo('z',fltk::CTRL)){
         do_undo();
@@ -181,7 +182,7 @@ int keyboard_handler(int e, fltk::Window* w){
       return 1;
     case fltk::KEYUP:
       if(E==combo(fltk::SpaceKey,0)){
-        ui->keyboard->set_sustain(0);
+        //ui->keyboard->set_sustain(0);
       }
       else if(ui->kg_l0->cmp(E))
         ui->keyboard->kb_release_note(0);
