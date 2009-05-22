@@ -229,7 +229,6 @@ int PianoRoll::handle(int event){
       else if(event_button()==3){//right mouse
         if(e==NULL){
           unselect_all();
-
           ui->event_edit->redraw();
         }
         else{//set up for deletion
@@ -240,6 +239,7 @@ int PianoRoll::handle(int event){
           delete_flag = 1;
           resize_arrow_color = fltk::color(120,60,58);
         }
+        ui->event_edit->select_flag = 0;
       }
       redraw();
       return 1;
@@ -819,10 +819,12 @@ void PianoRoll::apply_box(){
     if(e->type == MIDI_NOTE_ON &&
        e->tick+e->dur > T1 && e->tick < T2 && 
        N >= N2 && N <= N1){
+        ui->event_edit->select_flag = 1;
         e->selected = 1;
     }
     e = e->next;
   }
+
 }
 
 void PianoRoll::apply_insert(){

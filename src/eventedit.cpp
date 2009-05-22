@@ -575,7 +575,8 @@ void EventEdit::apply_box(){
     int M = get_event_mag(e);
       if(T1>T2){SWAP(T1,T2);}
       if(M1<M2){SWAP(M1,M2);}
-      if(e->tick > T1 && e->tick < T2 && M > M2){
+      if(e->tick > T1 && e->tick < T2 && M > M2 &&
+         e->type == event_type){
         e->selected = 1;
       }
     e=e->next;
