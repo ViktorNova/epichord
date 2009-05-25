@@ -36,7 +36,7 @@ extern UI* ui;
 
 extern std::vector<track*> tracks;
 
-TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label = 0) : fltk::Group(x, y, w, h, label)
+TrackInfo::TrackInfo(int x, int y, int w, int h, const char* label) : fltk::Group(x, y, w, h, label)
 {
   //begin();
 
@@ -80,14 +80,6 @@ void TrackInfo::layout(){
   }
 }
 
-void TrackInfo::toggle_controls(){
-  if(settings==0){settings=1;}
-  else{settings=0;}
-  for(int i=0; i<children(); i++){
-    ((TrackModule*)child(i))->toggle_controls(settings);
-  }
-}
-
 
 void TrackInfo::update(){
   //for each child cast to TrackModule and call update
@@ -121,7 +113,7 @@ void TrackInfo::clear_tracks(){
 
 void TrackInfo::add_track(){
   int i = tracks.size()-1;
-  TrackModule* mod = new TrackModule(0,30*i,255,30,i);
+  TrackModule* mod = new TrackModule(0,30*i,325,30,i);
 
   mod->box(fltk::UP_BOX);
   mod->index = i;
@@ -129,7 +121,6 @@ void TrackInfo::add_track(){
 
   add(mod);
 
-  mod->toggle_controls(settings);
 }
 
 void TrackInfo::del_track(int n){

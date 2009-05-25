@@ -91,7 +91,7 @@ class Toggle : public fltk::Button {
 
   int state;
 
-  void set(int s);
+  void value(int s);
 
   Toggle(int x, int y, int w, int h, const char* label=0);
 
@@ -102,11 +102,13 @@ class Toggle : public fltk::Button {
 
 class TrackModule : public fltk::Group {
 
-  int settings_shown;
+  //int settings_shown;
 
   public:
 
   int index;
+
+/*
   VGauge volume;
   HGauge pan;
   Toggle solo;
@@ -117,8 +119,23 @@ class TrackModule : public fltk::Group {
   VGauge port;
   VGauge bank;
   Toggle rec;
+*/
 
-  void toggle_controls(int n);
+  Toggle rec;
+  fltk::Input name;
+
+  fltk::ValueInput prog;
+  VGauge volume;
+  HGauge pan;
+
+  Toggle solo;
+  Toggle mute;
+
+  VGauge chan;
+  VGauge port;
+
+  fltk::Button rem;
+
 
   TrackModule(int x, int y, int w, int h, int i, const char* label=0);
   int handle(int event);

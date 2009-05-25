@@ -61,11 +61,20 @@ void chancb(fltk::Widget* w, long i){
 }
 
 void progcb(fltk::Widget* w, long i){
-  //fltk::ValueInput* o = (fltk::ValueInput*)w;
-  Gauge* o = (Gauge*)w;
+  fltk::ValueInput* o = (fltk::ValueInput*)w;
+
+  //Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  int prog = (int)o->value;
+
+  if(o->value() > o->maximum()){
+    o->value(o->maximum());
+  }
+  else if(o->value() < o->minimum()){
+    o->value(o->minimum());
+  }
+  int prog = o->value();
   t->prog = prog;
+
   program_change(i, prog);
   if(config.autotrackname){
     free(t->name);
@@ -99,11 +108,11 @@ void mutecb(fltk::Widget* w, long i){
   if(t->mute == 0){
     t->mute = 1;
     midi_track_off(i);
-    o->set(1);
+    o->value(1);
   }
   else{
     t->mute = 0;
-    o->set(0);
+    o->value(0);
   }
   o->redraw();
 }
@@ -116,12 +125,12 @@ void solocb(fltk::Widget* w, long i){
     t->solo = 1;
     set_solo(1);
     all_notes_off();
-    o->set(1);
+    o->value(1);
   }
   else{
     t->solo = 0;
     set_solo(0);
-    o->set(0);
+    o->value(0);
   }
   o->redraw();
 }
@@ -159,52 +168,57 @@ void pancb(fltk::Widget* w, long i){
 TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   fltk::Group(x, y, w, h, label),
   rec(5,5,20,20),
-  name(25,5,145,20),
-  volume(170,5,20,20),
-  pan(190,5,20,20),
-  solo(210,5,20,20),
-  mute(230,5,20,20),
-  port(230,5,20,20),
-  chan(210,5,20,20),
-  prog(170,5,20,20),
-  bank(190,5,20,20)
+  name(25,5,115,20),
+  volume(140,5,20,20),
+  pan(160,5,20,20),
+  prog(180,5,45,20),
+  chan(225,5,20,20),
+  port(245,5,20,20),
+  solo(265,5,20,20),
+  mute(285,5,20,20),
+  rem(310,5,10,20)
   {
 
-  port.hide();
-  chan.hide();
-  prog.hide();
-  bank.hide();
+  rec.color(fltk::color(0,0,0));
+  rec.key_flag = 1;
+  rec.tooltip("input uses this track");
 
-  prog.r = 0x3b;
-  prog.g = 0x5a;
-  prog.b = 0x88;
-  prog.R = 0x94;
-  prog.G = 0xbf;
-  prog.B = 0xff;
-  prog.value = 0;
-  prog.last_value = 0;
-  prog.label_always = 1;
-  prog.gauge_off = 1;
+  prog.color(fltk::color(0,128,0));
+  prog.textcolor(fltk::color(0,255,0));
+  prog.minimum(0);
+  prog.maximum(127);
+  prog.step(1.0);
+  prog.value(1);
+  prog.value(0);
   prog.tooltip("program");
 
-  bank.r = 0x2c;
-  bank.g = 0x40;
-  bank.b = 0x5b;
-  bank.R = 0x5a;
-  bank.G = 0x83;
-  bank.B = 0xba;
-  bank.value = 0;
-  bank.last_value = 0;
-  bank.label_always = 1;
-  bank.gauge_off = 1;
-  bank.tooltip("bank");
+  volume.r = 0;
+  volume.g = 0;
+  volume.b = 128;
+  volume.R = 0;
+  volume.G = 0;
+  volume.B = 255;
+  volume.tooltip("volume");
 
-  chan.r = 0x8c;
-  chan.g = 0xaf;
-  chan.b = 0xb6;
-  chan.R = 0xeb;
-  chan.G = 0xef;
-  chan.B = 0xf0;
+  pan.r = 128;
+  pan.g = 0;
+  pan.b = 0;
+  pan.R = 255;
+  pan.G = 0;
+  pan.B = 0;
+  pan.tooltip("pan");
+//  chan.r = 0x8c;
+//  chan.g = 0xaf;
+//  chan.b = 0xb6;
+//  chan.R = 0xeb;
+//  chan.G = 0xef;
+//  chan.B = 0xf0;
+  chan.r = 255;
+  chan.g = 255;
+  chan.b = 255;
+  chan.R = 0;
+  chan.G = 0;
+  chan.B = 0;
   chan.max = 15;
   chan.label_always = 1;
   chan.label_plusone = 1;
@@ -212,12 +226,12 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   chan.gauge_off = 1;
   chan.tooltip("channel");
 
-  port.r = 0xc0;
-  port.g = 0xc0;
-  port.b = 0xc0;
-  port.R = 0xff;
-  port.G = 0xff;
-  port.B = 0xff;
+  port.r = 255;
+  port.g = 255;
+  port.b = 255;
+  port.R = 0;
+  port.G = 0;
+  port.B = 0;
   port.max = 7;
   port.value = 0;
   port.last_value = 0;
@@ -229,7 +243,7 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   port.callback(portcb, i);
   chan.callback(chancb, i);
   prog.callback(progcb, i);
-  bank.callback(bankcb, i);
+  //bank.callback(bankcb, i);
   rec.callback(reccb, i);
   name.callback(namecb, i);
   volume.callback(volcb, i);
@@ -237,80 +251,59 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   solo.callback(solocb, i);
   mute.callback(mutecb, i);
 
-  rec.tooltip("record on this track");
-  volume.tooltip("volume");
-  pan.tooltip("pan");
+  
+  
+  
   solo.tooltip("solo");
   mute.tooltip("mute");
 
-  rec.key_flag = 1;
-  solo.c[0] = '1';
-  solo.r = 127;
+
+
+  //solo.label("S");
+  solo.c[0] = 'S';
+  solo.r = 196;
   solo.g = 0; 
-  solo.b = 127;
+  solo.b = 196;
   solo.R = 255;
   solo.G = 0; 
   solo.B = 255;
-  mute.c[0] = '.';
-  mute.c[1] = '.';
-  mute.c[2] = '.';
-  mute.c[3] = '\0';
-  mute.r = 0;
-  mute.g = 0;
-  mute.b = 127;
-  mute.R = 0;
-  mute.G = 0; 
-  mute.B = 255;
+
+  //mute.label("M");
+  mute.c[0] = 'M';
+  mute.r = 200;
+  mute.g = 200;
+  mute.b = 200;
+  mute.R = 140;
+  mute.G = 140; 
+  mute.B = 140;
+
+  rem.tooltip("delete track");
 
   begin();
 
   add(rec);//toggle recording
   add(name);//change track name
 
+  add(prog);//change track program
   add(volume);//set track volume
   add(pan);//set track pan
+
   add(solo);//set solo to this track
   add(mute);//mute or unmute track
 
   add(port);//change track port
   add(chan);//change track channel
-  add(prog);//change track program
-  add(bank);
+
+  add(rem);//delete track
 
   end();
 
   index = i;
-  settings_shown = 0;
 
 }
 
 int TrackModule::handle(int e){
   return fltk::Group::handle(e);
-}
-
-void TrackModule::toggle_controls(int n){
-  if(n==1){
-    volume.hide();
-    pan.hide();
-    solo.hide();
-    mute.hide();
-    port.show();
-    chan.show();
-    prog.show();
-    bank.show();
-    settings_shown = 1;
-  }
-  else{
-settings_shown=0;
-    volume.show();
-    pan.show();
-    solo.show();
-    mute.show();
-    port.hide();
-    chan.hide();
-    prog.hide();
-    bank.hide();
-  }
 }
 
 
@@ -322,18 +315,18 @@ void TrackModule::set_channel(int i){
 void TrackModule::unset_solo(){
   if(tracks[index]->solo){
     tracks[index]->solo = 0;
-    solo.set(0);
+    solo.value(0);
     solo.redraw();
   }
 }
 
 void TrackModule::unset_rec(){
-  rec.set(0);
+  rec.value(0);
   rec.redraw();
 }
 
 void TrackModule::set_rec(){
-  rec.set(1);
+  rec.value(1);
   rec.redraw();
 }
 
@@ -343,21 +336,20 @@ void TrackModule::update(){
   name.text(t->name);
   port.value = t->port;
   chan.value = t->chan;
-  prog.value = t->prog;
-  bank.value = t->bank;
+  //prog.value = t->prog;
 
   if(t->mute){
-    mute.set(1);
+    mute.value(1);
   }
   else{
-    mute.set(0);
+    mute.value(0);
   }
 
   if(t->solo){
-    solo.set(1);
+    solo.value(1);
   }
   else{
-    solo.set(0);
+    solo.value(0);
   }
 
   mute.redraw();
@@ -536,26 +528,8 @@ void HGauge::draw(){
   fltk::fillrect(2,2,w()-4,h()-4);
 
   fltk::setcolor(fltk::color(R,G,B));
-  int V = value * (h()-4) / max;
-  fltk::fillrect(2,2,V,h()-4);
-
-  if(label_flag || label_always || label_temp){
-    char buf[3];
-    snprintf(buf,3,"%x",value);
-
-    fltk::push_clip(V+2,2,w()-4-V,h()-4);
-    fltk::setcolor(fltk::color(R,G,B));
-    fltk::setfont(fltk::HELVETICA,12);
-    int W = (int)fltk::getwidth(buf);
-    fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
-    fltk::pop_clip();
-
-    fltk::push_clip(2,2,V,h()-4);
-    fltk::setcolor(fltk::color(r,g,b));
-    fltk::setfont(fltk::HELVETICA,12);
-    fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
-    fltk::pop_clip();
-  }
+  int V = value * (w()-5) / max;
+  fltk::drawline(V+2, 2, V+2, h()-3);
 }
 
 Toggle::Toggle(int x, int y, int w, int h, const char* label) :
@@ -621,6 +595,6 @@ void Toggle::draw(){
 }
 
 
-void Toggle::set(int s){
+void Toggle::value(int s){
   state = s;
 }

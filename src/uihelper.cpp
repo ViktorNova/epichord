@@ -244,6 +244,9 @@ void playing_timeout_cb(void* v){
   ui->pattern_timeline->update(pos);
   ui->metronome->update(pos);
 
+  //check for self events (do not record)
+  //TODO
+
   //check for midi input
   int tick;
   int chan;

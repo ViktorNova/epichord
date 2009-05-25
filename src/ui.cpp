@@ -44,24 +44,6 @@ void UI::cb_main_window(fltk::Window* o, void* v) {
   ((UI*)(o->user_data()))->cb_main_window_i(o,v);
 }
 
-inline void UI::cb__i(fltk::Button*, void*) {
-  ui->track_info->toggle_controls();
-}
-void UI::cb_(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
-}
-
-inline void UI::cb_1_i(fltk::Button*, void*) {
-  track* t = new track();
-  add_track(t);
-  ui->track_info->redraw();
-  ui->arranger->layout();
-  ui->song_vscroll->redraw();
-}
-void UI::cb_1(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_1_i(o,v);
-}
-
 inline void UI::cb_song_vscroll_i(fltk::Scrollbar* o, void*) {
   int target = (int)o->value();
   int dummy = ui->arranger->scrollx;
@@ -138,11 +120,11 @@ void UI::cb_Z(fltk::Button* o, void* v) {
   ((UI*)(o->parent()->parent()->parent()->parent()->parent()->user_data()))->cb_Z_i(o,v);
 }
 
-inline void UI::cb_2_i(fltk::Button*, void*) {
+inline void UI::cb__i(fltk::Button*, void*) {
   show_song_edit();
 }
-void UI::cb_2(fltk::Button* o, void* v) {
-  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_2_i(o,v);
+void UI::cb_(fltk::Button* o, void* v) {
+  ((UI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb__i(o,v);
 }
 
 inline void UI::cb_play_button_i(fltk::Button*, void*) {
@@ -650,50 +632,39 @@ UI::UI() {
       o->begin();
        {fltk::Group* o = song_edit = new fltk::Group(0, 0, 640, 445);
         o->begin();
-         {fltk::Group* o = new fltk::Group(0, 0, 255, 445);
+         {fltk::Group* o = new fltk::Group(0, 0, 325, 445);
           o->set_vertical();
           o->box(fltk::FLAT_BOX);
           o->begin();
-           {TrackInfo* o = track_info = new TrackInfo(0, 15, 255, 415, "track info");
+           {TrackInfo* o = track_info = new TrackInfo(0, 15, 325, 415);
             o->set_vertical();
             fltk::Group::current()->resizable(o);
           }
-           {fltk::Button* o = new fltk::Button(170, 0, 85, 15, "@");
-            o->callback((fltk::Callback*)cb_);
-            o->tooltip("more settings");
-          }
-           {fltk::Button* o = new fltk::Button(0, 0, 85, 15, "+");
-            o->callback((fltk::Callback*)cb_1);
-            o->tooltip("add new track");
-          }
-           {fltk::Button* o = new fltk::Button(85, 0, 85, 15, "-");
-            o->tooltip("delete last track");
-          }
           o->end();
         }
-         {fltk::Group* o = new fltk::Group(255, 0, 385, 15);
+         {fltk::Group* o = new fltk::Group(320, 0, 320, 15);
           o->begin();
-           {Timeline* o = song_timeline = new Timeline(0, 0, 370, 15, "timeline");
+           {Timeline* o = song_timeline = new Timeline(5, 0, 300, 15, "timeline");
             fltk::Group::current()->resizable(o);
             o->scale=16;
             o->label_scale=4;
           }
           o->end();
         }
-         {fltk::Group* o = song_scrollgroup = new fltk::Group(255, 15, 385, 430);
+         {fltk::Group* o = song_scrollgroup = new fltk::Group(325, 15, 315, 430);
           o->set_vertical();
           o->begin();
-           {Arranger* o = arranger = new Arranger(0, 0, 370, 415, "arranger");
+           {Arranger* o = arranger = new Arranger(0, 0, 300, 415, "arranger");
             o->set_vertical();
             o->box(fltk::FLAT_BOX);
             fltk::Group::current()->resizable(o);
           }
-           {fltk::Scrollbar* o = song_vscroll = new fltk::Scrollbar(370, 0, 15, 415);
+           {fltk::Scrollbar* o = song_vscroll = new fltk::Scrollbar(300, 0, 15, 415);
             o->set_vertical();
             o->slider_size(60);
             o->callback((fltk::Callback*)cb_song_vscroll);
           }
-           {DragBar* o = song_hscroll = new DragBar(0, 415, 370, 15);
+           {DragBar* o = song_hscroll = new DragBar(0, 415, 300, 15);
             o->callback((fltk::Callback*)cb_song_hscroll);
           }
           o->end();
@@ -789,14 +760,13 @@ UI::UI() {
           }
            {fltk::Button* o = new fltk::Button(0, 370, 45, 75, "@<-");
             o->set_vertical();
-            o->callback((fltk::Callback*)cb_2);
+            o->callback((fltk::Callback*)cb_);
           }
           o->end();
         }
         o->end();
       }
       o->end();
-      fltk::Group::current()->resizable(o);
     }
      {fltk::Group* o = new fltk::Group(0, 445, 640, 35);
       o->box(fltk::UP_BOX);
@@ -954,6 +924,7 @@ UI::UI() {
     
     o->size_range(640,455);
     o->resize(640,455);
+    o->resizable(o);
   }
    {fltk::Window* o = config_window = new fltk::Window(320, 285, "config");
     o->shortcut(0xff1b);

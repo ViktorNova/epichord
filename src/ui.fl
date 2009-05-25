@@ -58,7 +58,7 @@ class UI {open
 shutdown_gui();
 
 save_config();} open
-      xywh {634 276 640 480} resizable
+      xywh {81 214 640 480} resizable
       extra_code {\#include <stdio.h>
 
 \#include <fltk/ask.h>
@@ -69,59 +69,37 @@ o->size_range(640,455);
 o->resize(640,455);} visible
     } {
       {fltk::Group} {} {open
-        xywh {0 0 640 445} resizable
+        xywh {0 0 640 445}
       } {
         {fltk::Group} song_edit {open
           xywh {0 0 640 445}
         } {
-          {fltk::Group} {} {open
-            xywh {0 0 255 445} box FLAT_BOX
+          {fltk::Group} {} {open selected
+            xywh {0 0 325 445} box FLAT_BOX
           } {
             {fltk::Widget} track_info {
-              label {track info} selected
-              xywh {0 15 255 415} resizable
+              xywh {0 15 325 415} resizable
               extra_code {\#include "trackinfo.h"}
               class TrackInfo
             }
-            {fltk::Button} {} {
-              label {@}
-              callback {ui->track_info->toggle_controls();}
-              tooltip {more settings}
-              xywh {170 0 85 15}
-            }
-            {fltk::Button} {} {
-              label {+}
-              callback {track* t = new track();
-add_track(t);
-ui->track_info->redraw();
-ui->arranger->layout();
-ui->song_vscroll->redraw();}
-              tooltip {add new track}
-              xywh {0 0 85 15}
-            }
-            {fltk::Button} {} {
-              label {-}
-              tooltip {delete last track}
-              xywh {85 0 85 15}
-            }
           }
           {fltk::Group} {} {open
-            xywh {255 0 385 15}
+            xywh {320 0 320 15}
           } {
             {fltk::Widget} song_timeline {
               label timeline
-              xywh {0 0 370 15} resizable
+              xywh {5 0 300 15} resizable
               extra_code {o->scale=16;
 o->label_scale=4;}
               class Timeline
             }
           }
           {fltk::Group} song_scrollgroup {open
-            xywh {255 15 385 430} resizable
+            xywh {325 15 315 430} resizable
           } {
             {fltk::Widget} arranger {
               label arranger
-              xywh {0 0 370 415} resizable box FLAT_BOX
+              xywh {0 0 300 415} resizable box FLAT_BOX
               extra_code {\#include "seq.h"
 \#include "arranger.h"}
               class Arranger
@@ -130,11 +108,11 @@ o->label_scale=4;}
               callback {int target = (int)o->value();
 int dummy = ui->arranger->scrollx;
 ui->arranger->scrollTo(dummy,target);}
-              xywh {370 0 15 415} slider_size 60
+              xywh {300 0 15 415} slider_size 60
             }
             {fltk::Widget} song_hscroll {
               callback {ui->arranger->scrollTo(o->value(), ui->arranger->scrolly);}
-              xywh {0 415 370 15}
+              xywh {0 415 300 15}
               extra_code {\#include "dragbar.h"}
               class DragBar
             }

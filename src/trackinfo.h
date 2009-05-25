@@ -31,12 +31,11 @@ class TrackInfo : public fltk::Group {
 
     int scroll;
 
-    TrackInfo(int x, int y, int w, int h, const char* label);
+    TrackInfo(int x, int y, int w, int h, const char* label=0);
     int handle(int event);
     void draw();
     void layout();
 
-    void toggle_controls();
     void unset_solo();
     void set_rec(int t);
 

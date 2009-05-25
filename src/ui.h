@@ -9,7 +9,6 @@
 #include "trackmodule.h"
 #include <fltk/Group.h>
 #include "trackinfo.h"
-#include <fltk/Button.h>
 #include "arranger.h"
 #include <fltk/Scrollbar.h>
 #include "dragbar.h"
@@ -17,6 +16,7 @@
 #include "pianoroll.h"
 #include "eventedit.h"
 #include "eventmenu.h"
+#include <fltk/Button.h>
 #include "trackselect.h"
 #include "sampleview.h"
 #include "keyboard.h"
@@ -46,12 +46,6 @@ private:
 public:
       fltk::Group *song_edit;
           TrackInfo *track_info;
-private:
-          inline void cb__i(fltk::Button*, void*);
-          static void cb_(fltk::Button*, void*);
-          inline void cb_1_i(fltk::Button*, void*);
-          static void cb_1(fltk::Button*, void*);
-public:
           Timeline *song_timeline;
         fltk::Group *song_scrollgroup;
           Arranger *arranger;
@@ -98,8 +92,8 @@ public:
             SampleView *sample_view;
             Keyboard *keyboard;
 private:
-          inline void cb_2_i(fltk::Button*, void*);
-          static void cb_2(fltk::Button*, void*);
+          inline void cb__i(fltk::Button*, void*);
+          static void cb_(fltk::Button*, void*);
 public:
       fltk::Button *play_button;
 private:

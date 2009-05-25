@@ -62,6 +62,7 @@ void* pbi;
 
 jack_ringbuffer_t* outbuf;
 jack_ringbuffer_t* inbuf;
+jack_ringbuffer_t* selfbuf;
 
 static int playing = 0;
 static int looping = 0;
@@ -157,20 +158,21 @@ void dispatch_event(mevent* e, int track, int tick_base){
 static int H = 1;
 static int process(jack_nframes_t nframes, void* arg){
 
+  jack_midi_data_t* md1;
+  jack_midi_data_t* md2;
+
+  jack_midi_event_t me;
+
   frame_count = nframes;
 
-  //handle incoming midi events
   for(int i=0; i<PORT_COUNT; i++){
     pbo[i] = jack_port_get_buffer(outport[i],nframes);
     jack_midi_clear_buffer(pbo[i]);
   }
   pbi = jack_port_get_buffer(inport,nframes);
 
-  jack_midi_data_t* md1;
-  jack_midi_data_t* md2;
 
-  jack_midi_event_t me;
-
+  //handle incoming midi events
   uint32_t rec_tick;
 
   for(int i=0; i<jack_midi_get_event_count(pbi); i++){
@@ -195,7 +197,7 @@ static int process(jack_nframes_t nframes, void* arg){
       jack_ringbuffer_write(inbuf,(char*)md1,me.size);
    // }
   }
-
+  
   //init chans
   if(init_chans && trackinit && playing){
     init_chans=0;
@@ -311,6 +313,10 @@ static int process(jack_nframes_t nframes, void* arg){
     }
   }
 
+
+  
+
+
   return 0;
 }
 
@@ -340,6 +346,7 @@ int init_backend(int* argc, char*** argv){
 
   outbuf = jack_ringbuffer_create(1024);
   inbuf = jack_ringbuffer_create(1024);
+  selfbuf = jack_ringbuffer_create(1024);
 
   sample_rate = jack_get_sample_rate(client);
 
