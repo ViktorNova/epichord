@@ -159,13 +159,6 @@ static int process(jack_nframes_t nframes, void* arg){
 
   frame_count = nframes;
 
-  //handle incoming midi events
-  for(int i=0; i<PORT_COUNT; i++){
-    pbo[i] = jack_port_get_buffer(outport[i],nframes);
-    jack_midi_clear_buffer(pbo[i]);
-  }
-  pbi = jack_port_get_buffer(inport,nframes);
-
   jack_midi_data_t* md1;
   jack_midi_data_t* md2;
 
@@ -173,28 +166,12 @@ static int process(jack_nframes_t nframes, void* arg){
 
   uint32_t rec_tick;
 
-  for(int i=0; i<jack_midi_get_event_count(pbi); i++){
-    jack_midi_event_get(&me,pbi,i);
-    md1 = me.buffer;
-    //printf("%d got midi event, type 0x%x, value 0x%x 0x%x\n",i,md1[0],md1[1],md1[2]);
-    if(passthru){
-      md2 = jack_midi_event_reserve(pbo[rec_port],0,me.size);
-      if(md2 == NULL){
-        printf("passthru: can't reserve midi event\n");
-      }
-      else{
-        memcpy(md2,md1,me.size);
-      }
-    }
-    rec_tick = last_tick + (me.time*bpm*tpb)/(sample_rate*60);
-
-    //if(playing && recording){
-      uint16_t size = me.size;
-      jack_ringbuffer_write(inbuf,(char*)&rec_tick,4);
-      jack_ringbuffer_write(inbuf,(char*)&size,2);
-      jack_ringbuffer_write(inbuf,(char*)md1,me.size);
-   // }
+  for(int i=0; i<PORT_COUNT; i++){
+    pbo[i] = jack_port_get_buffer(outport[i],nframes);
+    jack_midi_clear_buffer(pbo[i]);
   }
+  pbi = jack_port_get_buffer(inport,nframes);
+
 
   //init chans
   if(init_chans && trackinit && playing){
@@ -310,6 +287,34 @@ static int process(jack_nframes_t nframes, void* arg){
       play_seq(cur_tick);
     }
   }
+
+
+
+  //handle incoming midi events
+
+  for(int i=0; i<jack_midi_get_event_count(pbi); i++){
+    jack_midi_event_get(&me,pbi,i);
+    md1 = me.buffer;
+    //printf("%d got midi event, type 0x%x, value 0x%x 0x%x\n",i,md1[0],md1[1],md1[2]);
+    if(passthru){
+      md2 = jack_midi_event_reserve(pbo[rec_port],0,me.size);
+      if(md2 == NULL){
+        printf("passthru: can't reserve midi event\n");
+      }
+      else{
+        memcpy(md2,md1,me.size);
+      }
+    }
+    rec_tick = last_tick + (me.time*bpm*tpb)/(sample_rate*60);
+
+    //if(playing && recording){
+      uint16_t size = me.size;
+      jack_ringbuffer_write(inbuf,(char*)&rec_tick,4);
+      jack_ringbuffer_write(inbuf,(char*)&size,2);
+      jack_ringbuffer_write(inbuf,(char*)md1,me.size);
+   // }
+  }
+
 
   return 0;
 }
