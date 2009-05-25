@@ -213,11 +213,11 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
 //  chan.R = 0xeb;
 //  chan.G = 0xef;
 //  chan.B = 0xf0;
-  chan.r = 255;
-  chan.g = 255;
-  chan.b = 255;
-  chan.R = 0;
-  chan.G = 0;
+  chan.r = 127;
+  chan.g = 127;
+  chan.b = 0;
+  chan.R = 255;
+  chan.G = 255;
   chan.B = 0;
   chan.max = 15;
   chan.label_always = 1;
@@ -226,12 +226,12 @@ TrackModule::TrackModule(int x, int y, int w, int h, int i, const char* label) :
   chan.gauge_off = 1;
   chan.tooltip("channel");
 
-  port.r = 255;
-  port.g = 255;
-  port.b = 255;
+  port.r = 0;
+  port.g = 127;
+  port.b = 127;
   port.R = 0;
-  port.G = 0;
-  port.B = 0;
+  port.G = 255;
+  port.B = 255;
   port.max = 7;
   port.value = 0;
   port.last_value = 0;
