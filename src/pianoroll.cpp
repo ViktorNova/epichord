@@ -339,6 +339,7 @@ int PianoRoll::handle(int event){
           move_flag = 0;
 
           midi_track_off(cur_seqpat->track);
+
           ui->keyboard->release_note(last_note,0);
           ui->keyboard->release_note(move_norig+move_noffset,0);
           ui->keyboard->redraw();
@@ -352,7 +353,9 @@ int PianoRoll::handle(int event){
         if(delete_flag && over_n){
           if(over_n->selected){
             apply_delete();
+
             midi_track_off(cur_seqpat->track);
+
             ui->event_edit->redraw();
           }
         }

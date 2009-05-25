@@ -33,6 +33,25 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
+class OnBitArray {
+  unsigned char bytes[16];
+  int spos;
+  int jpos;
+
+  public:
+
+  int get(int note);
+  void set(int note, int value);
+
+  void search_init();
+  int search_next();
+
+  void clear();
+
+  OnBitArray();
+};
+
 struct mevent {
 
   public:
@@ -278,6 +297,8 @@ struct track {
   int alive;
   seqpat* head;
   seqpat* skip;
+
+  OnBitArray onbits;
 
   int modified;
 
@@ -737,6 +758,8 @@ int set_seq_pos(int new_tick);
 
 void set_rec_track(int t);
 int get_rec_track();
+
+void tracks_auto_off();
 
 int set_default_hsv_value(float v);
 

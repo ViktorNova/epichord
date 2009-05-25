@@ -46,18 +46,21 @@ void portcb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
   Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  int old_port = t->port;
-  t->port = (int)o->value;
-  midi_channel_off(t->chan,old_port);
+  if(t->port != (int)o->value){
+    midi_track_off(i);
+    t->port = (int)o->value;
+  }
+
 }
 
 void chancb(fltk::Widget* w, long i){
   //fltk::ValueInput* o = (fltk::ValueInput*)w;
   Gauge* o = (Gauge*)w;
   track* t = tracks[i];
-  int old_chan = t->chan;
-  t->chan = (int)o->value;
-  midi_channel_off(old_chan,t->port);
+  if(t->chan != (int)o->value){
+    midi_track_off(i);
+    t->chan = (int)o->value;
+  }
 }
 
 void progcb(fltk::Widget* w, long i){

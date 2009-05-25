@@ -481,7 +481,9 @@ void press_play(){
   }
   else{
     pause_backend();
+
     all_notes_off();
+
     ui->play_button->label("@>");
   }
 }
@@ -494,8 +496,13 @@ void press_stop(){
   }
 
   pause_backend();
-  reset_backend(left);
+
   all_notes_off();
+
+  reset_backend(left);
+
+
+
 
   ui->song_timeline->update(left);
   ui->pattern_timeline->update(left);

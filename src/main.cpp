@@ -27,6 +27,7 @@
 #include <fltk/Button.h>
 #include <fltk/Input.h>
 #include <fltk/ValueInput.h>
+#include <fltk/TextDisplay.h>
 
 
 #include "ui.h"

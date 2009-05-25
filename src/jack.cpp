@@ -70,6 +70,7 @@ static int loop_start = 0;
 static int loop_end = TICKS_PER_BEAT*4;
 static int passthru = 1;
 static int rec_port = 0;
+
 static int trackinit = 1;
 
 static int init_chans = 1;
@@ -223,6 +224,7 @@ static int process(jack_nframes_t nframes, void* arg){
     for(int i=0; i<n; i++){
       md1[i]=buf[i];
     }
+
   }
 
 
@@ -549,17 +551,14 @@ void midi_track_off(int track){
   int chan = tracks[track]->chan;
   int port = tracks[track]->port;
 
-  midi_channel_off(chan,port);
-}
-
-void midi_channel_off(int chan, int port){
-  char buf[3] = {0xB0,123,0};
-  buf[0] = 0xB0 | chan;
-  send_midi(buf,3,port);
-
-  buf[0] = 0xB0 | chan;
-  buf[1] = 120;
-  send_midi(buf,3,port);
+  OnBitArray* onbits = &(tracks[track]->onbits);
+  onbits->search_init();
+  int note = onbits->search_next();
+  while(note >= 0){
+    midi_note_off(note, chan, port);
+    note = onbits->search_next();
+  }
+  onbits->clear();
 }
 
 

@@ -35,4 +35,9 @@ void unmodify_blocks();
 int unmodify_and_unstick_tracks();
 
 float randf(float l, float r);
+
+
+
+
+
 #endif

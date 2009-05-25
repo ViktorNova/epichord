@@ -25,9 +25,9 @@
 #include <list>
 #include <vector>
 
+#include <fltk/TextDisplay.h>
 #include "seq.h"
 
-#include <fltk/TextDisplay.h>
 #include "util.h"
 
 #include "backend.h"
@@ -106,7 +106,7 @@ int play_seq(int cur_tick){
     p = s->p;
     e = s->skip;
 
-    if(!e){ goto switchpatseq; }//no more events in this seqpat
+    if(!e){ goto switchblock; }//no more events in this seqpat
 
 again:
 
@@ -122,17 +122,21 @@ again:
       e = e->next;
       s->skip = e;
       if(!e){//no more events in this seqpat
-        goto switchpatseq;
+        goto switchblock;
       }
     }
     else if(e->tick > s->dur){//went past the end
-      goto switchpatseq;
+      goto switchblock;
     }
     else{//no more events on this track right now
       continue;
     }
 goto again;//try to play next event
-switchpatseq:
+
+switchblock:
+
+      //TODO auto off all playing notes on track because end of block
+
       s = s->next;
 
       tracks[i]->skip = s;
@@ -151,7 +155,24 @@ switchpatseq:
 
   std::list<total_event>::iterator i = dispatch_queue.begin();
   while(i != dispatch_queue.end()){
+    OnBitArray* oba = &(tracks[i->t]->onbits);
+    if(i->e->type == MIDI_NOTE_ON){
+      if(!oba->get(i->e->value1)){
+        tracks[i->t]->onbits.set(i->e->value1, 1);
+      }
+      else{
+        mevent eoff = i->e;
+        eoff.type = MIDI_NOTE_OFF;
+        eoff.value2 = 0;
+        dispatch_event(&eoff, i->t, i->s->tick);
+      }
+    }
+    else if(i->e->type == MIDI_NOTE_OFF){
+      tracks[i->t]->onbits.set(i->e->value1, 0);
+    }
+    
     dispatch_event(i->e, i->t, i->s->tick);
+
     i++;
   }
 
@@ -817,8 +838,6 @@ void pattern::fixdur(){
   }
 }
 
-
-
 //used when the sequence is changed in such a way 
 //that the sequencer state needs to be updated
 void track::restate(){
@@ -957,7 +976,7 @@ void seqpat::autocomplete(){
 
   int chan = tracks[track]->chan;
   int port = tracks[track]->port;
-
+printf("use of deprecated function seqpat::autocomplete\n");
   while(e){
     if(e->type == MIDI_NOTE_ON && e->tick < pos){
       eoff = find_off(e);
@@ -1163,4 +1182,69 @@ void undo_reset(){
 
   undo_nptr = undo_number.begin();
   undo_ptr = undo_stack.begin();
+}
+
+
+OnBitArray::OnBitArray(){
+  for(int i=0; i<16; i++){
+    bytes[i] = 0;
+  }
+  spos = 0;
+  jpos = 0;
+}
+
+int OnBitArray::get(int note){
+  //note/8 = note >> 3
+  //note%8 = note & 0x7
+  return bytes[note >> 3] & (1 << (note & 0x7));
+}
+
+void OnBitArray::set(int note, int value){
+  //note/8 = note >> 3
+  //note%8 = note & 0x3
+
+  if(value){
+    bytes[note >> 3] |= (1 << (note & 0x7));
+  }
+  else{
+    bytes[note >> 3] &= ~(1 << (note & 0x7));
+  }
+}
+
+void OnBitArray::search_init(){
+  spos = 0;
+  jpos = 0;
+}
+
+int OnBitArray::search_next(){
+  unsigned char byte;
+  for(int i=spos; i<16; i++){
+    byte = bytes[i];
+
+    if(byte){
+      for(int j=jpos; j<8; j++){
+        if(byte & (1<<j)){
+          if(j==7){
+            spos = i+1;
+            jpos = 0;
+          }
+          else{
+            spos = i;
+            jpos = j+1;
+          }
+          int note = i*8 + j;
+          //bytes[i] &= ~(1<<j);
+          return note;
+        }
+      }
+      jpos = 0;
+    }
+  }
+  return -1;
+}
+
+void OnBitArray::clear(){
+  for(int i=0; i<16; i++){
+    bytes[i] = 0;
+  }
 }
