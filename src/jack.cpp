@@ -500,7 +500,7 @@ void midi_bank_controller(int track, int bank){
 
   char buf[3];
   buf[0] = 0xB0 | chan;
-  buf[1] = 0;
+  buf[1] = 32;
   buf[2] = bank;
   send_midi(buf, 3, port);
 }
