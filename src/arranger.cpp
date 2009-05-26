@@ -27,6 +27,8 @@
 #include <fltk/Widget.h>
 #include <fltk/events.h>
 
+#include <fltk/Cursor.h>
+
 #include "ui.h"
 
 #include "uihelper.h"
@@ -102,6 +104,10 @@ int Arranger::handle(int event){
     case fltk::FOCUS:
       return 1;
     case fltk::ENTER:
+      //cursor(fltk::CURSOR_WE);
+      return 1;
+    case fltk::LEAVE:
+      //cursor(fltk::CURSOR_DEFAULT);
       return 1;
     case fltk::KEYUP:
 
@@ -249,6 +255,7 @@ int Arranger::handle(int event){
             move_x = X+scrollx;
             move_y = Y+scrolly;
             move_offset = xpix2tick(X+scrollx)/q_tick*q_tick - s->tick;
+            cursor(fltk::CURSOR_MOVE);
           }
         }
       }
@@ -353,16 +360,19 @@ lresize_torig;
         else if(move_flag){
           apply_move();
           move_flag = 0;
+          cursor(fltk::CURSOR_DEFAULT);
         }
         else if(rresize_flag){
           apply_rresize();
           rresize_flag = 0;
           resize_arrow = 0;
+          cursor(fltk::CURSOR_DEFAULT);
         }
         else if(lresize_flag){
           apply_lresize();
           lresize_flag = 0;
           resize_arrow = 0;
+          cursor(fltk::CURSOR_DEFAULT);
         }
 
         insert_flag=0;
@@ -383,6 +393,7 @@ lresize_torig;
         }
         delete_flag=0;
         resize_arrow = 0;
+        cursor(fltk::CURSOR_DEFAULT);
       }
 
 
@@ -422,6 +433,8 @@ lresize_torig;
            resize_x = tick2xpix(s->tick + s->dur)-scrollx-resize_handle_width-1;
             resize_y = s->track*30-scrolly;
             redraw();
+
+            cursor(fltk::CURSOR_WE);
           }
         }
         else if(over_lhandle(s)){
@@ -433,11 +446,14 @@ lresize_torig;
             resize_x = tick2xpix(s->tick)+1 - scrollx;
             resize_y = s->track*30 - scrolly;
             redraw();
+
+            cursor(fltk::CURSOR_WE);
           }
         }
         else{
           if(resize_arrow != 0){
             resize_arrow=0;
+            cursor(fltk::CURSOR_DEFAULT);
             redraw();
           }
         }
@@ -454,6 +470,7 @@ lresize_torig;
         }
         if(resize_arrow != 0){
           resize_arrow=0;
+          cursor(fltk::CURSOR_DEFAULT);
           redraw_question = 1;
         }
         if(redraw_question){redraw();}
@@ -463,6 +480,7 @@ lresize_torig;
   }
   return 0;
 }
+
 
 void Arranger::draw(){
 
@@ -682,10 +700,10 @@ void Arranger::draw(){
       int X = resize_x;
       int Y = resize_y;
 
-      addvertex(X,Y);
-      addvertex(X,Y+H);
-      addvertex(X+W,Y+H/2);
-      fillpath();
+      //addvertex(X,Y);
+      //addvertex(X,Y+H);
+      //addvertex(X+W,Y+H/2);
+      //fillpath();
     }
     else if(resize_arrow < 0){
       setcolor(resize_arrow_color);
@@ -695,10 +713,10 @@ void Arranger::draw(){
       int X = resize_x;
       int Y = resize_y;
 
-      addvertex(X+W,Y);
-      addvertex(X+W,Y+H);
-      addvertex(X,Y+H/2);
-      fillpath();
+      //addvertex(X+W,Y);
+      //addvertex(X+W,Y+H);
+      //addvertex(X,Y+H/2);
+      //fillpath();
     }
   }
 

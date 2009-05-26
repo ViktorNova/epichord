@@ -26,6 +26,8 @@
 
 #include <fltk/Scrollbar.h>
 
+#include <fltk/Cursor.h>
+
 #include <fltk/events.h>
 
 #include <stdio.h>
@@ -108,6 +110,7 @@ int PianoRoll::handle(int event){
         delete_flag = 0;
         redraw();
         resize_arrow = 0;
+        cursor(fltk::CURSOR_DEFAULT);
         ui->event_edit->redraw();
         return 1;
       }
@@ -202,7 +205,7 @@ int PianoRoll::handle(int event){
           }
           else{//begin move
             move_flag = 1;
-
+            cursor(fltk::CURSOR_MOVE);
             move_torig = e->tick;
             move_qoffset = e->tick - quantize(e->tick);
 
@@ -314,12 +317,14 @@ int PianoRoll::handle(int event){
           apply_rresize();
           rresize_flag = 0;
           resize_arrow = 0;
+          cursor(fltk::CURSOR_DEFAULT);
           ui->event_edit->redraw();
         }
         else if(lresize_flag){
           apply_lresize();
           lresize_flag = 0;
           resize_arrow = 0;
+          cursor(fltk::CURSOR_DEFAULT);
           ui->event_edit->redraw();
         }
         else if(insert_flag){
@@ -337,7 +342,7 @@ int PianoRoll::handle(int event){
         else if(move_flag){
           apply_move();
           move_flag = 0;
-
+          cursor(fltk::CURSOR_DEFAULT);
           midi_track_off(cur_seqpat->track);
 
           ui->keyboard->release_note(last_note,0);
@@ -361,6 +366,7 @@ int PianoRoll::handle(int event){
         }
         delete_flag=0;
         resize_arrow = 0;
+        cursor(fltk::CURSOR_DEFAULT);
       }
       redraw();
 
@@ -376,6 +382,7 @@ int PianoRoll::handle(int event){
             else{resize_arrow_color = fltk::color(95,58,119);}
             resize_e = e;
             resize_arrow = 1;
+            cursor(fltk::CURSOR_WE);
             resize_x = tick2xpix(e->tick + e->dur)-scrollx-resize_handle_width;
             resize_y = note2ypix(e->value1)-scrolly;
             redraw();
@@ -387,6 +394,7 @@ int PianoRoll::handle(int event){
             else{resize_arrow_color = fltk::color(95,58,119);}
             resize_e = e;
             resize_arrow = -1;
+            cursor(fltk::CURSOR_WE);
             resize_x = tick2xpix(e->tick)+1 - scrollx;
             resize_y = note2ypix(e->value1) - scrolly;
             redraw();
@@ -396,6 +404,7 @@ int PianoRoll::handle(int event){
           if(resize_e != e || resize_arrow != 0){
             resize_e = e;
             resize_arrow = 0;
+            cursor(fltk::CURSOR_DEFAULT);
             redraw();
           }
         }
@@ -403,6 +412,7 @@ int PianoRoll::handle(int event){
       else{
         if(resize_arrow != 0){
           resize_arrow = 0;
+          cursor(fltk::CURSOR_DEFAULT);
           redraw();
         }
       }
@@ -557,10 +567,10 @@ void PianoRoll::draw(){
       int X = resize_x;
       int Y = resize_y;
 
-      addvertex(X,Y);
-      addvertex(X,Y+H);
-      addvertex(X+W,Y+H/2);
-      fillpath();
+      //addvertex(X,Y);
+      //addvertex(X,Y+H);
+      //addvertex(X+W,Y+H/2);
+      //fillpath();
     }
     else if(resize_arrow < 0){
       setcolor(resize_arrow_color);
@@ -570,10 +580,10 @@ void PianoRoll::draw(){
       int X = resize_x;
       int Y = resize_y;
 
-      addvertex(X+W,Y);
-      addvertex(X+W,Y+H);
-      addvertex(X,Y+H/2);
-      fillpath();
+      //addvertex(X+W,Y);
+      //addvertex(X+W,Y+H);
+      //addvertex(X,Y+H/2);
+      //fillpath();
     }
   }
 
