@@ -461,6 +461,10 @@ void playing_timeout_cb(void* v){
   }
 
 
+  //maybe do dynamic update of controller widgets
+  ui->track_info->dynamic_update();
+
+
   if(is_backend_playing()){
     fltk::repeat_timeout(0.005, playing_timeout_cb, NULL);
   }
@@ -897,3 +901,6 @@ void shutdown_gui(){
   ui->action_window->hide();
   ui->scope_window->hide();
 }
+
+
+

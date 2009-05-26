@@ -300,6 +300,10 @@ struct track {
 
   OnBitArray onbits;
 
+  int contr[128];
+  int pressure;
+  int pitchwheel;
+
   int modified;
 
   void restate();
@@ -320,6 +324,11 @@ struct track {
     head->tick = 0;
     skip = head;
     modified = 0;
+
+    pressure = 64;
+    pitchwheel = 0;
+    contr[7] = 64;
+    contr[10] = 64;
   }
 
   ~track(){

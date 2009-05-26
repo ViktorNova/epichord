@@ -50,7 +50,6 @@ void portcb(fltk::Widget* w, long i){
     midi_track_off(i);
     t->port = (int)o->value;
   }
-
 }
 
 void chancb(fltk::Widget* w, long i){
@@ -147,8 +146,8 @@ void volcb(fltk::Widget* w, long i){
   track* t = tracks[i];
 
   t->vol = o->value;
+  t->contr[7] = o->value;
   midi_volume_controller(i, t->vol);
-  //perhaps record this
 }
 
 void pancb(fltk::Widget* w, long i){
@@ -156,6 +155,7 @@ void pancb(fltk::Widget* w, long i){
   track* t = tracks[i];
 
   t->pan = o->value;
+  t->contr[10] = o->value;
   midi_pan_controller(i, t->pan);
 }
 
@@ -341,6 +341,26 @@ void TrackModule::set_rec(){
 }
 
 
+void TrackModule::dynamic_update(){
+  track* t = tracks[index];
+  int do_update = 0;
+
+  if(t->prog != prog.value){
+    prog.value = t->prog;
+    prog.redraw();
+  }
+
+  if(t->contr[7] != volume.value){
+    volume.value = t->contr[7];
+    volume.redraw();
+  }
+
+  if(t->contr[10] != pan.value){
+    pan.value = t->contr[10];
+    pan.redraw();
+  }
+}
+
 void TrackModule::update(){
   track* t = tracks[index];
   name.text(t->name);
@@ -392,7 +412,7 @@ Gauge::Gauge(int x, int y, int w, int h, const char* label) :
   label_flag = 0;
   label_always = 0;
   label_plusone = 0;
-  label_hex = 1;
+  label_hex = 0;
   gauge_off = 0;
   label_temp=0;
   sens=1;
@@ -505,21 +525,37 @@ void VGauge::draw(){
   fltk::fillrect(2,h()-2-H,w()-4,H);
 
   if(label_flag || label_always || label_temp){
-    char buf[3];
+    char buf[8];
     int V = label_plusone ? value + 1 : value;
     if(label_hex){
-      snprintf(buf,3,"%x",V);
+      snprintf(buf,8,"%x",V);
     }
     else{
-      snprintf(buf,3,"%d",V);
+      snprintf(buf,8,"%d",V);
     }
 
 
     fltk::push_clip(2,2,w()-4,h()-4 - H);
     fltk::setcolor(fltk::color(R,G,B));
-    fltk::setfont(fltk::HELVETICA,12);
+
     int W = (int)fltk::getwidth(buf);
-    fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
+    int X;
+    int Y;
+
+    if(value > 99){
+      fltk::setfont(fltk::HELVETICA,9);
+      X = 1;
+      Y = 13;
+    }
+    else{
+      fltk::setfont(fltk::HELVETICA,12);
+      X = (w()-W)/2;
+      Y = 14;
+    }
+
+
+    //fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
+    fltk::drawtext(buf,X,Y);
     fltk::pop_clip();
 
 
@@ -527,10 +563,13 @@ void VGauge::draw(){
     if(!gauge_off){
       fltk::setcolor(fltk::color(r,g,b));
     }
-    fltk::setfont(fltk::HELVETICA,12);
-    fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
+    //fltk::setfont(fltk::HELVETICA,12);
+    //fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
+    fltk::drawtext(buf,X,Y);
     fltk::pop_clip();
   }
+
+  fltk::setfont(fltk::HELVETICA,12);
 }
 
 void HGauge::draw(){
@@ -539,26 +578,46 @@ void HGauge::draw(){
   fltk::fillrect(2,2,w()-4,h()-4);
 
   fltk::setcolor(fltk::color(R,G,B));
-  int V = value * (h()-4) / max;
-  fltk::fillrect(2,2,V,h()-4);
+  int V = value * (h()-5) / max;
+  //fltk::fillrect(2,2,V,h()-4);
+  fltk::drawline(V+2, 2, V+2, h()-3);
 
   if(label_flag || label_always || label_temp){
-    char buf[3];
-    snprintf(buf,3,"%x",value);
+    char buf[8];
+    snprintf(buf,8,"%d",value);
 
-    fltk::push_clip(V+2,2,w()-4-V,h()-4);
-    fltk::setcolor(fltk::color(R,G,B));
-    fltk::setfont(fltk::HELVETICA,12);
+
     int W = (int)fltk::getwidth(buf);
-    fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
-    fltk::pop_clip();
+    int X;
+    int Y;
+    if(value > 99){
+      fltk::setfont(fltk::HELVETICA,9);
+      X = 1;
+      Y = 13;
+    }
+    else{
+      fltk::setfont(fltk::HELVETICA,12);
+      X = (w()-W)/2;
+      Y = 14;
+    }
 
-    fltk::push_clip(2,2,V,h()-4);
-    fltk::setcolor(fltk::color(r,g,b));
-    fltk::setfont(fltk::HELVETICA,12);
-    fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
-    fltk::pop_clip();
+    //fltk::push_clip(V+2,2,w()-4-V,h()-4);
+    fltk::setcolor(fltk::color(R,G,B));
+    //fltk::setfont(fltk::HELVETICA,12);
+
+    //fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
+    fltk::drawtext(buf,X,Y);
+    //fltk::pop_clip();
+
+    //fltk::push_clip(2,2,V,h()-4);
+    //fltk::setcolor(fltk::color(r,g,b));
+    //fltk::setfont(fltk::HELVETICA,12);
+    //fltk::drawtext(buf,(w()-W)/2,h()-fltk::getascent()/2);
+    //fltk::drawtext(buf,X,Y);
+    //fltk::pop_clip();
   }
+
+  fltk::setfont(fltk::HELVETICA,12);
 }
 
 Toggle::Toggle(int x, int y, int w, int h, const char* label) :

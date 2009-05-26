@@ -89,6 +89,13 @@ void TrackInfo::toggle_controls(){
 }
 
 
+void TrackInfo::dynamic_update(){
+  //for each child cast to TrackModule and call update
+  for(int i=0; i<children(); i++){
+    ((TrackModule*)child(i))->dynamic_update();
+  }
+}
+
 void TrackInfo::update(){
   //for each child cast to TrackModule and call update
   for(int i=0; i<children(); i++){

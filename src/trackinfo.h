@@ -40,6 +40,7 @@ class TrackInfo : public fltk::Group {
     void unset_solo();
     void set_rec(int t);
 
+    void dynamic_update();
     void update();
 
     void clear_tracks();

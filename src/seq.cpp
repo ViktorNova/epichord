@@ -170,7 +170,14 @@ switchblock:
     else if(i->e->type == MIDI_NOTE_OFF){
       tracks[i->t]->onbits.set(i->e->value1, 0);
     }
-    
+
+    if(i->e->type == MIDI_CONTROLLER_CHANGE){
+      tracks[i->t]->contr[i->e->value1] = i->e->value2;
+    }
+    if(i->e->type == MIDI_PROGRAM_CHANGE){
+      tracks[i->t]->prog = i->e->value1;
+    }
+
     dispatch_event(i->e, i->t, i->s->tick);
 
     i++;

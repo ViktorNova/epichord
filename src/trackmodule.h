@@ -128,6 +128,7 @@ class TrackModule : public fltk::Group {
   void set_rec();
   void unset_solo();
 
+  void dynamic_update();
   void update();
 
 };
