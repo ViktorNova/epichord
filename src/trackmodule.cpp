@@ -83,6 +83,7 @@ void bankcb(fltk::Widget* w, long i){
   track* t = tracks[i];
   int bank = (int)o->value;
   t->bank = bank;
+  t->contr[32] = bank;
   midi_bank_controller(i, bank);
 }
 
@@ -358,6 +359,11 @@ void TrackModule::dynamic_update(){
   if(t->contr[10] != pan.value){
     pan.value = t->contr[10];
     pan.redraw();
+  }
+
+  if(t->contr[32] != bank.value){
+    bank.value = t->contr[32];
+    bank.redraw();
   }
 }
 

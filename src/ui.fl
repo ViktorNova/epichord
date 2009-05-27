@@ -58,7 +58,7 @@ class UI {open
 shutdown_gui();
 
 save_config();} open
-      xywh {634 276 640 480} resizable
+      xywh {634 268 640 480} resizable
       extra_code {\#include <stdio.h>
 
 \#include <fltk/ask.h>
@@ -78,7 +78,7 @@ o->resize(640,455);} visible
             xywh {0 0 255 445} box FLAT_BOX
           } {
             {fltk::Widget} track_info {
-              label {track info} selected
+              label {track info}
               xywh {0 15 255 415} resizable
               extra_code {\#include "trackinfo.h"}
               class TrackInfo
@@ -273,7 +273,7 @@ ui->event_edit->redraw();}
           }
         }
       }
-      {fltk::Group} {} {
+      {fltk::Group} {} {open
         xywh {0 445 640 35} box UP_BOX
       } {
         {fltk::Button} play_button {
@@ -449,10 +449,11 @@ ui->file_button->state(0);}
 ui->file_button->state(0);
 const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
 if(filename){
+  reset_song();
   if(load(filename)<0){
     reset_song();
   }
-}}
+}} selected
             }
           {fltk::Item} {} {
             label save
@@ -474,6 +475,7 @@ save(fltk::file_chooser("save file",NULL,get_last_dir()));}
 ui->file_button->state(0);
 const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
 if(filename){
+  reset_song();
   if(loadsmf(filename)<0){
     reset_song();
   }

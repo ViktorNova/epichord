@@ -320,6 +320,7 @@ inline void UI::cb_load_i(fltk::Item*, void*) {
   ui->file_button->state(0);
   const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
   if(filename){
+    reset_song();
     if(load(filename)<0){
       reset_song();
     }
@@ -352,6 +353,7 @@ inline void UI::cb_import_i(fltk::Item*, void*) {
   ui->file_button->state(0);
   const char* filename = fltk::file_chooser("open file",NULL,get_last_dir());
   if(filename){
+    reset_song();
     if(loadsmf(filename)<0){
       reset_song();
     }

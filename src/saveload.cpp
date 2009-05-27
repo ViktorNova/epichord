@@ -121,6 +121,7 @@ pattern* findpatternbyindex(int index, std::list<pattern*>& patlist){
 int clear(){
 
   pause_backend();
+  all_notes_off();
   reset_backend(0);
 
   last_filename = "";

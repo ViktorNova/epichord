@@ -329,6 +329,7 @@ struct track {
     pitchwheel = 0;
     contr[7] = 64;
     contr[10] = 64;
+    contr[32] = 0;
   }
 
   ~track(){
