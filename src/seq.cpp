@@ -172,7 +172,15 @@ switchblock:
     }
 
     if(i->e->type == MIDI_CONTROLLER_CHANGE){
-      tracks[i->t]->contr[i->e->value1] = i->e->value2;
+      int V = i->e->value2;
+      int B = tracks[i->t]->bank;
+      tracks[i->t]->contr[i->e->value1] = V;
+      if(V == 0){
+        tracks[i->t]->bank = B%128 + V*128;
+      }
+      else if(V == 32){
+        tracks[i->t]->bank = B/128*128 + V;
+      }
     }
     if(i->e->type == MIDI_PROGRAM_CHANGE){
       tracks[i->t]->prog = i->e->value1;

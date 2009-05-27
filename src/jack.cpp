@@ -473,6 +473,8 @@ int recv_midi(int* chan, int* tick, int* type, int* val1, int* val2){
   return 1;
 }
 
+
+
 const char* getsysexbuf(){
   return sysexbuf.c_str();
 }
@@ -501,7 +503,11 @@ void midi_bank_controller(int track, int bank){
   char buf[3];
   buf[0] = 0xB0 | chan;
   buf[1] = 32;
-  buf[2] = bank;
+  buf[2] = bank%128;
+  send_midi(buf, 3, port);
+
+  buf[1] = 0;
+  buf[2] = bank/128;
   send_midi(buf, 3, port);
 }
 
