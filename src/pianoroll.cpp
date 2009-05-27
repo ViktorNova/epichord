@@ -169,7 +169,7 @@ int PianoRoll::handle(int event){
             insert_flag = 1;
             insert_torig = quantize(xpix2tick(X+scrollx));
             if(trip_flag){
-              insert_toffset = (q_tick*4) / 3;
+              insert_toffset = (q_tick*2) / 3;
             }
             else{
               insert_toffset = q_tick;
@@ -257,7 +257,7 @@ int PianoRoll::handle(int event){
       }
       else if(insert_flag){
         if(trip_flag){
-          int q_trip = (q_tick*4) / 3;
+          int q_trip = (q_tick*2) / 3;
           insert_toffset = quantize(xpix2tick(X+scrollx)+q_trip) - insert_torig;
           if(insert_toffset<=0){
             insert_toffset -= q_trip;
@@ -293,7 +293,7 @@ int PianoRoll::handle(int event){
       }
       else if(rresize_flag){
         if(trip_flag){
-          int q_trip = (q_tick*4) / 3;
+          int q_trip = (q_tick*2) / 3;
           rresize_toffset = quantize(xpix2tick(X+scrollx))+q_trip-rresize_torig;
         }
         else{
@@ -703,9 +703,10 @@ int PianoRoll::xpix2tick(int xpix){
 
 int PianoRoll::quantize(int tick){
   if(trip_flag){
-    int T = (q_tick*4) / 3;
-    int P = tick/(q_tick*4) * (q_tick*4);
-    int Q = (tick%(q_tick*4));
+    int W = (q_tick*2);
+    int T = W/3;
+    int P = tick/W * W;
+    int Q = (tick%W);
     return P + Q / T * T;
   }
   else{
