@@ -115,7 +115,7 @@ again:
       if(e->tick != s->dur || e->type == MIDI_NOTE_OFF)
       if(tracks[i]->mute == 0)
       if((get_solo() && tracks[i]->solo != 0) || !get_solo()){
-          //dispatch_event(e, i, s->tick);
+         //dispatch_event(e, i, s->tick);
          dispatch_queue.push_back(total_event(e,i,s));
       }
 
@@ -164,7 +164,7 @@ switchblock:
         mevent eoff = i->e;
         eoff.type = MIDI_NOTE_OFF;
         eoff.value2 = 0;
-        dispatch_event(&eoff, i->t, i->s->tick);
+        //dispatch_event(&eoff, i->t, i->s->tick);
       }
     }
     else if(i->e->type == MIDI_NOTE_OFF){
@@ -733,7 +733,8 @@ void ChangeEvent::undo(){
 mevent* find_off(mevent* e){
   mevent* ptr = e;
   while(ptr){
-    if(ptr->type == MIDI_NOTE_OFF && ptr->value1 == e->value1){
+    if(ptr->type == MIDI_NOTE_OFF && ptr->value1 == e->value1 &&
+       ptr->tick != e->tick){
       return ptr;
     }
     ptr = ptr->next;
@@ -1263,3 +1264,4 @@ void OnBitArray::clear(){
     bytes[i] = 0;
   }
 }
+
