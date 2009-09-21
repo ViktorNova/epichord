@@ -83,6 +83,9 @@ int keyboard_handler(int e, fltk::Window* w){
         //ui->keyboard->set_sustain(1);
         press_play();
       }
+      else if(E==combo('s',fltk::CTRL)){
+        save();
+      }
       else if(E==combo('z',fltk::CTRL)){
         do_undo();
         ui->main_window->redraw();
