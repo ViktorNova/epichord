@@ -25,7 +25,7 @@ ctrl n - erase everything
 
 ctrl+backspace - reset play head
 ctrl+return - toggle recording
-ctrl+space - toggle play
+spacebar - toggle play
 
 
 You can play notes with the keyboard.
@@ -40,7 +40,6 @@ q w e r t y u i o p [ ]
  s d   g h j   k l
 z x c v b n m , . /
 
-space - sustain pedal
 shift+[ - octave down one
 shift+] - octave up one
 
