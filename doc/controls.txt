@@ -23,8 +23,8 @@ ctrl o - open
 ctrl w - save as
 ctrl n - erase everything
 
-ctrl+backspace - reset play head
-ctrl+return - toggle recording
+backspace - reset play head
+return - toggle recording
 spacebar - toggle play
 
 

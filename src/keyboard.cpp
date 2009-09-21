@@ -83,6 +83,12 @@ int keyboard_handler(int e, fltk::Window* w){
         //ui->keyboard->set_sustain(1);
         press_play();
       }
+      else if(E==combo(fltk::BackSpaceKey,0)){
+        press_stop();
+      }
+      else if(E==combo(fltk::ReturnKey,0)){
+        //press_record();
+      }
       else if(E==combo('s',fltk::CTRL)){
         save();
       }
@@ -98,6 +104,23 @@ int keyboard_handler(int e, fltk::Window* w){
         dump_pattern();
         ui->main_window->redraw();
       }
+
+      else if(E==combo('1',fltk::CTRL)){
+        set_songtool(0);
+      }
+      else if(E==combo('2',fltk::CTRL)){
+        set_songtool(1);
+      }
+      else if(E==combo('3',fltk::CTRL)){
+        set_songtool(2);
+      }
+      else if(E==combo('4',fltk::CTRL)){
+        set_songtool(3);
+      }
+      else if(E==combo('5',fltk::CTRL)){
+        set_songtool(4);
+      }
+
       else if(ui->kg_od->cmp(E)){
         ui->keyboard->octave_down();
       }
