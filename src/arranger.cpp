@@ -1029,6 +1029,8 @@ void Arranger::apply_paste(){
   //  return;
   //}
 
+  if(!main_sel) return;
+
   Command* c;
   c = new CreateSeqpat(paste_kcenter1,paste_tcenter1,main_sel,config.alwayscopy);
   set_undo(c);
