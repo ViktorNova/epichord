@@ -519,7 +519,7 @@ void press_stop(){
 
   ui->metronome->update(left);
 
-  ui->arranger->scrollTo(0,ui->arranger->scrolly);
+  ui->arranger->scrollTo(ui->arranger->tick2xpix(left),ui->arranger->scrolly);
 }
 
 

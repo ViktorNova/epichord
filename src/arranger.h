@@ -86,9 +86,6 @@ class Arranger : public fltk::Widget {
     int over_rhandle(seqpat* s);
     int over_lhandle(seqpat* s);
 
-    int tick2xpix(int tick);
-    int xpix2tick(int xpix);
-    int quantize(int xpix);
 
     int delete_flag;
 
@@ -157,6 +154,11 @@ class Arranger : public fltk::Widget {
     void layout();
 
     void scrollTo(int X, int Y);
+
+
+    int tick2xpix(int tick);
+    int xpix2tick(int xpix);
+    int quantize(int xpix);
 
 };
 
