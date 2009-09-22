@@ -1,7 +1,10 @@
-AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\"" @LASH_CFLAGS@
+AM_CPPFLAGS = -DROOT_DATA_DIR="\"$(datadir)/@PACKAGE@/\""
 CFLAGS = -g -O2 -Wall
-AM_LDFLAGS = `fltk2-config --ldflags` -ljack -llash
-#AM_LDFLAGS = -ljack -llash
+AM_LDFLAGS = `fltk2-config --ldflags` -ljack
+if HAVE_LASH
+AM_CPPFLAGS += @LASH_CFLAGS@
+AM_LDFLAGS +=  @LASH_LIBS@
+endif
 
 bin_PROGRAMS = epichord
 epichord_SOURCES = main.cpp seq.cpp jack.cpp ui.cpp \

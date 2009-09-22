@@ -53,8 +53,16 @@ if test "$fltk2found" == "no"; then
   ])
 fi
 
-
-PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0);
-
+PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0, HAVE_LASH="yes", HAVE_LASH="no");
+if test "$HAVE_LASH" = "yes"
+then
+  AC_DEFINE([HAVE_LASH], 1, [Defined if LASH is present.])
+fi
+AM_CONDITIONAL(HAVE_LASH, test "$HAVE_LASH" = "yes")
 
 AC_OUTPUT(Makefile src/Makefile doc/Makefile gfx/Makefile)
+
+AC_MSG_RESULT([])
+AC_MSG_RESULT([========================])
+AC_MSG_RESULT([Prefix                    : $prefix])
+AC_MSG_RESULT([LASH support              : $HAVE_LASH])

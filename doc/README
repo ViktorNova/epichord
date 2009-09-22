@@ -36,11 +36,10 @@ some additional libs to build this program.
 
 fltk-2.0      graphical user interface
 jack-0.109.2  or any recent version of jack with midi support
-lash          use the latest version if you want to actually use lash
 
-Lash is currently required because autoconf does not define-or-not HAVE_LASH
-based on whether lash is available. If you would like to add this to the
-configure.ac please do and contribute your changes.
+optional dependencies:
+
+lash          use the latest version if you want to actually use lash
 
 After installing those, you can build and do a default install by:
 

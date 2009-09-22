@@ -20,6 +20,8 @@
    Boston, MA  02110-1301, USA
 */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -32,8 +34,6 @@
 #include <jack/ringbuffer.h>
 #include <jack/midiport.h>
 #include <jack/transport.h>
-
-#define HAVE_LASH
 
 #ifdef HAVE_LASH
 #include <lash/lash.h>
@@ -48,8 +48,6 @@ lash_client_t* lash_client;
 //#include "ui.h"
 
 #define PORT_COUNT 8
-
-//#define HAVE_LASH
 
 extern std::vector<track*> tracks;
 
