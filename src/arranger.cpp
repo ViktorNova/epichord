@@ -522,7 +522,7 @@ void Arranger::draw(){
     int X = tick2xpix(T1)+1 - scrollx;
     int Y = insert_track*130 - scrolly;
     int W = tick2xpix(T2)-tick2xpix(T1) - 1;
-    fltk::fillrect(X,Y,W,28);
+    fltk::fillrect(X,Y,W,128);
   }
 
   if(move_flag){
@@ -541,9 +541,9 @@ void Arranger::draw(){
           int Y = (s->track + move_koffset)*130 - scrolly;
           int W = tick2xpix(s->dur);
           fltk::fillrect(X+1,Y+1,W-1,1);
-          fltk::fillrect(X+1,Y+1,1,29-1);
-          fltk::fillrect(X+1,Y+29-1,W-1,1);
-          fltk::fillrect(X+W-1,Y+1,1,29-1);
+          fltk::fillrect(X+1,Y+1,1,129-1);
+          fltk::fillrect(X+1,Y+129-1,W-1,1);
+          fltk::fillrect(X+W-1,Y+1,1,129-1);
         }
         s = s->next;
       }
@@ -570,9 +570,9 @@ void Arranger::draw(){
           int Y = paste_kcenter1*130 - scrolly;
           int W = tick2xpix(s->dur);
           fltk::fillrect(X+1,Y+1,W-1,1);
-          fltk::fillrect(X+1,Y+1,1,29-1);
+          fltk::fillrect(X+1,Y+1,1,129-1);
           fltk::fillrect(X+1,Y+29-1,W-1,1);
-          fltk::fillrect(X+W-1,Y+1,1,29-1);
+          fltk::fillrect(X+W-1,Y+1,1,129-1);
         }
         s = s->next;
       }
@@ -632,23 +632,23 @@ void Arranger::draw(){
         W = tick2xpix(TICKS_PER_BEAT)-1;
       }
 
-      fillrect(X+1,Y+1,W-2,27);
+      fillrect(X+1,Y+1,W-2,127);
       //float a = 1.5f;
 
 
       fltk::setcolor(c2);
-      fillrect(X+W-1,Y,1,29);
-      fillrect(X,Y+28,W-1,1);
+      fillrect(X+W-1,Y,1,129);
+      fillrect(X,Y+128,W-1,1);
 
       fltk::setcolor(c3);
-      fillrect(X,Y,1,28);
+      fillrect(X,Y,1,128);
       fillrect(X,Y,W,1);
 
       if(s==join_s){
         fltk::setcolor(fltk::YELLOW);
-        fillrect(X-2,Y,3,28);
+        fillrect(X-2,Y,3,128);
         fltk::setcolor(fltk::color(128,128,0));
-        fillrect(X-2,Y+28,3,1);
+        fillrect(X-2,Y+128,3,1);
       }
 
       fltk::push_clip(X,Y,W,130);
@@ -662,7 +662,7 @@ void Arranger::draw(){
         }
         if(e->type == MIDI_NOTE_ON){
           int X2 = tick2xpix(e->tick) + tick2xpix(s->tick)+2 - scrollx;
-          Y = s->track*130 + 27 - e->value1*27/127 - scrolly;
+          Y = s->track*130 + 127 - e->value1*127/127 - scrolly;
           int W2 = tick2xpix(e->dur);
           if(W2==0){W2=1;}
           if(!(X2+W2<0 || X2>X+W )){
@@ -681,7 +681,7 @@ void Arranger::draw(){
         int count = s->layer_index()+1;
         char buf[16];
         snprintf(buf,16,"%d / %d",count,total);
-        fltk::drawtext(buf,X+2,Y+27);
+        fltk::drawtext(buf,X+2,Y+127);
       }
 
 
@@ -696,7 +696,7 @@ void Arranger::draw(){
       setcolor(resize_arrow_color);
 
       int W = resize_handle_width;
-      int H = 28;
+      int H = 128;
       int X = resize_x;
       int Y = resize_y;
 
@@ -709,7 +709,7 @@ void Arranger::draw(){
       setcolor(resize_arrow_color);
 
       int W = resize_handle_width;
-      int H = 28;
+      int H = 128;
       int X = resize_x;
       int Y = resize_y;
 
@@ -724,7 +724,7 @@ void Arranger::draw(){
     fltk::setcolor(fltk::RED);
     int X = tick2xpix(split_t) - scrollx;
     int Y = split_s->track*130;
-    fltk::fillrect(X,Y+1,1,28);
+    fltk::fillrect(X,Y+1,1,128);
   }
 
   fltk::pop_clip();
@@ -776,7 +776,7 @@ int Arranger::over_rhandle(seqpat* s){
   int X1 = tick2xpix(s->tick) - scrollx;
   int X2 = X1 + tick2xpix(s->dur);
   int Y1 = s->track * 130 + 1 - scrolly;
-  int Y2 = Y1 + 29;
+  int Y2 = Y1 + 129;
 
   if(tick2xpix(s->dur) < 10){
     return 0;
@@ -792,7 +792,7 @@ int Arranger::over_lhandle(seqpat* s){
   int X1 = tick2xpix(s->tick) - scrollx;
   int X2 = X1 + tick2xpix(s->dur);
   int Y1 = s->track * 130 + 1 - scrolly;
-  int Y2 = Y1 + 29;
+  int Y2 = Y1 + 129;
 
   if(tick2xpix(s->dur) < 10){
     return 0;
@@ -1385,4 +1385,5 @@ void Arranger::apply_join(){
   set_undo(c);
   undo_push(1);
 }
+
 
