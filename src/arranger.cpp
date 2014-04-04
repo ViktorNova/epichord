@@ -69,7 +69,7 @@ Arranger::Arranger(int x, int y, int w, int h, const char* label = 0) : fltk::Wi
   maxt = 0;
 
 
-  fakeh = 16*30;
+  fakeh = 16*130;
   if(fakeh < h){fakeh = h;}
 
   scrollbuffer = 30;
@@ -180,14 +180,14 @@ int Arranger::handle(int event){
             box_y2=Y;
             box_t1=xpix2tick(X+scrollx);
             box_t2=box_t1;
-            box_k1=(Y+scrolly)/30;
+            box_k1=(Y+scrolly)/130;
             box_k2=box_k1;
           }
           else{//begin insert
             insert_flag = 1;
             insert_torig = xpix2tick(X+scrollx)/q_tick*q_tick;
             insert_toffset = q_tick;
-            insert_track = (Y+scrolly) / 30;
+            insert_track = (Y+scrolly) / 130;
           }
         }
         else{
@@ -271,7 +271,7 @@ int Arranger::handle(int event){
         if(!s){
           paste_flag = 1;
           paste_tcenter1 = quantize(xpix2tick(X+scrollx));
-          paste_kcenter1 = (Y+scrolly) / 30;
+          paste_kcenter1 = (Y+scrolly) / 130;
         }
       }
       else if(event_button()==3){//right mouse
@@ -311,7 +311,7 @@ int Arranger::handle(int event){
         box_x2 = X;
         box_y2 = Y;
         box_t2 = xpix2tick(X+scrollx);
-        box_k2 = (Y+scrolly)/30;
+        box_k2 = (Y+scrolly)/130;
       }
       if(color_flag && color_sel){
         color_sel->h = color_orig_h + (color_orig_x - X)/1.0;
@@ -326,7 +326,7 @@ int Arranger::handle(int event){
         if(insert_toffset <=0){
           insert_toffset -= q_tick;
         }
-        insert_track = (Y+scrolly) / 30;
+        insert_track = (Y+scrolly) / 130;
       }
       else if(rresize_flag){
         rresize_toffset = xpix2tick(X+scrollx)/TICKS_PER_BEAT*TICKS_PER_BEAT -
@@ -338,11 +338,11 @@ lresize_torig;
       }
       else if(move_flag){
         move_toffset = quantize(xpix2tick(X+scrollx)) - move_torig - move_offset;
-        move_koffset = (Y+scrolly) / 30 - move_korig;
+        move_koffset = (Y+scrolly) / 130 - move_korig;
       }
       else if(paste_flag){
         paste_tcenter1 = quantize(xpix2tick(X+scrollx));
-        paste_kcenter1 = (Y+scrolly) / 30;
+        paste_kcenter1 = (Y+scrolly) / 130;
       }
       redraw();
       return 1;
@@ -431,7 +431,7 @@ lresize_torig;
             resize_s = s;
             resize_arrow = 1;
            resize_x = tick2xpix(s->tick + s->dur)-scrollx-resize_handle_width-1;
-            resize_y = s->track*30-scrolly;
+            resize_y = s->track*130-scrolly;
             redraw();
 
             cursor(fltk::CURSOR_WE);
@@ -444,7 +444,7 @@ lresize_torig;
             resize_s = s;
             resize_arrow = -1;
             resize_x = tick2xpix(s->tick)+1 - scrollx;
-            resize_y = s->track*30 - scrolly;
+            resize_y = s->track*130 - scrolly;
             redraw();
 
             cursor(fltk::CURSOR_WE);
@@ -520,7 +520,7 @@ void Arranger::draw(){
     int tmp;
     if(T1>T2){SWAP(T1,T2);}
     int X = tick2xpix(T1)+1 - scrollx;
-    int Y = insert_track*30 - scrolly;
+    int Y = insert_track*130 - scrolly;
     int W = tick2xpix(T2)-tick2xpix(T1) - 1;
     fltk::fillrect(X,Y,W,28);
   }
@@ -538,7 +538,7 @@ void Arranger::draw(){
       while(s){
         if(s->selected){
           int X = tick2xpix(s->tick + move_toffset) - scrollx;
-          int Y = (s->track + move_koffset)*30 - scrolly;
+          int Y = (s->track + move_koffset)*130 - scrolly;
           int W = tick2xpix(s->dur);
           fltk::fillrect(X+1,Y+1,W-1,1);
           fltk::fillrect(X+1,Y+1,1,29-1);
@@ -565,9 +565,9 @@ void Arranger::draw(){
       while(s){
         if(s->selected){
           //int X = tick2xpix(s->tick-paste_tcenter0+paste_tcenter1) - scrollx;
-          //int Y = (s->track-paste_tcenter0+paste_kcenter1)*30 - scrolly;
+          //int Y = (s->track-paste_tcenter0+paste_kcenter1)*130 - scrolly;
           int X = tick2xpix(paste_tcenter1) - scrollx;
-          int Y = paste_kcenter1*30 - scrolly;
+          int Y = paste_kcenter1*130 - scrolly;
           int W = tick2xpix(s->dur);
           fltk::fillrect(X+1,Y+1,W-1,1);
           fltk::fillrect(X+1,Y+1,1,29-1);
@@ -622,7 +622,7 @@ void Arranger::draw(){
       if(T1 > T2){SWAP(T1,T2)};
 
       int X = tick2xpix(T1)+1 - scrollx;
-      int Y = s->track * 30 - scrolly;
+      int Y = s->track * 130 - scrolly;
       int W = tick2xpix(T2)-tick2xpix(T1)-1;
 
       if(rresize_flag && s->selected && T1==T2){
@@ -651,7 +651,7 @@ void Arranger::draw(){
         fillrect(X-2,Y+28,3,1);
       }
 
-      fltk::push_clip(X,Y,W,30);
+      fltk::push_clip(X,Y,W,130);
 
       fltk::setcolor(cx);
 
@@ -662,7 +662,7 @@ void Arranger::draw(){
         }
         if(e->type == MIDI_NOTE_ON){
           int X2 = tick2xpix(e->tick) + tick2xpix(s->tick)+2 - scrollx;
-          Y = s->track*30 + 27 - e->value1*27/127 - scrolly;
+          Y = s->track*130 + 27 - e->value1*27/127 - scrolly;
           int W2 = tick2xpix(e->dur);
           if(W2==0){W2=1;}
           if(!(X2+W2<0 || X2>X+W )){
@@ -677,7 +677,7 @@ void Arranger::draw(){
       if(total > 1){
         fltk::setcolor(fltk::BLACK);
         int X = tick2xpix(s->tick) - scrollx;
-        int Y = s->track * 30 - scrolly;
+        int Y = s->track * 130 - scrolly;
         int count = s->layer_index()+1;
         char buf[16];
         snprintf(buf,16,"%d / %d",count,total);
@@ -723,7 +723,7 @@ void Arranger::draw(){
   if(split_s){
     fltk::setcolor(fltk::RED);
     int X = tick2xpix(split_t) - scrollx;
-    int Y = split_s->track*30;
+    int Y = split_s->track*130;
     fltk::fillrect(X,Y+1,1,28);
   }
 
@@ -754,7 +754,7 @@ void Arranger::scrollTo(int X, int Y){
 
 
 seqpat* Arranger::over_seqpat(){
-  int track = (event_y()+scrolly) / 30;
+  int track = (event_y()+scrolly) / 130;
   if(track >= tracks.size()){
     return NULL;
   }
@@ -775,7 +775,7 @@ int Arranger::over_rhandle(seqpat* s){
   int Y = event_y();
   int X1 = tick2xpix(s->tick) - scrollx;
   int X2 = X1 + tick2xpix(s->dur);
-  int Y1 = s->track * 30 + 1 - scrolly;
+  int Y1 = s->track * 130 + 1 - scrolly;
   int Y2 = Y1 + 29;
 
   if(tick2xpix(s->dur) < 10){
@@ -791,7 +791,7 @@ int Arranger::over_lhandle(seqpat* s){
   int Y = event_y();
   int X1 = tick2xpix(s->tick) - scrollx;
   int X2 = X1 + tick2xpix(s->dur);
-  int Y1 = s->track * 30 + 1 - scrolly;
+  int Y1 = s->track * 130 + 1 - scrolly;
   int Y2 = Y1 + 29;
 
   if(tick2xpix(s->dur) < 10){
@@ -842,7 +842,7 @@ void Arranger::layout(){
     kludge--;
     return;
   }
-  fakeh = tracks.size()*30;
+  fakeh = tracks.size()*130;
   if(fakeh<h()){
     fakeh = h();
   }
@@ -1385,5 +1385,4 @@ void Arranger::apply_join(){
   set_undo(c);
   undo_push(1);
 }
-
 
