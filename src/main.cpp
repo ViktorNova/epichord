@@ -22,12 +22,12 @@
 
 #include <stdlib.h>
 
-#include <fltk/run.h>
-#include <fltk/Group.h>
-#include <fltk/Button.h>
-#include <fltk/Input.h>
-#include <fltk/ValueInput.h>
-#include <fltk/TextDisplay.h>
+#include <ntk/FL/Fl.H>
+#include <ntk/FL/Fl_Group.H>
+#include <ntk/FL/Fl_Button.H>
+#include <ntk/FL/Fl_Input.H>
+#include <ntk/FL/Fl_Value_Input.H>
+#include <ntk/FL/Fl_Text_Display.H>
 
 
 #include "ui.h"

@@ -24,10 +24,10 @@
 #define trackmodule_h
 
 
-#include <fltk/Input.h>
-#include <fltk/Button.h>
-#include <fltk/ValueInput.h>
-#include <fltk/events.h>
+#include <ntk/FL/Fl_Input.H>
+#include <ntk/FL/Fl_Button.H>
+#include <ntk/FL/Fl_Value_Input.H>
+#include <ntk/FL/Enumerations.H>
 
 class Gauge : public fltk::Widget {
 
