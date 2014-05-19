@@ -45,7 +45,7 @@ AC_CHECK_LIB([jack],[jack_midi_event_write],[],[
   ])
 ],[])
 
-AC_CHECK_PROG(fltk2found,ntk-fluid,[yes],[no])
+AC_CHECK_PROG(fltk2found,fltk2-config,[yes],[no])
 if test "$fltk2found" == "no"; then
   AC_MSG_ERROR([
     FLTK 2 not found. 

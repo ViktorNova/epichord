@@ -2,16 +2,16 @@
 
 #ifndef ui_h
 #define ui_h
-#include <ntk/FL/Fl_Window.H>
+#include <fltk/Window.h>
 #include <stdio.h>
-#include <ntk/FL/fl_ask.H>
+#include <fltk/ask.h>
 #include "seq.h"
 #include "trackmodule.h"
-#include <ntk/FL/Fl_Group.H>
+#include <fltk/Group.h>
 #include "trackinfo.h"
-#include <ntk/FL/Fl_Button.H>
+#include <fltk/Button.h>
 #include "arranger.h"
-#include <ntk/FL/Fl_Scrollbar.H>
+#include <fltk/Scrollbar.h>
 #include "dragbar.h"
 #include "timeline.h"
 #include "pianoroll.h"
@@ -22,22 +22,19 @@
 #include "keyboard.h"
 #include <metronome.h>
 #include "saveload.h"
-#include <ntk/FL/Fl_Menu_Bar.H>
-#include <ntk/FL/Fl_Menu_Item.H>
-/include <fltk/Divider.h>
-#include <ntk/FL/Fl_Widget.H>
-#include <ntk/FL/Fl_Tabs.H>
-#include <ntk/FL/Fl_Group.H>
-#include <ntk/FL/Fl_Value_Input.H>
-#include <ntk/FL/Fl_Value_Output.H>
-/include <fltk/ThumbWheel.h>
-#include <ntk/FL/Fl_Check_Button.H>
-#include <ntk/FL/Fl_Choice.H>
-#include <ntk/FL/Fl_Input.H>
-#include <ntk/FL/Fl_Text_Editor.H>
-#include <ntk/FL/Fl_Text_Display.H>
-/include <fltk/InvisibleBox.h>
-#include <ntk/FL/Fl_Box.H>
+#include <fltk/PopupMenu.h>
+#include <fltk/Item.h>
+#include <fltk/Divider.h>
+#include <fltk/TabGroup.h>
+#include <fltk/ValueInput.h>
+#include <fltk/ValueOutput.h>
+#include <fltk/ThumbWheel.h>
+#include <fltk/CheckButton.h>
+#include <fltk/Choice.h>
+#include <fltk/Input.h>
+#include <fltk/TextEditor.h>
+#include <fltk/TextDisplay.h>
+#include <fltk/InvisibleBox.h>
 
 class UI  {
 public:
